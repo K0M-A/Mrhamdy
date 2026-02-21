@@ -245,6 +245,30 @@
         onlineRef.on('value', (snapshot) => {
             document.getElementById('real-count').innerText = snapshot.numChildren() || 0;
         });
+        // أضف هذا الكود داخل سكريبت الفايربيس الموجود في index.html
+const notifyRef = db.ref('admin/notification');
+notifyRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if(data && data.text) {
+        // إنشاء تنبيه جذاب للطلاب
+        const msg = document.createElement('div');
+        msg.style = "position:fixed; top:80px; left:50%; transform:translateX(-50%); background:var(--accent); color:white; padding:15px 30px; border-radius:10px; z-index:2000; box-shadow:0 5px 20px rgba(0,0,0,0.5); font-weight:bold; animation:bounceIn 0.5s;";
+        msg.innerHTML = `<i class="fas fa-bell"></i> تنبيه من المستر: ${data.text}`;
+        document.body.appendChild(msg);
+        
+        // يختفي بعد 10 ثواني
+        setTimeout(() => msg.remove(), 10000);
+    }
+});
+
+// خاصية تغيير البوستر تلقائياً
+const posterRef = db.ref('admin/poster_url');
+posterRef.on('value', (snapshot) => {
+    const url = snapshot.val();
+    if(url) {
+        document.querySelector('.teacher-img').src = url;
+    }
+});
     </script>
 </body>
 </html>
