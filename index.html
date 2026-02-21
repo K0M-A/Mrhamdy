@@ -17,12 +17,14 @@
             --bg: #0b111e;
             --text: #ffffff;
             --nav-bg: rgba(15, 23, 42, 0.9);
+            --card-bg: rgba(30, 41, 59, 0.7);
         }
 
         [data-theme="light"] {
             --bg: #f0f4f8;
             --text: #0f172a;
             --nav-bg: rgba(255, 255, 255, 0.9);
+            --card-bg: rgba(255, 255, 255, 0.8);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s ease; }
@@ -44,14 +46,13 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); min-width: 120px; }
+        .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); min-width: 120px; cursor: pointer; }
 
         nav ul { display: flex; list-style: none; align-items: center; }
         nav ul li { margin: 0 8px; }
         nav ul li a { 
             color: var(--text); text-decoration: none; font-weight: 700; font-size: 0.75rem; 
             display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.8;
-            transition: 0.3s;
         }
         nav ul li a i { font-size: 1.1rem; color: var(--primary); }
         nav ul li a:hover { opacity: 1; transform: translateY(-3px); color: var(--accent); }
@@ -77,28 +78,57 @@
         }
 
         .btn-group { display: flex; gap: 20px; }
-        .btn { padding: 14px 35px; border-radius: 15px; text-decoration: none; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .btn { padding: 14px 35px; border-radius: 15px; text-decoration: none; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; cursor: pointer; border: none; }
         .btn-main { background: var(--accent); color: white; box-shadow: 0 10px 25px rgba(255, 23, 68, 0.4); }
         .btn-sub { border: 2px solid var(--primary); color: var(--primary); background: rgba(0,191,165,0.05); }
+
+        /* --- Admin Section Styles --- */
+        #admin-auth-overlay {
+            position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+            display: none; align-items: center; justify-content: center;
+        }
+        .auth-card {
+            background: var(--nav-bg); padding: 40px; border-radius: 0; /* بدون حواف */
+            border: 1px solid var(--primary); text-align: center; width: 90%; max-width: 400px;
+        }
+        .auth-card input {
+            width: 100%; padding: 12px; margin: 20px 0; background: rgba(255,255,255,0.1);
+            border: none; border-bottom: 2px solid var(--primary); color: white; outline: none; text-align: center;
+        }
+
+        #admin-dashboard {
+            display: none; padding: 120px 8% 50px; min-height: 100vh;
+        }
+        .admin-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;
+        }
+        .admin-card {
+            background: var(--card-bg); padding: 25px; border-radius: 0; /* بدون حواف */
+            border-right: 4px solid var(--primary);
+        }
+
+        /* بوستر المنصة - ملهوش حواف تماماً */
+        .poster-box {
+            width: 100%; aspect-ratio: 16/9; background: #000;
+            border-radius: 0 !important; overflow: hidden; border: none !important;
+            margin-top: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .poster-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
 
         footer { padding: 40px 10%; background: rgba(0,0,0,0.3); text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
         .online-status { font-weight: bold; color: #4caf50; margin-bottom: 15px; font-size: 1.1rem; }
         .online-dot { height: 10px; width: 10px; background-color: #4caf50; border-radius: 50%; display: inline-block; margin-left: 8px; animation: pulse 1.5s infinite; }
         
         .dev-credits { margin-top: 20px; font-size: 0.95rem; opacity: 0.9; }
-        .dev-link { color: var(--primary); text-decoration: none; font-weight: 700; transition: 0.3s; }
-        .dev-link:hover { color: var(--accent); }
+        .dev-link { color: var(--primary); text-decoration: none; font-weight: 700; }
 
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
         @media (max-width: 1100px) {
             header { width: 98%; flex-wrap: wrap; justify-content: center; gap: 10px; position: absolute; }
             nav ul { gap: 5px; }
-            nav ul li { margin: 0 5px; }
             nav ul li a { font-size: 0.65rem; }
             .hero { flex-direction: column-reverse; text-align: center; padding-top: 180px; height: auto; min-height: 100vh; }
-            .hero-text { text-align: center; margin-bottom: 50px; }
-            .btn-group { justify-content: center; }
             .teacher-img { max-height: 50vh; }
         }
     </style>
@@ -107,8 +137,17 @@
 
     <div id="particles-js"></div>
 
+    <div id="admin-auth-overlay">
+        <div class="auth-card">
+            <h2 style="color: var(--primary)">لوحة التحكم</h2>
+            <input type="password" id="pass-input" placeholder="كلمة السر يا إمبراطور">
+            <button class="btn btn-main" style="width: 100%" onclick="verifyAdmin()">دخول</button>
+            <button class="btn btn-sub" style="width: 100%; margin-top: 10px;" onclick="hideAdminAuth()">إلغاء</button>
+        </div>
+    </div>
+
     <header>
-        <div class="logo">🧬 <span>MR. HAMDY</span></div>
+        <div class="logo" onclick="window.location.reload()">🧬 <span>MR. HAMDY</span></div>
         <nav>
             <ul>
                 <li><a href="index.html"><i class="fas fa-home"></i>الرئيسية</a></li>
@@ -121,23 +160,48 @@
             </ul>
         </nav>
         <div style="display: flex; gap: 12px; align-items: center;">
+            <i class="fas fa-user-shield" onclick="showAdminAuth()" style="cursor:pointer; color: var(--accent); font-size: 1.1rem;" title="لوحة الإدارة"></i>
             <i class="fas fa-share-alt" onclick="shareSite()" style="cursor:pointer; color: var(--primary); font-size: 1.1rem;" title="مشاركة الموقع"></i>
             <i class="fas fa-adjust" id="theme-toggle" style="cursor:pointer; color: var(--primary); font-size: 1.1rem;" title="تغيير الوضع"></i>
         </div>
     </header>
 
-    <main class="hero">
-        <div class="hero-text animate__animated animate__fadeInRight">
-            <h1>إمبراطورية الأحياء <br><span style="color: var(--primary);">مع مستر حمدي عيد</span></h1>
-            <p>تعلم الأحياء بأسلوب ممتع وشرح مبسط يضمن لك الدرجة النهائية. انضم الآن لآلاف الطلاب وابدأ رحلة التفوق مع نخبة التعليم الثانوي.</p>
-            <div class="btn-group">
-                <a href="live.html" class="btn btn-main"><i class="fas fa-bolt"></i> دخول المنصة</a>
-                <a href="library.html" class="btn btn-sub"><i class="fas fa-download"></i> المذكرات</a>
+    <main id="main-content">
+        <section class="hero">
+            <div class="hero-text animate__animated animate__fadeInRight">
+                <h1>إمبراطورية الأحياء <br><span style="color: var(--primary);">مع مستر حمدي عيد</span></h1>
+                <p>تعلم الأحياء بأسلوب ممتع وشرح مبسط يضمن لك الدرجة النهائية. انضم الآن لآلاف الطلاب وابدأ رحلة التفوق مع نخبة التعليم الثانوي.</p>
+                <div class="btn-group">
+                    <a href="live.html" class="btn btn-main"><i class="fas fa-bolt"></i> دخول المنصة</a>
+                    <a href="library.html" class="btn btn-sub"><i class="fas fa-download"></i> المذكرات</a>
+                </div>
             </div>
-        </div>
-        
-        <div class="teacher-img-container">
-            <img src="H.png" alt="مستر حمدي عيد" class="teacher-img">
+            <div class="teacher-img-container">
+                <img src="H.png" alt="مستر حمدي عيد" class="teacher-img">
+            </div>
+        </section>
+    </main>
+
+    <main id="admin-dashboard">
+        <h1 style="margin-bottom: 40px; border-bottom: 2px solid var(--accent); display: inline-block;">مرحباً بك يا إمبراطور</h1>
+        <div class="admin-grid">
+            <div class="admin-card">
+                <h3><i class="fas fa-chart-line"></i> الإحصائيات</h3>
+                <p style="font-size: 2rem; color: var(--primary); margin: 15px 0;" id="admin-online-count">0</p>
+                <p>طالب متصل بالمنصة الآن</p>
+            </div>
+            <div class="admin-card">
+                <h3><i class="fas fa-image"></i> بوستر المنصة</h3>
+                <div class="poster-box">
+                    <img src="H.png" alt="Poster">
+                </div>
+                <button class="btn btn-sub" style="width:100%; margin-top:10px; font-size: 0.8rem;">تغيير البوستر</button>
+            </div>
+            <div class="admin-card">
+                <h3><i class="fas fa-tasks"></i> إجراءات سريعة</h3>
+                <button class="btn btn-main" style="width:100%; margin-top:10px;"><i class="fas fa-plus"></i> إضافة امتحان</button>
+                <button class="btn btn-sub" style="width:100%; margin-top:10px;"><i class="fas fa-bell"></i> إرسال تنبيه للطلاب</button>
+            </div>
         </div>
     </main>
 
@@ -158,7 +222,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // إعدادات جزيئات الخلفية
+        // Particles Config
         particlesJS('particles-js', {
             "particles": {
                 "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
@@ -171,26 +235,42 @@
             }
         });
 
-        // تبديل الثيم
+        // Theme Toggle
         document.getElementById('theme-toggle').onclick = () => {
             const current = document.body.getAttribute('data-theme');
             document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
         };
 
-        // ميزة المشاركة
+        // Sharing Function
         function shareSite() {
+            const url = 'https://k0m-a.github.io/Mrhamdy/';
             if (navigator.share) {
-                navigator.share({
-                    title: 'منصة مستر حمدي للأحياء',
-                    text: 'تعلم الأحياء بأسلوب الإمبراطور!',
-                    url: 'https://k0m-a.github.io/Mrhamdy/'
-                });
+                navigator.share({ title: 'مستر حمدي أحياء', url: url });
             } else {
-                alert("انسخ رابط المنصة: https://k0m-a.github.io/Mrhamdy/");
+                prompt("انسخ الرابط:", url);
             }
         }
 
-        // Firebase - المتصلون الآن
+        // --- Admin Functions ---
+        function showAdminAuth() {
+            document.getElementById('admin-auth-overlay').style.display = 'flex';
+        }
+        function hideAdminAuth() {
+            document.getElementById('admin-auth-overlay').style.display = 'none';
+        }
+        function verifyAdmin() {
+            const pass = document.getElementById('pass-input').value;
+            if(pass === 'hamdyhamdy012345') {
+                document.getElementById('admin-auth-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'block';
+                window.scrollTo(0,0);
+            } else {
+                alert("كلمة سر خاطئة!");
+            }
+        }
+
+        // Firebase Setup
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -203,12 +283,15 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // Realtime Online Counter
         const onlineRef = db.ref('admin/online_users');
         const userStatusRef = onlineRef.push(true);
         userStatusRef.onDisconnect().remove();
 
         onlineRef.on('value', (snapshot) => {
-            document.getElementById('real-count').innerText = snapshot.numChildren() || 0;
+            const count = snapshot.numChildren() || 0;
+            document.getElementById('real-count').innerText = count;
+            document.getElementById('admin-online-count').innerText = count;
         });
     </script>
 </body>
