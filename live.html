@@ -101,5 +101,30 @@
     </div>
 
     <script src="script.js"></script>
+    <script type="module">
+      // 1. استيراد المكتبات من روابط فايربيز الرسمية
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+      // 2. إعدادات مشروعك (الكود بتاعك)
+      const firebaseConfig = {
+        apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
+        authDomain: "mrhamdy-1c406.firebaseapp.com",
+        databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
+        projectId: "mrhamdy-1c406",
+        storageBucket: "mrhamdy-1c406.firebasestorage.app",
+        messagingSenderId: "806268398144",
+        appId: "1:806268398144:web:c40aef6b378377f72b4da5",
+        measurementId: "G-CM2YSVZ1XB"
+      };
+
+      // 3. تشغيل فايربيز
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+
+      // رسالة اختبار عشان نتأكد إن كله شغال تمام
+      console.log("مبروك! تم ربط فايربيز بنجاح يا هندسة 🚀");
+    </script>
 </body>
+
 </html>
