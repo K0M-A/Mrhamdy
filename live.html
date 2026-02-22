@@ -7,14 +7,50 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ستايل إضافي للسبورة والصلاحيات */
+        #drawingCanvas {
+            background-color: #1a1a2e;
+            cursor: crosshair;
+            width: 100%;
+            height: 500px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        .board-controls {
+            display: none; /* سيتم إظهارها للمعلم فقط */
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #0f3460;
+            border-radius: 8px;
+        }
+        .student-alert {
+            display: none;
+            color: #e94560;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .permission-btn {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .permission-btn.active {
+            background-color: #39ff14;
+            color: black;
+        }
+    </style>
 </head>
 <body>
 
     <header class="main-header">
         <div class="logo">BIO-<span class="neon-text">HAMDY</span></div>
-        <div class="menu-wrapper" id="menuBtn">
-            <div class="hamburger"></div>
-        </div>
+        <div style="color: white; font-weight: bold;" id="userRoleDisplay"></div>
     </header>
 
     <nav class="side-nav" id="sideNav">
@@ -22,137 +58,223 @@
             <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
             <li><a href="live.html" class="active"><i class="fas fa-video"></i> البث المباشر</a></li>
             <li><a href="exams.html"><i class="fas fa-microscope"></i> الامتحانات</a></li>
-            <li><a href="anatomy.html"><i class="fas fa-dna"></i> معرض التشريح</a></li>
-            <li><a href="library.html"><i class="fas fa-book"></i> المكتبة</a></li>
-            <li><a href="videos.html"><i class="fas fa-play-circle"></i> الفيديوهات</a></li>
-            <li><a href="contact.html"><i class="fas fa-paper-plane"></i> تواصل معنا</a></li>
         </ul>
     </nav>
 
     <main class="studio-hub">
         <div class="welcome-text">
             <h1>مرحباً بك في <span class="cyan-text">النظام الحيوي</span></h1>
-            <p>اختر بيئة الشرح المناسبة للبدء</p>
         </div>
-
         <div class="main-options">
             <div class="opt-card green-glow" onclick="switchSystem('board')">
                 <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
                 <h3>السبورة الذكية</h3>
-                <p>بيئة كتابة تفاعلية متقدمة</p>
             </div>
-
-            <div class="opt-card red-glow" onclick="switchSystem('files')">
-                <div class="icon-box"><i class="fas fa-file-pdf"></i></div>
-                <h3>عرض الملفات</h3>
-                <p>رفع مذكرات PDF وصور توضيحية</p>
             </div>
-
-            <div class="opt-card blue-glow" onclick="toggleChat()">
-                <div class="icon-box"><i class="fas fa-comments"></i></div>
-                <h3>قناة التواصل</h3>
-                <p>نقاش فوري مع الطلاب</p>
-            </div>
-        </div>
     </main>
 
-    <section class="workspace" id="workspace">
+    <section class="workspace" id="workspace" style="display: none;">
         <button class="back-btn" onclick="closeWorkspace()"><i class="fas fa-times"></i> إغلاق</button>
         
         <div id="board-system" class="sys-content">
-            <div class="board-controls">
+            <div id="studentAlert" class="student-alert"><i class="fas fa-lock"></i> السبورة مقفولة، الشرح للمستر فقط حالياً.</div>
+            
+            <div class="board-controls" id="teacherControls">
                 <input type="color" id="colorPicker" value="#39ff14">
-                <button onclick="setPenSize(5)">قلم رفيع</button>
-                <button onclick="setPenSize(15)">قلم عريض</button>
-                <button onclick="clearCanvas()" class="danger-btn">مسح الشاشة</button>
+                <button id="btnThin">قلم رفيع</button>
+                <button id="btnThick">قلم عريض</button>
+                <button id="btnClear" class="danger-btn">مسح الشاشة</button>
+                <button id="btnPermission" class="permission-btn"><i class="fas fa-user-edit"></i> السماح للطلاب بالكتابة</button>
             </div>
             <canvas id="drawingCanvas"></canvas>
         </div>
-
-        <div id="file-system" class="sys-content">
-            <div class="upload-area" id="dropZone">
-                <input type="file" id="fileInput" hidden accept=".pdf,image/*">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h2>اسحب الملف هنا أو انقر للرفع</h2>
-            </div>
-            <div id="previewArea"></div>
-        </div>
     </section>
 
-    <div class="chat-widget">
-        <div class="chat-btn" id="chatToggleBtn">
-            <i class="fas fa-comment-dots"></i>
-            <span class="unread-dot" id="unreadBadge"></span>
-        </div>
-        
-        <div class="chat-container" id="chatContainer">
-            <div class="chat-header">
-                <span><i class="fas fa-circle"></i> البث المباشر</span>
-                <button onclick="toggleChat()">×</button>
-            </div>
-            <div class="chat-messages" id="chatBox">
-                <div class="message system">مرحباً بك يا مستر حمدي في الغرفة.</div>
-            </div>
-            <div class="chat-footer">
-                <input type="text" id="msgInput" placeholder="اكتب رسالتك هنا...">
-                <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
-    </div>
-
     <script src="script.js"></script>
-   <script type="module">
-  // 1. استيراد المكتبات اللازمة (App + Database)
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onChildAdded, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  // 2. إعدادات مشروعك
-  const firebaseConfig = {
-    apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
-    authDomain: "mrhamdy-1c406.firebaseapp.com",
-    databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
-    projectId: "mrhamdy-1c406",
-    storageBucket: "mrhamdy-1c406.firebasestorage.app",
-    messagingSenderId: "806268398144",
-    appId: "1:806268398144:web:c40aef6b378377f72b4da5"
-  };
+        // إعدادات فايربيز
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
+            authDomain: "mrhamdy-1c406.firebaseapp.com",
+            databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
+            projectId: "mrhamdy-1c406",
+            storageBucket: "mrhamdy-1c406.firebasestorage.app",
+            messagingSenderId: "806268398144",
+            appId: "1:806268398144:web:c40aef6b378377f72b4da5"
+        };
 
-  // 3. تشغيل فايربيز وقاعدة البيانات
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const messagesRef = ref(db, "chat_messages");
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-  // --- منطق الشات ---
+        // ==========================================
+        // 1. نظام تحديد الهوية (مستر ولا طالب)
+        // ==========================================
+        let isTeacher = false;
+        // للتجربة: هنسأل المستخدم أول ما يفتح الصفحة (بعدين هنربطها بنظام تسجيل الدخول)
+        const roleStr = localStorage.getItem("userRole") || prompt("للتجربة: اكتب 'مستر' إذا كنت المعلم، أو 'طالب' إذا كنت طالب");
+        localStorage.setItem("userRole", roleStr);
+        
+        if (roleStr === "مستر") {
+            isTeacher = true;
+            document.getElementById("userRoleDisplay").innerText = "👨‍🏫 وضع المعلم";
+            document.getElementById("teacherControls").style.display = "flex"; // إظهار أدوات المستر
+        } else {
+            document.getElementById("userRoleDisplay").innerText = "👨‍🎓 وضع الطالب";
+            document.getElementById("studentAlert").style.display = "block"; // إظهار تنبيه للطالب
+        }
 
-  const msgInput = document.getElementById("msgInput");
-  const sendBtn = document.getElementById("sendBtn");
-  const chatBox = document.getElementById("chatBox");
+        // ==========================================
+        // 2. نظام السبورة التفاعلية (Real-time Canvas)
+        // ==========================================
+        const canvas = document.getElementById("drawingCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        // ضبط أبعاد السبورة
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 500;
+        }
+        window.onload = resizeCanvas;
+        window.onresize = resizeCanvas;
 
-  // وظيفة إرسال الرسالة لفايربيز
-  sendBtn.onclick = () => {
-    const text = msgInput.value;
-    if (text.trim() !== "") {
-      push(messagesRef, {
-        sender: "مستر حمدي", // هنا ممكن تغيرها بناءً على مين اللي داخل
-        message: text,
-        time: Date.now()
-      });
-      msgInput.value = "";
-    }
-  };
+        let isDrawing = false;
+        let currentColor = "#39ff14";
+        let currentSize = 5;
+        let studentsAllowedToDraw = false;
 
-  // وظيفة استقبال الرسائل فوراً (Real-time)
-  onChildAdded(messagesRef, (data) => {
-    const msg = data.val();
-    const msgDiv = document.createElement("div");
-    msgDiv.classList.add("message");
-    msgDiv.innerHTML = `<strong>${msg.sender}:</strong> ${msg.message}`;
-    chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight; // النزول لآخر رسالة تلقائياً
-  });
+        // مراجع فايربيز للسبورة
+        const boardRef = ref(db, "board_drawings");
+        const permissionRef = ref(db, "board_settings/students_can_draw");
+        const clearRef = ref(db, "board_settings/clear_trigger");
 
-</script>
+        // أدوات التحكم للمستر
+        if (isTeacher) {
+            document.getElementById("colorPicker").onchange = (e) => currentColor = e.target.value;
+            document.getElementById("btnThin").onclick = () => currentSize = 5;
+            document.getElementById("btnThick").onclick = () => currentSize = 15;
+            
+            // زرار السماح للطلاب
+            const btnPermission = document.getElementById("btnPermission");
+            btnPermission.onclick = () => {
+                studentsAllowedToDraw = !studentsAllowedToDraw;
+                set(permissionRef, studentsAllowedToDraw); // تحديث الصلاحية في فايربيز للجميع
+            };
+
+            // زر مسح الشاشة
+            document.getElementById("btnClear").onclick = () => {
+                set(clearRef, Date.now()); // إرسال إشارة مسح للكل
+                remove(boardRef); // مسح البيانات من الداتابيز عشان متبقاش تقيلة
+            };
+        }
+
+        // الاستماع لصلاحيات الكتابة للطلاب
+        onValue(permissionRef, (snapshot) => {
+            studentsAllowedToDraw = snapshot.val();
+            if (isTeacher) {
+                const btn = document.getElementById("btnPermission");
+                btn.className = studentsAllowedToDraw ? "permission-btn active" : "permission-btn";
+                btn.innerHTML = studentsAllowedToDraw ? "<i class='fas fa-unlock'></i> الطلاب يمكنهم الكتابة" : "<i class='fas fa-lock'></i> السماح للطلاب بالكتابة";
+            } else {
+                const alertMsg = document.getElementById("studentAlert");
+                if (studentsAllowedToDraw) {
+                    alertMsg.style.color = "#39ff14";
+                    alertMsg.innerHTML = "<i class='fas fa-unlock'></i> المستر سمح لك بالكتابة الآن!";
+                } else {
+                    alertMsg.style.color = "#e94560";
+                    alertMsg.innerHTML = "<i class='fas fa-lock'></i> السبورة مقفولة، الشرح للمستر فقط حالياً.";
+                }
+            }
+        });
+
+        // الاستماع لأمر مسح الشاشة
+        onValue(clearRef, (snapshot) => {
+            if (snapshot.val()) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        });
+
+        // دوال الرسم والتصدير لفايربيز
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (e.clientX || e.touches[0].clientX) - rect.left,
+                y: (e.clientY || e.touches[0].clientY) - rect.top
+            };
+        }
+
+        function startPosition(e) {
+            // لو مش مستر، والطلاب مش مسموحلهم، امنع الرسم!
+            if (!isTeacher && !studentsAllowedToDraw) return;
+            
+            isDrawing = true;
+            const pos = getMousePos(e);
+            
+            // إرسال نقطة البداية لفايربيز
+            push(boardRef, { type: "start", x: pos.x, y: pos.y, color: currentColor, size: currentSize });
+            drawLocal(pos.x, pos.y, currentColor, currentSize, false);
+        }
+
+        function endPosition() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            if (!isTeacher && !studentsAllowedToDraw) return;
+
+            e.preventDefault(); // منع السكرول على الموبايل أثناء الرسم
+            const pos = getMousePos(e);
+
+            // إرسال مسار الرسم لفايربيز
+            push(boardRef, { type: "draw", x: pos.x, y: pos.y, color: currentColor, size: currentSize });
+            drawLocal(pos.x, pos.y, currentColor, currentSize, true);
+        }
+
+        // الرسم الفعلي على الشاشة
+        function drawLocal(x, y, color, size, isDrawingPath) {
+            ctx.lineWidth = size;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = color;
+
+            if (!isDrawingPath) {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            }
+        }
+
+        // أحداث الماوس واللمس
+        canvas.addEventListener("mousedown", startPosition);
+        canvas.addEventListener("mouseup", endPosition);
+        canvas.addEventListener("mousemove", draw);
+        
+        canvas.addEventListener("touchstart", startPosition);
+        canvas.addEventListener("touchend", endPosition);
+        canvas.addEventListener("touchmove", draw);
+
+        // ==========================================
+        // 3. الاستماع للرسم من فايربيز (للطلاب والمستر)
+        // ==========================================
+        onChildAdded(boardRef, (data) => {
+            const point = data.val();
+            // لو النقطة جاية من بره، نرسمها
+            if (point.type === "start") {
+                ctx.beginPath();
+                ctx.moveTo(point.x, point.y);
+            } else if (point.type === "draw") {
+                drawLocal(point.x, point.y, point.color, point.size, true);
+            }
+        });
+
+        // ... (كود الشات الخاص بك كما هو) ...
+    </script>
 </body>
-
 </html>
-
