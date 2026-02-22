@@ -8,49 +8,66 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ستايل إضافي للسبورة والصلاحيات */
+        /* --- ستايل شاشة تسجيل الدخول --- */
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 52, 96, 0.95); z-index: 9999;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .login-box {
+            background: #1a1a2e; padding: 30px; border-radius: 10px;
+            box-shadow: 0 0 20px #e94560; text-align: center; width: 300px;
+        }
+        .login-box input {
+            width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px;
+            border: 1px solid #cyan; background: #222; color: white;
+        }
+        .login-box button {
+            background: #e94560; color: white; border: none; padding: 10px 20px;
+            border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;
+        }
+        
+        /* --- ستايل السبورة وقائمة الطلاب --- */
         #drawingCanvas {
-            background-color: #1a1a2e;
-            cursor: crosshair;
-            width: 100%;
-            height: 500px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+            background-color: #ffffff; cursor: crosshair;
+            width: 100%; height: 500px; border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); touch-action: none;
         }
-        .board-controls {
-            display: none; /* سيتم إظهارها للمعلم فقط */
-            gap: 10px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #0f3460;
-            border-radius: 8px;
+        .board-container { display: flex; gap: 15px; }
+        .canvas-area { flex-grow: 1; }
+        .students-panel {
+            width: 250px; background: #1a1a2e; padding: 15px; border-radius: 10px;
+            display: none; /* تظهر للمستر فقط */ color: white; height: 500px; overflow-y: auto;
         }
-        .student-alert {
-            display: none;
-            color: #e94560;
-            font-weight: bold;
-            margin-bottom: 10px;
+        .student-item {
+            background: #0f3460; padding: 10px; margin-bottom: 10px; border-radius: 5px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .permission-btn {
-            background-color: #e94560;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
+        .student-item button {
+            background: #e94560; color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer;
         }
-        .permission-btn.active {
-            background-color: #39ff14;
-            color: black;
-        }
+        .student-item button.allowed { background: #39ff14; color: black; }
+        .teacher-tools { display: none; margin-bottom: 10px; background: #0f3460; padding: 10px; border-radius: 5px; }
     </style>
 </head>
 <body>
 
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2 style="color: white; margin-bottom: 20px;">تسجيل الدخول</h2>
+            <input type="text" id="userNameInput" placeholder="اكتب اسمك الحقيقي هنا..." required>
+            <input type="password" id="passwordInput" placeholder="كلمة السر..." required>
+            <button id="loginBtn">دخول للاستوديو</button>
+            <p id="loginError" style="color: #e94560; display: none; margin-top: 10px;">كلمة السر غير صحيحة!</p>
+        </div>
+    </div>
+
     <header class="main-header">
         <div class="logo">BIO-<span class="neon-text">HAMDY</span></div>
-        <div style="color: white; font-weight: bold;" id="userRoleDisplay"></div>
+        <div id="userInfoDisplay" style="color: white; font-weight: bold;"></div>
+        <div class="menu-wrapper" id="menuBtn">
+            <div class="hamburger"></div>
+        </div>
     </header>
 
     <nav class="side-nav" id="sideNav">
@@ -64,38 +81,94 @@
     <main class="studio-hub">
         <div class="welcome-text">
             <h1>مرحباً بك في <span class="cyan-text">النظام الحيوي</span></h1>
+            <p>اختر بيئة الشرح المناسبة للبدء</p>
         </div>
+
         <div class="main-options">
             <div class="opt-card green-glow" onclick="switchSystem('board')">
                 <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
                 <h3>السبورة الذكية</h3>
             </div>
+            <div class="opt-card red-glow" onclick="switchSystem('files')">
+                <div class="icon-box"><i class="fas fa-file-pdf"></i></div>
+                <h3>عرض الملفات</h3>
             </div>
+            <div class="opt-card blue-glow" onclick="toggleChat()">
+                <div class="icon-box"><i class="fas fa-comments"></i></div>
+                <h3>قناة التواصل</h3>
+            </div>
+        </div>
     </main>
 
     <section class="workspace" id="workspace" style="display: none;">
         <button class="back-btn" onclick="closeWorkspace()"><i class="fas fa-times"></i> إغلاق</button>
         
         <div id="board-system" class="sys-content">
-            <div id="studentAlert" class="student-alert"><i class="fas fa-lock"></i> السبورة مقفولة، الشرح للمستر فقط حالياً.</div>
             
-            <div class="board-controls" id="teacherControls">
-                <input type="color" id="colorPicker" value="#39ff14">
-                <button id="btnThin">قلم رفيع</button>
-                <button id="btnThick">قلم عريض</button>
-                <button id="btnClear" class="danger-btn">مسح الشاشة</button>
-                <button id="btnPermission" class="permission-btn"><i class="fas fa-user-edit"></i> السماح للطلاب بالكتابة</button>
+            <div class="teacher-tools" id="teacherTools">
+                <input type="color" id="colorPicker" value="#000000">
+                <button onclick="currentSize = 2">قلم رفيع</button>
+                <button onclick="currentSize = 8">قلم عريض</button>
+                <button id="clearBoardBtn" class="danger-btn">مسح السبورة للجميع</button>
             </div>
-            <canvas id="drawingCanvas"></canvas>
+
+            <div class="board-container">
+                <div class="canvas-area">
+                    <canvas id="drawingCanvas"></canvas>
+                </div>
+                <div class="students-panel" id="studentsPanel">
+                    <h3 style="border-bottom: 1px solid #555; padding-bottom: 10px;">الطلاب المتصلين</h3>
+                    <div id="studentsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="file-system" class="sys-content" style="display: none;">
+            <div class="upload-area" id="dropZone">
+                <input type="file" id="fileInput" hidden accept=".pdf,image/*">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h2>اسحب الملف هنا أو انقر للرفع</h2>
+            </div>
+            <div id="previewArea"></div>
         </div>
     </section>
+
+    <div class="chat-widget">
+        <div class="chat-btn" id="chatToggleBtn" onclick="toggleChatUI()">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+        <div class="chat-container" id="chatContainer" style="display:none;">
+            <div class="chat-header">
+                <span><i class="fas fa-circle" style="color:#39ff14"></i> البث المباشر</span>
+                <button onclick="toggleChatUI()">×</button>
+            </div>
+            <div class="chat-messages" id="chatBox"></div>
+            <div class="chat-footer">
+                <input type="text" id="msgInput" placeholder="اكتب رسالتك هنا...">
+                <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchSystem(sys) {
+            document.getElementById('workspace').style.display = 'block';
+            document.getElementById('board-system').style.display = sys === 'board' ? 'block' : 'none';
+            document.getElementById('file-system').style.display = sys === 'files' ? 'block' : 'none';
+            if(sys === 'board') resizeCanvas();
+        }
+        function closeWorkspace() { document.getElementById('workspace').style.display = 'none'; }
+        function toggleChatUI() { 
+            const chat = document.getElementById('chatContainer');
+            chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
+        }
+    </script>
 
     <script src="script.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onChildAdded, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onChildAdded, set, onValue, remove, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // إعدادات فايربيز
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -109,172 +182,188 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // ==========================================
-        // 1. نظام تحديد الهوية (مستر ولا طالب)
-        // ==========================================
+        // متغيرات المستخدم
+        let myName = "";
         let isTeacher = false;
-        // للتجربة: هنسأل المستخدم أول ما يفتح الصفحة (بعدين هنربطها بنظام تسجيل الدخول)
-        const roleStr = localStorage.getItem("userRole") || prompt("للتجربة: اكتب 'مستر' إذا كنت المعلم، أو 'طالب' إذا كنت طالب");
-        localStorage.setItem("userRole", roleStr);
-        
-        if (roleStr === "مستر") {
-            isTeacher = true;
-            document.getElementById("userRoleDisplay").innerText = "👨‍🏫 وضع المعلم";
-            document.getElementById("teacherControls").style.display = "flex"; // إظهار أدوات المستر
-        } else {
-            document.getElementById("userRoleDisplay").innerText = "👨‍🎓 وضع الطالب";
-            document.getElementById("studentAlert").style.display = "block"; // إظهار تنبيه للطالب
+        let canIDraw = false;
+        const myId = "user_" + Date.now() + Math.floor(Math.random() * 1000);
+
+        // مراجع الداتا بيز
+        const usersRef = ref(db, "active_users");
+        const myUserRef = ref(db, `active_users/${myId}`);
+        const boardRef = ref(db, "board_drawings");
+        const clearRef = ref(db, "board_commands/clear");
+        const messagesRef = ref(db, "chat_messages");
+
+        // ----------------------------------------------------
+        // 1. نظام تسجيل الدخول
+        // ----------------------------------------------------
+        document.getElementById("loginBtn").onclick = () => {
+            const name = document.getElementById("userNameInput").value.trim();
+            const pass = document.getElementById("passwordInput").value;
+            const errorText = document.getElementById("loginError");
+
+            if (!name) { errorText.innerText = "يرجى كتابة اسمك!"; errorText.style.display = "block"; return; }
+
+            if (pass === "2027") {
+                isTeacher = true; canIDraw = true; myName = "أ. حمدي";
+                document.getElementById("teacherTools").style.display = "flex";
+                document.getElementById("studentsPanel").style.display = "block";
+                document.getElementById("userInfoDisplay").innerText = "👨‍🏫 وضع المعلم";
+                finishLogin();
+            } else if (pass === "2026") {
+                isTeacher = false; canIDraw = false; myName = name;
+                document.getElementById("userInfoDisplay").innerText = `👨‍🎓 الطالب: ${myName}`;
+                finishLogin();
+            } else {
+                errorText.innerText = "كلمة السر غير صحيحة!"; errorText.style.display = "block";
+            }
+        };
+
+        function finishLogin() {
+            document.getElementById("loginOverlay").style.display = "none";
+            
+            // تسجيل الدخول في فايربيز وتجهيز الحذف عند الخروج
+            set(myUserRef, { name: myName, role: isTeacher ? "teacher" : "student", canDraw: canIDraw });
+            onDisconnect(myUserRef).remove(); // لما يقفل الصفحة اسمه يتمسح من القائمة
+            
+            // لو مستر، نراقب الطلاب المتصلين
+            if (isTeacher) {
+                onValue(usersRef, (snapshot) => {
+                    const studentsList = document.getElementById("studentsList");
+                    studentsList.innerHTML = "";
+                    snapshot.forEach((child) => {
+                        const user = child.val();
+                        const uid = child.key;
+                        if (user.role === "student") {
+                            const div = document.createElement("div");
+                            div.className = "student-item";
+                            div.innerHTML = `
+                                <span>${user.name}</span>
+                                <button class="${user.canDraw ? 'allowed' : ''}" onclick="window.toggleStudentDraw('${uid}', ${user.canDraw})">
+                                    ${user.canDraw ? 'مسموح بالكتابة' : 'سماح بالكتابة'}
+                                </button>
+                            `;
+                            studentsList.appendChild(div);
+                        }
+                    });
+                });
+            } else {
+                // لو طالب، نراقب حالته لو المستر اداله إذن
+                onValue(myUserRef, (snapshot) => {
+                    if(snapshot.exists()) {
+                        canIDraw = snapshot.val().canDraw;
+                        if (canIDraw) alert("المستر سمح لك بالكتابة على السبورة الآن!");
+                    }
+                });
+            }
         }
 
-        // ==========================================
-        // 2. نظام السبورة التفاعلية (Real-time Canvas)
-        // ==========================================
+        // دالة للمستر عشان يعكس صلاحية الطالب
+        window.toggleStudentDraw = (uid, currentState) => {
+            update(ref(db, `active_users/${uid}`), { canDraw: !currentState });
+        };
+
+
+        // ----------------------------------------------------
+        // 2. نظام السبورة الذكية
+        // ----------------------------------------------------
         const canvas = document.getElementById("drawingCanvas");
         const ctx = canvas.getContext("2d");
-        
-        // ضبط أبعاد السبورة
-        function resizeCanvas() {
+        window.currentSize = 2;
+        let currentColor = "#000000";
+        let isDrawing = false;
+
+        window.resizeCanvas = function() {
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = 500;
-        }
-        window.onload = resizeCanvas;
-        window.onresize = resizeCanvas;
+        };
+        window.addEventListener("resize", window.resizeCanvas);
 
-        let isDrawing = false;
-        let currentColor = "#39ff14";
-        let currentSize = 5;
-        let studentsAllowedToDraw = false;
-
-        // مراجع فايربيز للسبورة
-        const boardRef = ref(db, "board_drawings");
-        const permissionRef = ref(db, "board_settings/students_can_draw");
-        const clearRef = ref(db, "board_settings/clear_trigger");
-
-        // أدوات التحكم للمستر
-        if (isTeacher) {
+        if(document.getElementById("colorPicker")) {
             document.getElementById("colorPicker").onchange = (e) => currentColor = e.target.value;
-            document.getElementById("btnThin").onclick = () => currentSize = 5;
-            document.getElementById("btnThick").onclick = () => currentSize = 15;
-            
-            // زرار السماح للطلاب
-            const btnPermission = document.getElementById("btnPermission");
-            btnPermission.onclick = () => {
-                studentsAllowedToDraw = !studentsAllowedToDraw;
-                set(permissionRef, studentsAllowedToDraw); // تحديث الصلاحية في فايربيز للجميع
-            };
-
-            // زر مسح الشاشة
-            document.getElementById("btnClear").onclick = () => {
-                set(clearRef, Date.now()); // إرسال إشارة مسح للكل
-                remove(boardRef); // مسح البيانات من الداتابيز عشان متبقاش تقيلة
-            };
         }
 
-        // الاستماع لصلاحيات الكتابة للطلاب
-        onValue(permissionRef, (snapshot) => {
-            studentsAllowedToDraw = snapshot.val();
-            if (isTeacher) {
-                const btn = document.getElementById("btnPermission");
-                btn.className = studentsAllowedToDraw ? "permission-btn active" : "permission-btn";
-                btn.innerHTML = studentsAllowedToDraw ? "<i class='fas fa-unlock'></i> الطلاب يمكنهم الكتابة" : "<i class='fas fa-lock'></i> السماح للطلاب بالكتابة";
-            } else {
-                const alertMsg = document.getElementById("studentAlert");
-                if (studentsAllowedToDraw) {
-                    alertMsg.style.color = "#39ff14";
-                    alertMsg.innerHTML = "<i class='fas fa-unlock'></i> المستر سمح لك بالكتابة الآن!";
-                } else {
-                    alertMsg.style.color = "#e94560";
-                    alertMsg.innerHTML = "<i class='fas fa-lock'></i> السبورة مقفولة، الشرح للمستر فقط حالياً.";
-                }
-            }
-        });
-
-        // الاستماع لأمر مسح الشاشة
-        onValue(clearRef, (snapshot) => {
-            if (snapshot.val()) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-        });
-
-        // دوال الرسم والتصدير لفايربيز
         function getMousePos(e) {
             const rect = canvas.getBoundingClientRect();
-            return {
-                x: (e.clientX || e.touches[0].clientX) - rect.left,
-                y: (e.clientY || e.touches[0].clientY) - rect.top
-            };
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
         }
 
-        function startPosition(e) {
-            // لو مش مستر، والطلاب مش مسموحلهم، امنع الرسم!
-            if (!isTeacher && !studentsAllowedToDraw) return;
-            
+        function startDrawing(e) {
+            if (!canIDraw) return; // الحماية الأساسية
             isDrawing = true;
             const pos = getMousePos(e);
-            
-            // إرسال نقطة البداية لفايربيز
-            push(boardRef, { type: "start", x: pos.x, y: pos.y, color: currentColor, size: currentSize });
-            drawLocal(pos.x, pos.y, currentColor, currentSize, false);
-        }
-
-        function endPosition() {
-            isDrawing = false;
-            ctx.beginPath();
+            push(boardRef, { type: "start", x: pos.x, y: pos.y, color: currentColor, size: window.currentSize });
+            drawLocal(pos.x, pos.y, currentColor, window.currentSize, false);
         }
 
         function draw(e) {
-            if (!isDrawing) return;
-            if (!isTeacher && !studentsAllowedToDraw) return;
-
-            e.preventDefault(); // منع السكرول على الموبايل أثناء الرسم
+            if (!isDrawing || !canIDraw) return;
+            e.preventDefault();
             const pos = getMousePos(e);
-
-            // إرسال مسار الرسم لفايربيز
-            push(boardRef, { type: "draw", x: pos.x, y: pos.y, color: currentColor, size: currentSize });
-            drawLocal(pos.x, pos.y, currentColor, currentSize, true);
+            push(boardRef, { type: "draw", x: pos.x, y: pos.y, color: currentColor, size: window.currentSize });
+            drawLocal(pos.x, pos.y, currentColor, window.currentSize, true);
         }
 
-        // الرسم الفعلي على الشاشة
-        function drawLocal(x, y, color, size, isDrawingPath) {
-            ctx.lineWidth = size;
-            ctx.lineCap = "round";
-            ctx.strokeStyle = color;
+        function stopDrawing() { isDrawing = false; ctx.beginPath(); }
 
-            if (!isDrawingPath) {
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-            }
+        function drawLocal(x, y, color, size, isPath) {
+            ctx.lineWidth = size; ctx.lineCap = "round"; ctx.strokeStyle = color;
+            if (!isPath) { ctx.beginPath(); ctx.moveTo(x, y); } 
+            else { ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y); }
         }
 
-        // أحداث الماوس واللمس
-        canvas.addEventListener("mousedown", startPosition);
-        canvas.addEventListener("mouseup", endPosition);
+        canvas.addEventListener("mousedown", startDrawing);
         canvas.addEventListener("mousemove", draw);
-        
-        canvas.addEventListener("touchstart", startPosition);
-        canvas.addEventListener("touchend", endPosition);
-        canvas.addEventListener("touchmove", draw);
+        canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("touchstart", startDrawing, {passive: false});
+        canvas.addEventListener("touchmove", draw, {passive: false});
+        canvas.addEventListener("touchend", stopDrawing);
 
-        // ==========================================
-        // 3. الاستماع للرسم من فايربيز (للطلاب والمستر)
-        // ==========================================
+        // استقبال الرسم من الداتابيز
         onChildAdded(boardRef, (data) => {
-            const point = data.val();
-            // لو النقطة جاية من بره، نرسمها
-            if (point.type === "start") {
-                ctx.beginPath();
-                ctx.moveTo(point.x, point.y);
-            } else if (point.type === "draw") {
-                drawLocal(point.x, point.y, point.color, point.size, true);
-            }
+            const pt = data.val();
+            if (pt.type === "start") { ctx.beginPath(); ctx.moveTo(pt.x, pt.y); } 
+            else { drawLocal(pt.x, pt.y, pt.color, pt.size, true); }
         });
 
-        // ... (كود الشات الخاص بك كما هو) ...
+        // مسح السبورة للكل (للمستر بس)
+        if(document.getElementById("clearBoardBtn")) {
+            document.getElementById("clearBoardBtn").onclick = () => {
+                remove(boardRef);
+                set(clearRef, Date.now());
+            };
+        }
+        onValue(clearRef, (snapshot) => {
+            if(snapshot.exists()) ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+
+        // ----------------------------------------------------
+        // 3. نظام الشات
+        // ----------------------------------------------------
+        const msgInput = document.getElementById("msgInput");
+        const chatBox = document.getElementById("chatBox");
+
+        document.getElementById("sendBtn").onclick = () => {
+            const text = msgInput.value;
+            if (text.trim() !== "") {
+                push(messagesRef, { sender: myName, message: text, isTeacherMsg: isTeacher });
+                msgInput.value = "";
+            }
+        };
+
+        onChildAdded(messagesRef, (data) => {
+            const msg = data.val();
+            const div = document.createElement("div");
+            div.style.padding = "8px"; div.style.borderBottom = "1px solid #ddd";
+            div.innerHTML = `<strong style="color: ${msg.isTeacherMsg ? '#e94560' : '#000'}">${msg.sender}:</strong> ${msg.message}`;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
     </script>
 </body>
 </html>
