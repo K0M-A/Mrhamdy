@@ -101,30 +101,58 @@
     </div>
 
     <script src="script.js"></script>
-    <script type="module">
-      // 1. استيراد المكتبات من روابط فايربيز الرسمية
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+   <script type="module">
+  // 1. استيراد المكتبات اللازمة (App + Database)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-      // 2. إعدادات مشروعك (الكود بتاعك)
-      const firebaseConfig = {
-        apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
-        authDomain: "mrhamdy-1c406.firebaseapp.com",
-        databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
-        projectId: "mrhamdy-1c406",
-        storageBucket: "mrhamdy-1c406.firebasestorage.app",
-        messagingSenderId: "806268398144",
-        appId: "1:806268398144:web:c40aef6b378377f72b4da5",
-        measurementId: "G-CM2YSVZ1XB"
-      };
+  // 2. إعدادات مشروعك
+  const firebaseConfig = {
+    apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
+    authDomain: "mrhamdy-1c406.firebaseapp.com",
+    databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
+    projectId: "mrhamdy-1c406",
+    storageBucket: "mrhamdy-1c406.firebasestorage.app",
+    messagingSenderId: "806268398144",
+    appId: "1:806268398144:web:c40aef6b378377f72b4da5"
+  };
 
-      // 3. تشغيل فايربيز
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
+  // 3. تشغيل فايربيز وقاعدة البيانات
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const messagesRef = ref(db, "chat_messages");
 
-      // رسالة اختبار عشان نتأكد إن كله شغال تمام
-      console.log("مبروك! تم ربط فايربيز بنجاح يا هندسة 🚀");
-    </script>
+  // --- منطق الشات ---
+
+  const msgInput = document.getElementById("msgInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const chatBox = document.getElementById("chatBox");
+
+  // وظيفة إرسال الرسالة لفايربيز
+  sendBtn.onclick = () => {
+    const text = msgInput.value;
+    if (text.trim() !== "") {
+      push(messagesRef, {
+        sender: "مستر حمدي", // هنا ممكن تغيرها بناءً على مين اللي داخل
+        message: text,
+        time: Date.now()
+      });
+      msgInput.value = "";
+    }
+  };
+
+  // وظيفة استقبال الرسائل فوراً (Real-time)
+  onChildAdded(messagesRef, (data) => {
+    const msg = data.val();
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("message");
+    msgDiv.innerHTML = `<strong>${msg.sender}:</strong> ${msg.message}`;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight; // النزول لآخر رسالة تلقائياً
+  });
+
+</script>
 </body>
 
 </html>
+
