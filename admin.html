@@ -3,178 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم | الإمبراطور مستر حمدي</title>
-    
+    <title>لوحة التحكم | مستر حمدي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <style>
-        :root {
-            --primary: #00bfa5;
-            --accent: #ff1744;
-            --bg: #0b111e;
-            --card-bg: #1e293b;
-            --text: #ffffff;
-        }
-
+        :root { --primary: #00bfa5; --accent: #ff1744; --bg: #0b111e; --card: #1e293b; --text: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-
-        /* شاشة القفل */
-        #login-overlay {
-            position: fixed; inset: 0; background: var(--bg); z-index: 2000;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .login-card {
-            background: var(--card-bg); padding: 40px; border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0, 191, 165, 0.2); text-align: center;
-            width: 90%; max-width: 400px; border: 1px solid var(--primary);
-        }
-        .login-card input {
-            width: 100%; padding: 15px; margin: 20px 0; border-radius: 10px;
-            border: 2px solid #334155; background: #0f172a; color: white;
-            text-align: center; font-size: 1.1rem; outline: none;
-        }
-
-        /* المحتوى الرئيسي */
-        #admin-content { display: none; padding: 30px 5%; }
-        
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 40px; background: var(--card-bg); padding: 20px;
-            border-radius: 15px; border-right: 5px solid var(--primary);
-        }
-
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px; margin-bottom: 40px;
-        }
-        .stat-card {
-            background: var(--card-bg); padding: 20px; border-radius: 15px;
-            text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .stat-card h3 { font-size: 0.9rem; opacity: 0.7; }
-        .stat-card p { font-size: 2.2rem; font-weight: 900; color: var(--primary); }
-
-        .tools-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-        .tool-box {
-            background: var(--card-bg); padding: 25px; border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .tool-box h2 { font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        .tool-box h2 i { color: var(--primary); }
-
-        input, textarea {
-            width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px;
-            border: 1px solid #334155; background: #0f172a; color: white; outline: none;
-        }
-
-        .btn {
-            width: 100%; padding: 12px; border-radius: 10px; border: none;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-accent { background: var(--accent); color: white; }
-        .btn:hover { transform: translateY(-3px); opacity: 0.9; }
-
-        .preview-box {
-            width: 100%; height: 150px; background: #0f172a; border-radius: 10px;
-            margin-bottom: 15px; display: flex; align-items: center; justify-content: center;
-            overflow: hidden; border: 1px dashed var(--primary);
-        }
-        .preview-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
-        /* ستايل رسائل الطلاب الواردة */
-        .msg-list { max-height: 350px; overflow-y: auto; margin-top: 10px; padding-left: 5px; }
-        .msg-item { 
-            background: #0f172a; padding: 15px; border-radius: 12px; 
-            margin-bottom: 12px; border-right: 4px solid var(--accent);
-            position: relative; animation: fadeIn 0.5s;
-        }
-        .msg-item small { color: var(--primary); font-size: 0.75rem; display: block; margin-top: 5px; }
-        .del-msg-btn { 
-            background: none; border: none; color: var(--accent); 
-            cursor: pointer; font-size: 0.8rem; margin-top: 10px;
-            display: block; font-weight: bold;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; }
+        #login-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--primary); text-align: center; }
+        header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 30px; }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
+        .box { background: var(--card); padding: 25px; border-radius: 20px; }
+        .msg-item { background: #0f172a; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-right: 4px solid var(--accent); }
+        input, textarea { width: 100%; padding: 10px; margin-top: 10px; border-radius: 8px; border: 1px solid #334155; background: #0b111e; color: white; outline: none; }
+        .btn { width: 100%; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-p { background: var(--primary); color: white; }
+        .btn-a { background: var(--accent); color: white; }
     </style>
 </head>
 <body>
-
     <div id="login-overlay">
         <div class="login-card">
-            <i class="fas fa-unlock-alt" style="font-size: 3rem; color: var(--primary);"></i>
-            <h2 style="margin-top:15px;">دخول الإمبراطور</h2>
-            <input type="password" id="pass-input" placeholder="كلمة السر">
-            <button class="btn btn-primary" onclick="login()">دخول</button>
+            <h2>دخول الإمبراطور</h2>
+            <input type="password" id="pass" placeholder="كلمة السر">
+            <button class="btn btn-p" onclick="login()">دخول</button>
         </div>
     </div>
 
-    <main id="admin-content">
+    <main id="admin-content" style="display:none;">
         <header>
-            <div>
-                <h1>لوحة القيادة 🧬</h1>
-                <p>تحكم في منصة مستر حمدي لحظياً</p>
-            </div>
-            <button class="btn btn-accent" style="width: auto; padding: 10px 20px;" onclick="location.href='index.html'">خروج</button>
+            <h1>لوحة التحكم 🧬</h1>
+            <div>المتصلين: <span id="online-count">0</span></div>
         </header>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>الطلاب المتصلين الآن</h3>
-                <p id="online-count">0</p>
-            </div>
-            <div class="stat-card">
-                <h3>إجمالي التفاعلات</h3>
-                <p>+150</p>
-            </div>
-        </div>
-
-        <div class="tools-grid">
-            <div class="tool-box">
-                <h2><i class="fas fa-bullhorn"></i> إرسال تنبيه مباشر</h2>
-                <textarea id="notif-input" placeholder="اكتب الرسالة التي ستظهر للطلاب الآن..."></textarea>
-                <button class="btn btn-accent" onclick="sendNotif()">
-                    <i class="fas fa-paper-plane"></i> بث التنبيه الآن
-                </button>
+        <div class="admin-grid">
+            <div class="box">
+                <h2><i class="fas fa-envelope"></i> رسائل الطلاب والرد عليها</h2>
+                <div id="msg-display" style="max-height: 500px; overflow-y: auto; margin-top: 15px;"></div>
             </div>
 
-            <div class="tool-box">
-                <h2><i class="fas fa-envelope-open-text"></i> رسائل الطلاب السرية</h2>
-                <div id="messages-display" class="msg-list">
-                    <p style="text-align:center; opacity:0.5; padding-top:20px;">في انتظار وصول رسائل...</p>
-                </div>
-            </div>
-
-            <div class="tool-box">
-                <h2><i class="fas fa-image"></i> تغيير بوستر الرئيسية</h2>
-                <div class="preview-box">
-                    <img src="H.png" id="poster-preview">
-                </div>
-                <input type="text" id="poster-url" placeholder="ضع رابط الصورة الجديد (URL)">
-                <button class="btn btn-primary" onclick="updatePoster()">
-                    <i class="fas fa-sync-alt"></i> تحديث الصورة
-                </button>
-            </div>
-
-            <div class="tool-box">
-                <h2><i class="fas fa-folder-plus"></i> إدارة المحتوى</h2>
-                <button class="btn btn-primary" style="margin-bottom:10px; background:#334155;"><i class="fas fa-file-pdf"></i> رفع مذكرة جديدة</button>
-                <button class="btn btn-primary" style="background:#334155;"><i class="fas fa-video"></i> إضافة فيديو شرح</button>
+            <div class="box">
+                <h2><i class="fas fa-bullhorn"></i> التنبيهات والبوستر</h2>
+                <textarea id="notif-input" placeholder="اكتب تنبيه عام..."></textarea>
+                <button class="btn btn-a" onclick="sendNotif()">بث تنبيه</button>
+                <hr style="margin:20px 0; opacity:0.1;">
+                <input type="text" id="p-url" placeholder="رابط البوستر الجديد">
+                <button class="btn btn-p" onclick="updatePoster()">تحديث الصورة</button>
             </div>
         </div>
     </main>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
     <script>
-        // إعداد Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -187,85 +69,60 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // نظام الدخول
         function login() {
-            const pass = document.getElementById('pass-input').value;
-            if(pass === 'hamdyhamdy012345') {
-                document.getElementById('login-overlay').style.display = 'none';
-                document.getElementById('admin-content').style.display = 'block';
-                startLiveTracking();
-                listenToMessages(); // بدء الاستماع للرسائل فور الدخول
-            } else {
-                alert("كلمة السر خاطئة يا إمبراطور!");
-            }
+            if(document.getElementById('pass').value === 'hamdyhamdy012345') {
+                document.getElementById('login-overlay').style.display='none';
+                document.getElementById('admin-content').style.display='block';
+                loadAdmin();
+            } else alert("خطأ!");
         }
 
-        // تتبع المتصلين
-        function startLiveTracking() {
-            db.ref('admin/online_users').on('value', (snapshot) => {
-                document.getElementById('online-count').innerText = snapshot.numChildren() || 0;
-            });
-        }
-
-        // جلب وعرض رسائل الطلاب
-        function listenToMessages() {
-            db.ref('admin/messages').on('value', (snapshot) => {
-                const display = document.getElementById('messages-display');
+        function loadAdmin() {
+            db.ref('admin/online_users').on('value', s => document.getElementById('online-count').innerText = s.numChildren() || 0);
+            
+            db.ref('admin/messages').on('value', s => {
+                const display = document.getElementById('msg-display');
                 display.innerHTML = "";
-                const data = snapshot.val();
-                
-                if (data) {
-                    // تحويل الكائن لمصفوفة وعكس الترتيب لعرض الأحدث أولاً
+                const data = s.val();
+                if(data) {
                     Object.keys(data).reverse().forEach(key => {
-                        const msg = data[key];
-                        const msgDiv = document.createElement('div');
-                        msgDiv.className = 'msg-item';
-                        msgDiv.innerHTML = `
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <strong style="color:var(--primary)">${msg.sender}</strong>
-                                <small>${msg.time}</small>
-                            </div>
-                            <p style="margin-top:8px; font-size:0.95rem;">${msg.message}</p>
-                            <button class="del-msg-btn" onclick="deleteMessage('${key}')">حذف الرسالة</button>
-                        `;
-                        display.appendChild(msgDiv);
+                        const m = data[key];
+                        display.innerHTML += `
+                            <div class="msg-item">
+                                <strong>${m.sender}</strong> <small style="opacity:0.5">${m.time}</small>
+                                <p style="margin:10px 0;">${m.message}</p>
+                                <input type="text" id="rep-${key}" placeholder="اكتب ردك هنا...">
+                                <button class="btn btn-p" onclick="reply('${key}')">إرسال الرد</button>
+                                <button onclick="del('${key}')" style="background:none; border:none; color:var(--accent); cursor:pointer; margin-top:10px; font-size:0.8rem;">حذف المحادثة</button>
+                            </div>`;
                     });
-                } else {
-                    display.innerHTML = '<p style="text-align:center; opacity:0.5; padding-top:20px;">صندوق الرسائل فارغ</p>';
                 }
             });
         }
 
-        // حذف رسالة معينة
-        function deleteMessage(id) {
-            if(confirm('هل أنت متأكد من حذف هذه الرسالة نهائياً؟')) {
-                db.ref('admin/messages/' + id).remove();
+        function reply(id) {
+            const txt = document.getElementById('rep-'+id).value;
+            if(txt) {
+                db.ref('admin/replies/'+id).set({ text: txt, time: new Date().toLocaleString('ar-EG') })
+                .then(() => alert("تم الرد!"));
             }
         }
 
-        // إرسال تنبيه (Real-time)
+        function del(id) {
+            if(confirm("حذف؟")) {
+                db.ref('admin/messages/'+id).remove();
+                db.ref('admin/replies/'+id).remove();
+            }
+        }
+
         function sendNotif() {
-            const text = document.getElementById('notif-input').value;
-            if(text) {
-                db.ref('admin/notification').set({
-                    text: text,
-                    time: Date.now()
-                }).then(() => {
-                    alert("تم الإرسال لجميع الطلاب!");
-                    document.getElementById('notif-input').value = "";
-                });
-            }
+            const t = document.getElementById('notif-input').value;
+            if(t) db.ref('admin/notification').set({ text: t, time: Date.now() }).then(()=>alert("تم!"));
         }
 
-        // تحديث البوستر (Real-time)
         function updatePoster() {
-            const url = document.getElementById('poster-url').value;
-            if(url) {
-                db.ref('admin/poster_url').set(url).then(() => {
-                    document.getElementById('poster-preview').src = url;
-                    alert("تم تحديث البوستر في الصفحة الرئيسية!");
-                });
-            }
+            const u = document.getElementById('p-url').value;
+            if(u) db.ref('admin/poster_url').set(u).then(()=>alert("تم!"));
         }
     </script>
 </body>
