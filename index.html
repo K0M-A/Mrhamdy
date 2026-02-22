@@ -17,7 +17,7 @@
             --bg: #05080f; 
             --card-bg: rgba(255, 255, 255, 0.03);
             --text: #e2e8f0;
-            --nav-bg: rgba(10, 15, 28, 0.7);
+            --nav-bg: rgba(10, 15, 28, 0.85);
             --glow: rgba(0, 229, 255, 0.4);
             --glass: rgba(255, 255, 255, 0.05);
         }
@@ -25,122 +25,117 @@
         [data-theme="light"] {
             --bg: #f0f4f8;
             --text: #0f172a;
-            --nav-bg: rgba(255, 255, 255, 0.8);
+            --nav-bg: rgba(255, 255, 255, 0.9);
             --primary: #00bfa5;
             --glow: rgba(0, 191, 165, 0.2);
             --card-bg: rgba(0, 0, 0, 0.03);
             --glass: rgba(0, 0, 0, 0.05);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: background 0.4s, color 0.4s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; line-height: 1.6; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; line-height: 1.6; padding-bottom: 70px; } /* مسافة عشان المنيو التحتانية */
 
         #particles-js { 
             position: fixed; width: 100%; height: 100%; z-index: -1; 
             background: radial-gradient(circle at center, #0d1b2a 0%, #05080f 100%);
         }
 
+        /* التصميم الأساسي للهيدر - كمبيوتر */
         header {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 1200px;
-            background: var(--nav-bg); backdrop-filter: blur(15px);
-            border-radius: 25px; padding: 12px 25px;
+            background: var(--nav-bg); backdrop-filter: blur(20px);
+            border-radius: 20px; padding: 12px 25px;
             z-index: 1000; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             border: 1px solid var(--glass);
         }
 
-        .logo { font-weight: 900; font-size: 1.5rem; color: var(--primary); letter-spacing: 1px; text-shadow: 0 0 10px var(--glow); }
+        .logo { font-weight: 900; font-size: 1.4rem; color: var(--primary); text-shadow: 0 0 10px var(--glow); display: flex; align-items: center; gap: 8px; }
 
-        nav ul { display: flex; list-style: none; align-items: center; gap: 15px; }
+        nav ul { display: flex; list-style: none; align-items: center; gap: 12px; }
         nav ul li a { 
-            color: var(--text); text-decoration: none; font-weight: 700; font-size: 0.85rem; 
-            display: flex; flex-direction: column; align-items: center; gap: 2px; opacity: 0.6;
+            color: var(--text); text-decoration: none; font-weight: 700; font-size: 0.8rem; 
+            display: flex; flex-direction: column; align-items: center; gap: 2px; opacity: 0.7;
         }
-        nav ul li a i { font-size: 1.3rem; margin-bottom: 2px; color: var(--primary); transition: 0.3s; }
-        nav ul li a:hover { opacity: 1; transform: translateY(-2px); }
-        nav ul li a:hover i { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
+        nav ul li a i { font-size: 1.2rem; color: var(--primary); }
+        nav ul li a:hover { opacity: 1; transform: translateY(-3px); }
 
         .hero {
             min-height: 100vh; display: flex; align-items: center; justify-content: space-between;
-            padding: 120px 10% 80px; position: relative; gap: 60px;
+            padding: 100px 8% 50px; position: relative; gap: 40px;
         }
 
         .hero-text { flex: 1.2; text-align: right; z-index: 2; }
-        .hero-text h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
-        .hero-text p { font-size: clamp(1.1rem, 2vw, 1.3rem); margin-bottom: 40px; opacity: 0.9; max-width: 800px; color: #b0c4de; text-align: justify; }
+        .hero-text h1 { font-size: clamp(2rem, 5vw, 3.8rem); font-weight: 900; line-height: 1.2; margin-bottom: 20px; }
+        .hero-text p { font-size: clamp(1rem, 1.8vw, 1.2rem); margin-bottom: 35px; opacity: 0.9; max-width: 750px; color: #cbd5e1; }
 
         .teacher-img-container {
-            flex: 0.9; display: flex; justify-content: center; align-items: center;
+            flex: 0.8; display: flex; justify-content: center; align-items: center;
             position: relative; z-index: 1;
         }
 
         .img-neon-frame {
-            position: relative; padding: 8px;
+            position: relative; padding: 6px;
             background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 50px;
-            box-shadow: 0 0 40px var(--glow);
-            animation: float 6s ease-in-out infinite;
+            border-radius: 40px;
+            box-shadow: 0 0 30px var(--glow);
+            animation: floating 4s ease-in-out infinite;
         }
 
         .teacher-img {
-            max-width: 100%; height: auto; max-height: 70vh;
-            border-radius: 42px; display: block; object-fit: cover;
-            filter: grayscale(10%) contrast(110%);
+            max-width: 100%; height: auto; max-height: 60vh;
+            border-radius: 35px; display: block; object-fit: cover;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
         }
 
-        .btn-group { display: flex; gap: 25px; flex-wrap: wrap; }
-        .btn { 
-            padding: 18px 40px; border-radius: 20px; text-decoration: none; font-weight: 900; 
-            font-size: 1.1rem; display: flex; align-items: center; gap: 12px; 
-            cursor: pointer; position: relative; overflow: hidden;
-        }
-        .btn-main { background: var(--accent); color: white; box-shadow: 0 10px 30px rgba(255, 23, 68, 0.3); }
-        .btn-main:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(255, 23, 68, 0.5); }
-        .btn-sub { 
-            background: var(--glass); border: 1px solid var(--primary); 
-            color: var(--primary); backdrop-filter: blur(5px);
-        }
-        .btn-sub:hover { background: var(--primary); color: #000; transform: scale(1.05); }
+        .btn-group { display: flex; gap: 15px; flex-wrap: wrap; }
+        .btn { padding: 15px 30px; border-radius: 15px; text-decoration: none; font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 10px; cursor: pointer; border: none; }
+        .btn-main { background: var(--accent); color: white; box-shadow: 0 8px 25px rgba(255, 23, 68, 0.4); }
+        .btn-sub { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
 
-        .highlights { margin-top: 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
-        .h-item { 
-            display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; 
-            padding: 20px; background: var(--card-bg); border-radius: 25px; 
-            border: 1px solid var(--glass); backdrop-filter: blur(5px);
-        }
-        .h-item i { font-size: 1.8rem; color: var(--primary); background: var(--glass); padding: 15px; border-radius: 50%; }
-        .h-item span { font-weight: 800; font-size: 0.95rem; }
+        .highlights { margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; }
+        .h-item { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.9rem; color: var(--primary); background: rgba(255,255,255,0.05); padding: 10px 18px; border-radius: 12px; border: 1px solid var(--glass); }
 
-        footer { 
-            padding: 60px 10% 40px; background: rgba(0,0,0,0.8); text-align: center; 
-            border-top: 1px solid var(--glass); position: relative;
-        }
-        .online-status { font-weight: 900; color: #4caf50; margin-bottom: 15px; font-size: 1.2rem; letter-spacing: 0.5px; }
-        .online-dot { height: 14px; width: 14px; background-color: #4caf50; border-radius: 50%; display: inline-block; margin-left: 10px; box-shadow: 0 0 15px #4caf50; animation: pulse 2s infinite; }
-        
-        @keyframes pulse { 0% { transform: scale(0.95); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } 100% { transform: scale(0.95); opacity: 1; } }
+        footer { padding: 40px 8%; background: rgba(0,0,0,0.6); text-align: center; border-top: 1px solid var(--glass); }
 
-        @media (max-width: 1100px) {
-            .hero { flex-direction: column-reverse; text-align: center; padding-top: 150px; }
+        /* التجاوب مع الموبايل (نظام الـ Tab Bar) */
+        @media (max-width: 992px) {
+            header { width: 95%; padding: 10px 20px; top: 10px; }
+            header nav { display: none; } /* إخفاء المنيو العادية */
+            
+            /* المنيو السفلي للموبايل */
+            .mobile-nav {
+                position: fixed; bottom: 0; left: 0; width: 100%;
+                background: var(--nav-bg); backdrop-filter: blur(25px);
+                display: flex; justify-content: space-around; align-items: center;
+                padding: 12px 5px; border-radius: 25px 25px 0 0;
+                z-index: 2000; border-top: 1px solid var(--glass);
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+            }
+            .mobile-nav a {
+                color: var(--text); text-decoration: none; font-size: 0.7rem; font-weight: 700;
+                display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.6; width: 14%;
+            }
+            .mobile-nav a i { font-size: 1.3rem; color: var(--primary); }
+            .mobile-nav a.active, .mobile-nav a:hover { opacity: 1; transform: translateY(-5px); color: var(--primary); }
+
+            .hero { flex-direction: column-reverse; text-align: center; padding-top: 120px; gap: 30px; }
             .hero-text { text-align: center; display: flex; flex-direction: column; align-items: center; }
-            .hero-text p { text-align: center; }
-            .teacher-img { max-height: 50vh; }
+            .btn-group { justify-content: center; width: 100%; }
+            .btn { width: 100%; justify-content: center; }
+            .highlights { justify-content: center; }
+            .teacher-img { max-height: 40vh; }
         }
 
-        @media (max-width: 650px) {
-            header { padding: 10px 15px; top: 0; width: 100%; border-radius: 0 0 20px 20px; }
-            nav ul { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg); padding: 15px; justify-content: space-around; border-radius: 25px 25px 0 0; border-top: 1px solid var(--glass); }
-            nav ul li a span { display: none; }
-            .hero { padding-bottom: 100px; }
-            .btn { width: 100%; justify-content: center; }
-            .logo span { font-size: 1rem; }
+        /* إخفاء منيو الموبايل في الشاشات الكبيرة */
+        @media (min-width: 993px) {
+            .mobile-nav { display: none; }
         }
     </style>
 </head>
@@ -152,37 +147,45 @@
         <div class="logo">🧬 <span>MR. HAMDY</span></div>
         <nav>
             <ul>
-                <li><a href="index.html"><i class="fas fa-home"></i><span>الرئيسية</span></a></li>
-                <li><a href="live.html"><i class="fas fa-video"></i><span>بث مباشر</span></a></li>
-                <li><a href="exams.html"><i class="fas fa-file-alt"></i><span>امتحانات</span></a></li>
-                <li><a href="gallery.html"><i class="fas fa-dna"></i><span>التشريح</span></a></li>
-                <li><a href="library.html"><i class="fas fa-book-open"></i><span>المكتبة</span></a></li>
-                <li><a href="videos.html"><i class="fas fa-play-circle"></i><span>فيديوهات</span></a></li>
-                <li><a href="contact.html"><i class="fas fa-paper-plane"></i><span>تواصل</span></a></li>
+                <li><a href="index.html"><i class="fas fa-home"></i>الرئيسية</a></li>
+                <li><a href="live.html"><i class="fas fa-video"></i>بث مباشر</a></li>
+                <li><a href="exams.html"><i class="fas fa-file-alt"></i>امتحانات</a></li>
+                <li><a href="gallery.html"><i class="fas fa-dna"></i>التشريح</a></li>
+                <li><a href="library.html"><i class="fas fa-book-open"></i>المكتبة</a></li>
+                <li><a href="videos.html"><i class="fas fa-play-circle"></i>فيديوهات</a></li>
+                <li><a href="contact.html"><i class="fas fa-paper-plane"></i>تواصل</a></li>
             </ul>
         </nav>
-        <div style="display: flex; gap: 18px; align-items: center;">
-            <a href="admin.html" style="text-decoration: none; color: var(--accent);"><i class="fas fa-user-shield" style="cursor:pointer; font-size: 1.3rem;" title="لوحة الإدارة"></i></a>
-            <i class="fas fa-adjust" id="theme-toggle" style="cursor:pointer; color: var(--primary); font-size: 1.3rem;" title="تغيير الوضع"></i>
-            <i class="fas fa-share-nodes" onclick="shareSite()" style="cursor:pointer; color: var(--primary); font-size: 1.3rem;" title="مشاركة الموقع"></i>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="admin.html" style="text-decoration: none; color: var(--accent);"><i class="fas fa-user-shield" style="font-size: 1.2rem;" title="لوحة الإدارة"></i></a>
+            <i class="fas fa-adjust" id="theme-toggle" style="cursor:pointer; color: var(--primary); font-size: 1.2rem;"></i>
         </div>
     </header>
 
+    <div class="mobile-nav">
+        <a href="index.html" class="active"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+        <a href="live.html"><i class="fas fa-video"></i><span>لايف</span></a>
+        <a href="exams.html"><i class="fas fa-file-pen"></i><span>اختبارات</span></a>
+        <a href="gallery.html"><i class="fas fa-dna"></i><span>تشريح</span></a>
+        <a href="library.html"><i class="fas fa-book"></i><span>كتب</span></a>
+        <a href="videos.html"><i class="fas fa-play"></i><span>دروس</span></a>
+        <a href="contact.html"><i class="fas fa-message"></i><span>تواصل</span></a>
+    </div>
+
     <main class="hero">
         <div class="hero-text animate__animated animate__fadeInRight">
-            <h1>إمبراطورية الأحياء <br><span style="color: var(--primary);">مع مستر حمدي عيد</span></h1>
-            <p>أهلاً بك في المحطة الأخيرة للتميز. هنا حيث نقوم بتفكيك عقد الأحياء وتحويلها إلى متعة بصرية وعقلية. لا نكتفي بالشرح التقليدي، بل نغوص في أدق التفاصيل العلمية عبر تقنيات ربط المنهج والتشريح الفكري، لنضمن لك ليس فقط الدرجة النهائية، بل فهماً يرافقك طوال حياتك المهنية. انضم الآن لآلاف المتفوقين في جيش الإمبراطور.</p>
+            <h1>إمبراطورية الأحياء <br><span style="color: var(--primary);">مستر حمدي عيد</span></h1>
+            <p>انضم الآن للمنصة التعليمية الأكثر تطوراً. نحوّل لك مادة الأحياء من مادة صعبة إلى قصة تفاعلية ممتعة. نضمن لك الفهم قبل الحفظ، والوصول للدرجة النهائية بذكاء واحترافية.أهلاً بك في المحطة الأخيرة للتميز. هنا حيث نقوم بتفكيك عقد الأحياء وتحويلها إلى متعة بصرية وعقلية. لا نكتفي بالشرح التقليدي، بل نغوص في أدق التفاصيل العلمية عبر تقنيات ربط المنهج والتشريح الفكري، لنضمن لك ليس فقط الدرجة النهائية، بل فهماً يرافقك طوال حياتك المهنية. انضم الآن لآلاف المتفوقين في جيش الإمبراطور</p>
             
             <div class="btn-group">
-                <a href="live.html" class="btn btn-main"><i class="fas fa-fire-alt"></i> ابدأ التعلم الآن</a>
-                <a href="library.html" class="btn btn-sub"><i class="fas fa-vault"></i> بنك المصادر الذهبي</a>
+                <a href="live.html" class="btn btn-main"><i class="fas fa-bolt"></i> ابدأ المذاكرة الآن</a>
+                <a href="library.html" class="btn btn-sub"><i class="fas fa-download"></i> المذكرات والكتب</a>
             </div>
 
             <div class="highlights">
-                <div class="h-item"><i class="fas fa-vr-cardboard"></i> <span>محاكاة واقعية</span></div>
-                <div class="h-item"><i class="fas fa-brain"></i> <span>خرائط ذهنية</span></div>
-                <div class="h-item"><i class="fas fa-award"></i> <span>تكريم الأوائل</span></div>
-                <div class="h-item"><i class="fas fa-headset"></i> <span>متابعة ذكية</span></div>
+                <div class="h-item"><i class="fas fa-microscope"></i> شرح حديث</div>
+                <div class="h-item"><i class="fas fa-vial"></i> تجارب 3D</div>
+                <div class="h-item"><i class="fas fa-trophy"></i> متابعة الأوائل</div>
             </div>
         </div>
         
@@ -195,14 +198,11 @@
 
     <footer>
         <div class="online-status">
-            <span class="online-dot"></span> المتواجدون في الإمبراطورية الآن: <span id="real-count">0</span> طالب
+            <span class="online-dot"></span> طلابنا الآن: <span id="real-count">0</span>
         </div>
-        <p style="opacity: 0.8; font-weight: bold;">حقوق الملكية الفكرية محفوظة لمنصة مستر حمدي عيد &copy; 2026</p>
-        <div class="dev-credits" style="margin-top: 25px; font-size: 0.9rem;">
-            هندسة وتطوير النخبة: 
-            <a href="https://kemo-omar.github.io/Kareem/" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 900; border-bottom: 1px dashed;">كريم</a> 
-            & 
-            <a href="https://mostafa7html7-pixel.github.io/Abqarieno-/" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 900; border-bottom: 1px dashed;">عبقرينو</a>
+        <p>حقوق النشر محفوظة © مستر حمدي عيد 2026</p>
+        <div class="dev-credits" style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
+            تطوير: <a href="https://kemo-omar.github.io/Kareem/" style="color:var(--primary); text-decoration:none;">كريم</a> & <a href="https://mostafa7html7-pixel.github.io/Abqarieno-/" style="color:var(--primary); text-decoration:none;">عبقرينو</a>
         </div>
     </footer>
 
@@ -210,44 +210,25 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // إعدادات جزيئات الخلفية المتطورة
+        // الجزيئات
         particlesJS('particles-js', {
             "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": ["#00e5ff", "#ff1744"] },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.3, "random": true },
-                "size": { "value": 3, "random": true },
+                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#00e5ff" },
+                "opacity": { "value": 0.2 },
+                "size": { "value": 2 },
                 "line_linked": { "enable": true, "distance": 150, "color": "#00e5ff", "opacity": 0.1, "width": 1 },
-                "move": { "enable": true, "speed": 2, "direction": "none", "random": true, "out_mode": "out" }
-            },
-            "interactivity": {
-                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } }
+                "move": { "enable": true, "speed": 1.5 }
             }
         });
 
-        // نظام تبديل الثيم
+        // الثيم
         document.getElementById('theme-toggle').onclick = () => {
             const current = document.body.getAttribute('data-theme');
             document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
-            localStorage.setItem('theme', current === 'dark' ? 'light' : 'dark');
         };
 
-        // ميزة المشاركة الذكية
-        function shareSite() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'منصة مستر حمدي للأحياء',
-                    text: 'انضم الآن لإمبراطورية الأحياء مع مستر حمدي عيد!',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert("تم نسخ رابط المنصة بنجاح!");
-            }
-        }
-
-        // Firebase Configuration & Real-time Integration
+        // Firebase - المحرك الأساسي
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -260,40 +241,33 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Online Users Tracker
+        // العداد الحي
         const onlineRef = db.ref('admin/online_users');
         const userStatusRef = onlineRef.push(true);
         userStatusRef.onDisconnect().remove();
-        onlineRef.on('value', (snapshot) => {
-            document.getElementById('real-count').innerText = snapshot.numChildren() || 0;
-        });
+        onlineRef.on('value', (s) => { document.getElementById('real-count').innerText = s.numChildren() || 0; });
 
-        // Notification System
+        // التنبيهات
         const notifyRef = db.ref('admin/notification');
-        notifyRef.on('value', (snapshot) => {
-            const data = snapshot.val();
+        notifyRef.on('value', (s) => {
+            const data = s.val();
             if(data && data.text && data.time) {
-                const notificationID = data.time; 
-                const lastSeenID = localStorage.getItem('last_seen_notif');
-                if (notificationID.toString() !== lastSeenID) {
+                if (data.time.toString() !== localStorage.getItem('last_seen_notif')) {
                     const msg = document.createElement('div');
-                    msg.className = "animate__animated animate__fadeInDown";
-                    msg.style = `position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 20px 30px; border-radius: 20px; z-index: 10001; box-shadow: 0 20px 40px rgba(0,0,0,0.6); font-weight: bold; display: flex; align-items: center; gap: 15px; min-width: 320px; border: 2px solid rgba(255,255,255,0.2);`;
-                    msg.innerHTML = `<i class="fas fa-bell-on fa-lg"></i><div><small style="display:block; opacity:0.8;">رسالة عاجلة من المستر</small>${data.text}</div><i class="fas fa-circle-xmark" id="close-notif" style="margin-right:auto; cursor:pointer;"></i>`;
+                    msg.style = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 15px 25px; border-radius: 12px; z-index: 10001; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-weight: bold; animation: fadeInDown 0.5s; cursor: pointer;`;
+                    msg.innerHTML = `<i class="fas fa-bell"></i> ${data.text}`;
                     document.body.appendChild(msg);
-                    localStorage.setItem('last_seen_notif', notificationID);
-                    document.getElementById('close-notif').onclick = () => msg.remove();
-                    setTimeout(() => { if(document.body.contains(msg)) msg.remove(); }, 12000);
+                    localStorage.setItem('last_seen_notif', data.time);
+                    setTimeout(() => msg.remove(), 8000);
                 }
             }
         });
 
-        // Poster Update System
+        // تحديث البوستر
         const posterRef = db.ref('admin/poster_url');
-        posterRef.on('value', (snapshot) => {
-            const url = snapshot.val();
-            const imgElement = document.querySelector('.teacher-img');
-            if(url && imgElement) { imgElement.src = url; }
+        posterRef.on('value', (s) => {
+            const url = s.val();
+            if(url) document.querySelector('.teacher-img').src = url;
         });
     </script>
 </body>
