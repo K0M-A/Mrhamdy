@@ -87,6 +87,21 @@
             overflow: hidden; border: 1px dashed var(--primary);
         }
         .preview-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        /* ستايل رسائل الطلاب الواردة */
+        .msg-list { max-height: 350px; overflow-y: auto; margin-top: 10px; padding-left: 5px; }
+        .msg-item { 
+            background: #0f172a; padding: 15px; border-radius: 12px; 
+            margin-bottom: 12px; border-right: 4px solid var(--accent);
+            position: relative; animation: fadeIn 0.5s;
+        }
+        .msg-item small { color: var(--primary); font-size: 0.75rem; display: block; margin-top: 5px; }
+        .del-msg-btn { 
+            background: none; border: none; color: var(--accent); 
+            cursor: pointer; font-size: 0.8rem; margin-top: 10px;
+            display: block; font-weight: bold;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -130,6 +145,13 @@
             </div>
 
             <div class="tool-box">
+                <h2><i class="fas fa-envelope-open-text"></i> رسائل الطلاب السرية</h2>
+                <div id="messages-display" class="msg-list">
+                    <p style="text-align:center; opacity:0.5; padding-top:20px;">في انتظار وصول رسائل...</p>
+                </div>
+            </div>
+
+            <div class="tool-box">
                 <h2><i class="fas fa-image"></i> تغيير بوستر الرئيسية</h2>
                 <div class="preview-box">
                     <img src="H.png" id="poster-preview">
@@ -152,7 +174,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // إعداد Firebase (نفس إعدادات مشروعك)
+        // إعداد Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -172,6 +194,7 @@
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'block';
                 startLiveTracking();
+                listenToMessages(); // بدء الاستماع للرسائل فور الدخول
             } else {
                 alert("كلمة السر خاطئة يا إمبراطور!");
             }
@@ -182,6 +205,42 @@
             db.ref('admin/online_users').on('value', (snapshot) => {
                 document.getElementById('online-count').innerText = snapshot.numChildren() || 0;
             });
+        }
+
+        // جلب وعرض رسائل الطلاب
+        function listenToMessages() {
+            db.ref('admin/messages').on('value', (snapshot) => {
+                const display = document.getElementById('messages-display');
+                display.innerHTML = "";
+                const data = snapshot.val();
+                
+                if (data) {
+                    // تحويل الكائن لمصفوفة وعكس الترتيب لعرض الأحدث أولاً
+                    Object.keys(data).reverse().forEach(key => {
+                        const msg = data[key];
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'msg-item';
+                        msgDiv.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <strong style="color:var(--primary)">${msg.sender}</strong>
+                                <small>${msg.time}</small>
+                            </div>
+                            <p style="margin-top:8px; font-size:0.95rem;">${msg.message}</p>
+                            <button class="del-msg-btn" onclick="deleteMessage('${key}')">حذف الرسالة</button>
+                        `;
+                        display.appendChild(msgDiv);
+                    });
+                } else {
+                    display.innerHTML = '<p style="text-align:center; opacity:0.5; padding-top:20px;">صندوق الرسائل فارغ</p>';
+                }
+            });
+        }
+
+        // حذف رسالة معينة
+        function deleteMessage(id) {
+            if(confirm('هل أنت متأكد من حذف هذه الرسالة نهائياً؟')) {
+                db.ref('admin/messages/' + id).remove();
+            }
         }
 
         // إرسال تنبيه (Real-time)
