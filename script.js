@@ -1,3 +1,112 @@
+// --- نظام تسجيل الدخول وتسجيل الشاشة ---
+(function initLoginSystem() {
+    // 1. إنشاء واجهة تسجيل الدخول
+    const loginOverlay = document.createElement('div');
+    loginOverlay.className = 'login-overlay';
+    loginOverlay.innerHTML = `
+        <div class="login-card">
+            <h2 style="color:var(--neon-blue); margin-bottom:20px;">مرحباً بك في المنصة</h2>
+            <div id="roleSelection">
+                <button class="role-btn" onclick="selectRole('teacher')">👨‍🏫 أنا المستر</button>
+                <button class="role-btn" onclick="selectRole('student')">👨‍🎓 أنا طالب</button>
+            </div>
+            <div id="passwordSection" style="display:none;">
+                <h3 id="roleTitle" style="color:white; margin-bottom:10px;"></h3>
+                <input type="password" id="passwordInput" class="pass-input" placeholder="أدخل كلمة المرور">
+                <button class="role-btn" style="background:var(--neon-green); color:black; margin-top:15px;" onclick="checkPassword()">دخول</button>
+                <button class="role-btn" style="background:#333; font-size:14px;" onclick="resetLogin()">رجوع</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(loginOverlay);
+
+    // 2. إنشاء زر تسجيل الشاشة (مخفي)
+    const recordWidget = document.createElement('div');
+    recordWidget.className = 'record-widget';
+    recordWidget.id = 'recordWidget';
+    recordWidget.innerHTML = `<button class="record-btn" id="recordBtn" title="تسجيل الحصة">🔴</button>`;
+    document.body.appendChild(recordWidget);
+
+    // متغيرات النظام
+    let selectedRole = null;
+    let mediaRecorder;
+    let recordedChunks = [];
+
+    // دوال التحكم في الدخول
+    window.selectRole = (role) => {
+        selectedRole = role;
+        document.getElementById('roleSelection').style.display = 'none';
+        document.getElementById('passwordSection').style.display = 'block';
+        document.getElementById('passwordInput').style.display = 'block';
+        document.getElementById('roleTitle').innerText = role === 'teacher' ? 'تسجيل دخول المستر' : 'تسجيل دخول الطالب';
+        document.getElementById('passwordInput').focus();
+    };
+
+    window.resetLogin = () => {
+        document.getElementById('roleSelection').style.display = 'block';
+        document.getElementById('passwordSection').style.display = 'none';
+        document.getElementById('passwordInput').value = '';
+    };
+
+    window.checkPassword = () => {
+        const pass = document.getElementById('passwordInput').value;
+        if (selectedRole === 'teacher' && pass === '400') {
+            loginOverlay.style.display = 'none';
+            document.getElementById('recordWidget').style.display = 'block'; // إظهار زر التسجيل للمستر
+            alert('مرحباً يا مستر! يمكنك الآن تسجيل الحصة.');
+        } else if (selectedRole === 'student' && pass === '300') {
+            loginOverlay.style.display = 'none';
+            // الطالب لا يرى زر التسجيل
+        } else {
+            alert('كلمة المرور غير صحيحة!');
+        }
+    };
+
+    // منطق تسجيل الشاشة
+    const recordBtn = document.getElementById('recordBtn');
+    recordBtn.onclick = async () => {
+        if (recordBtn.classList.contains('recording')) {
+            // إيقاف التسجيل
+            mediaRecorder.stop();
+            recordBtn.classList.remove('recording');
+            recordBtn.innerHTML = '🔴';
+        } else {
+            // بدء التسجيل
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: { mediaSource: "screen" },
+                    audio: true
+                });
+
+                mediaRecorder = new MediaRecorder(stream);
+                recordedChunks = [];
+
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) recordedChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'recording.webm';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                };
+
+                mediaRecorder.start();
+                recordBtn.classList.add('recording');
+                recordBtn.innerHTML = '⬛'; // رمز الإيقاف
+            } catch (err) {
+                console.error("Error: " + err);
+            }
+        }
+    };
+})();
+
 // --- إعدادات Firebase والاتصال ---
 const firebaseConfig = {
     apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
@@ -35,16 +144,26 @@ if (typeof firebase !== 'undefined') {
     notifyRef.on('value', (snapshot) => {
         const data = snapshot.val();
         if(data && data.text) {
+            // إنشاء تنبيه جذاب للطلاب
             const msg = document.createElement('div');
-            msg.style = "position:fixed; top:100px; left:50%; transform:translateX(-50%); background:var(--neon-blue); color:black; padding:15px 30px; border-radius:10px; z-index:2000; box-shadow:0 0 20px var(--neon-blue); font-weight:bold; animation:bounceIn 0.5s;";
-            msg.innerHTML = `<i class="fas fa-bell"></i> تنبيه هام: ${data.text}`;
+            msg.style = "position:fixed; top:80px; left:50%; transform:translateX(-50%); background:var(--neon-red); color:white; padding:15px 30px; border-radius:10px; z-index:2000; box-shadow:0 5px 20px rgba(0,0,0,0.5); font-weight:bold; animation:bounceIn 0.5s;";
+            msg.innerHTML = `<i class="fas fa-bell"></i> تنبيه من المستر: ${data.text}`;
             document.body.appendChild(msg);
+            
+            // يختفي بعد 10 ثواني
             setTimeout(() => msg.remove(), 10000);
         }
     });
 
-    // 3. تغيير البوستر
-    // (سيتم تفعيله فقط إذا كانت الصورة موجودة في الصفحة)
+    // 3. تغيير البوستر تلقائياً
+    const posterRef = db.ref('admin/poster_url');
+    posterRef.on('value', (snapshot) => {
+        const url = snapshot.val();
+        if(url) {
+            const teacherImg = document.querySelector('.teacher-img');
+            if(teacherImg) teacherImg.src = url;
+        }
+    });
 }
 
 // القائمة الجانبية
