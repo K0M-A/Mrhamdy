@@ -269,6 +269,83 @@ posterRef.on('value', (snapshot) => {
         document.querySelector('.teacher-img').src = url;
     }
 });
+        // --- كود استقبال التنبيهات المطور ---
+const notifyRef = db.ref('admin/notification');
+
+notifyRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    
+    if(data && data.text && data.time) {
+        // نستخدم وقت التنبيه كمعرف فريد (ID)
+        const notificationID = data.time; 
+        const lastSeenID = localStorage.getItem('last_seen_notif');
+
+        // لا يظهر التنبيه إلا لو كان المعرف (الوقت) مختلف عن آخر واحد رآه الطالب
+        if (notificationID.toString() !== lastSeenID) {
+            
+            // إنشاء عنصر التنبيه
+            const msg = document.createElement('div');
+            msg.id = 'live-notification';
+            msg.style = `
+                position: fixed; 
+                top: 20px; 
+                left: 50%; 
+                transform: translateX(-50%); 
+                background: #ff1744; 
+                color: white; 
+                padding: 15px 25px; 
+                border-radius: 12px; 
+                z-index: 9999; 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+                font-weight: bold; 
+                display: flex; 
+                align-items: center; 
+                gap: 12px; 
+                min-width: 300px;
+                cursor: pointer;
+                animation: fadeInDown 0.5s ease-out;
+            `;
+            
+            msg.innerHTML = `
+                <i class="fas fa-bell animate__animated animate__swing animate__infinite" style="font-size: 1.2rem;"></i>
+                <div style="flex:1">
+                    <small style="display:block; opacity:0.8; font-size:0.7rem;">تنبيه جديد من المستر</small>
+                    <span>${data.text}</span>
+                </div>
+                <i class="fas fa-times" id="close-notif" style="opacity:0.7; padding:5px;"></i>
+            `;
+            
+            document.body.appendChild(msg);
+
+            // حفظ أن الطالب رأى هذا التنبيه لكي لا يظهر مرة أخرى عند التحديث
+            localStorage.setItem('last_seen_notif', notificationID);
+
+            // إغلاق التنبيه عند الضغط على علامة X
+            document.getElementById('close-notif').onclick = () => {
+                msg.style.animation = "fadeOutUp 0.5s ease-in";
+                setTimeout(() => msg.remove(), 500);
+            };
+
+            // يختفي تلقائياً بعد 15 ثانية
+            setTimeout(() => {
+                if(document.body.contains(msg)){
+                    msg.style.animation = "fadeOutUp 0.5s ease-in";
+                    setTimeout(() => msg.remove(), 500);
+                }
+            }, 15000);
+        }
+    }
+});
+
+// كود تحديث البوستر (يُوضع في الرئيسية فقط أو الصفحات التي بها صورة المستر)
+const posterRef = db.ref('admin/poster_url');
+posterRef.on('value', (snapshot) => {
+    const url = snapshot.val();
+    const imgElement = document.querySelector('.teacher-img');
+    if(url && imgElement) {
+        imgElement.src = url;
+    }
+});
     </script>
 </body>
 </html>
