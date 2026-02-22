@@ -12,119 +12,135 @@
 
     <style>
         :root {
-            --primary: #00bfa5;
+            --primary: #00e5ff; 
             --accent: #ff1744;
-            --bg: #0b111e;
-            --text: #ffffff;
-            --nav-bg: rgba(15, 23, 42, 0.9);
+            --bg: #05080f; 
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text: #e2e8f0;
+            --nav-bg: rgba(10, 15, 28, 0.7);
+            --glow: rgba(0, 229, 255, 0.4);
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         [data-theme="light"] {
             --bg: #f0f4f8;
             --text: #0f172a;
-            --nav-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            --primary: #00bfa5;
+            --glow: rgba(0, 191, 165, 0.2);
+            --card-bg: rgba(0, 0, 0, 0.03);
+            --glass: rgba(0, 0, 0, 0.05);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s ease; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; line-height: 1.6; }
 
         #particles-js { 
             position: fixed; width: 100%; height: 100%; z-index: -1; 
-            background: linear-gradient(135deg, rgba(11,17,30,1) 0%, rgba(0,30,30,1) 100%);
+            background: radial-gradient(circle at center, #0d1b2a 0%, #05080f 100%);
         }
 
         header {
-            position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
-            width: 95%; max-width: 1300px;
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 1200px;
             background: var(--nav-bg); backdrop-filter: blur(15px);
-            border-radius: 20px; padding: 8px 15px;
+            border-radius: 25px; padding: 12px 25px;
             z-index: 1000; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border: 1px solid var(--glass);
         }
 
-        .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); min-width: 120px; }
+        .logo { font-weight: 900; font-size: 1.5rem; color: var(--primary); letter-spacing: 1px; text-shadow: 0 0 10px var(--glow); }
 
-        nav ul { display: flex; list-style: none; align-items: center; }
-        nav ul li { margin: 0 8px; }
+        nav ul { display: flex; list-style: none; align-items: center; gap: 15px; }
         nav ul li a { 
-            color: var(--text); text-decoration: none; font-weight: 700; font-size: 0.75rem; 
-            display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.8;
-            transition: 0.3s;
+            color: var(--text); text-decoration: none; font-weight: 700; font-size: 0.85rem; 
+            display: flex; flex-direction: column; align-items: center; gap: 2px; opacity: 0.6;
         }
-        nav ul li a i { font-size: 1.1rem; color: var(--primary); }
-        nav ul li a:hover { opacity: 1; transform: translateY(-3px); color: var(--accent); }
+        nav ul li a i { font-size: 1.3rem; margin-bottom: 2px; color: var(--primary); transition: 0.3s; }
+        nav ul li a:hover { opacity: 1; transform: translateY(-2px); }
+        nav ul li a:hover i { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
 
         .hero {
-            height: 100vh; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 8%; position: relative;
+            min-height: 100vh; display: flex; align-items: center; justify-content: space-between;
+            padding: 120px 10% 80px; position: relative; gap: 60px;
         }
 
         .hero-text { flex: 1.2; text-align: right; z-index: 2; }
-        .hero-text h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 900; line-height: 1.2; margin-bottom: 20px; }
-        .hero-text p { font-size: 1.25rem; margin-bottom: 35px; opacity: 0.9; max-width: 700px; line-height: 1.9; }
+        .hero-text h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
+        .hero-text p { font-size: clamp(1.1rem, 2vw, 1.3rem); margin-bottom: 40px; opacity: 0.9; max-width: 800px; color: #b0c4de; text-align: justify; }
 
-        /* تعديل البوستر: مربع بزوايا دائرية ونيون */
         .teacher-img-container {
-            flex: 0.8; display: flex; justify-content: center; align-items: center;
-            height: 100%; position: relative; z-index: 1;
+            flex: 0.9; display: flex; justify-content: center; align-items: center;
+            position: relative; z-index: 1;
         }
 
         .img-neon-frame {
-            position: relative;
-            padding: 5px;
-            background: var(--primary);
-            border-radius: 40px; /* زوايا دائرية فخمة */
-            box-shadow: 0 0 25px var(--primary), 0 0 50px rgba(0, 191, 165, 0.4);
-            animation: pulseNeon 2.5s infinite alternate;
+            position: relative; padding: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50px;
+            box-shadow: 0 0 40px var(--glow);
+            animation: float 6s ease-in-out infinite;
         }
 
         .teacher-img {
-            max-height: 70vh;
-            width: auto; 
-            border-radius: 35px; /* تماشي الزوايا مع الإطار */
-            display: block;
-            transition: 0.5s;
+            max-width: 100%; height: auto; max-height: 70vh;
+            border-radius: 42px; display: block; object-fit: cover;
+            filter: grayscale(10%) contrast(110%);
         }
 
-        .img-neon-frame:hover { transform: scale(1.02); box-shadow: 0 0 40px var(--primary), 0 0 80px rgba(0, 191, 165, 0.6); }
-
-        @keyframes pulseNeon {
-            from { box-shadow: 0 0 15px var(--primary), 0 0 30px rgba(0, 191, 165, 0.3); }
-            to { box-shadow: 0 0 35px var(--primary), 0 0 70px rgba(0, 191, 165, 0.7); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
 
-        .btn-group { display: flex; gap: 20px; }
-        .btn { padding: 15px 40px; border-radius: 18px; text-decoration: none; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; cursor: pointer; border: none; }
-        .btn-main { background: var(--accent); color: white; box-shadow: 0 10px 25px rgba(255, 23, 68, 0.4); }
-        .btn-main:hover { background: #d32f2f; transform: translateY(-5px); }
-        .btn-sub { border: 2px solid var(--primary); color: var(--primary); background: rgba(0,191,165,0.05); }
-        .btn-sub:hover { background: var(--primary); color: white; transform: translateY(-5px); }
+        .btn-group { display: flex; gap: 25px; flex-wrap: wrap; }
+        .btn { 
+            padding: 18px 40px; border-radius: 20px; text-decoration: none; font-weight: 900; 
+            font-size: 1.1rem; display: flex; align-items: center; gap: 12px; 
+            cursor: pointer; position: relative; overflow: hidden;
+        }
+        .btn-main { background: var(--accent); color: white; box-shadow: 0 10px 30px rgba(255, 23, 68, 0.3); }
+        .btn-main:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(255, 23, 68, 0.5); }
+        .btn-sub { 
+            background: var(--glass); border: 1px solid var(--primary); 
+            color: var(--primary); backdrop-filter: blur(5px);
+        }
+        .btn-sub:hover { background: var(--primary); color: #000; transform: scale(1.05); }
 
-        .highlights { margin-top: 40px; display: flex; gap: 30px; }
-        .h-item { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1rem; color: var(--primary); }
-        .h-item i { background: rgba(0,191,165,0.1); padding: 10px; border-radius: 10px; }
+        .highlights { margin-top: 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
+        .h-item { 
+            display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; 
+            padding: 20px; background: var(--card-bg); border-radius: 25px; 
+            border: 1px solid var(--glass); backdrop-filter: blur(5px);
+        }
+        .h-item i { font-size: 1.8rem; color: var(--primary); background: var(--glass); padding: 15px; border-radius: 50%; }
+        .h-item span { font-weight: 800; font-size: 0.95rem; }
 
-        footer { padding: 40px 10%; background: rgba(0,0,0,0.3); text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
-        .online-status { font-weight: bold; color: #4caf50; margin-bottom: 15px; font-size: 1.1rem; }
-        .online-dot { height: 10px; width: 10px; background-color: #4caf50; border-radius: 50%; display: inline-block; margin-left: 8px; animation: pulse 1.5s infinite; }
+        footer { 
+            padding: 60px 10% 40px; background: rgba(0,0,0,0.8); text-align: center; 
+            border-top: 1px solid var(--glass); position: relative;
+        }
+        .online-status { font-weight: 900; color: #4caf50; margin-bottom: 15px; font-size: 1.2rem; letter-spacing: 0.5px; }
+        .online-dot { height: 14px; width: 14px; background-color: #4caf50; border-radius: 50%; display: inline-block; margin-left: 10px; box-shadow: 0 0 15px #4caf50; animation: pulse 2s infinite; }
         
-        .dev-credits { margin-top: 20px; font-size: 0.95rem; opacity: 0.9; }
-        .dev-link { color: var(--primary); text-decoration: none; font-weight: 700; transition: 0.3s; }
-        .dev-link:hover { color: var(--accent); }
-
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(0.95); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } 100% { transform: scale(0.95); opacity: 1; } }
 
         @media (max-width: 1100px) {
-            header { width: 98%; flex-wrap: wrap; justify-content: center; gap: 10px; position: absolute; }
-            nav ul { gap: 5px; }
-            nav ul li a { font-size: 0.65rem; }
-            .hero { flex-direction: column-reverse; text-align: center; padding-top: 180px; height: auto; min-height: 100vh; }
-            .hero-text { text-align: center; margin-bottom: 50px; }
-            .btn-group { justify-content: center; }
-            .highlights { justify-content: center; flex-wrap: wrap; }
+            .hero { flex-direction: column-reverse; text-align: center; padding-top: 150px; }
+            .hero-text { text-align: center; display: flex; flex-direction: column; align-items: center; }
+            .hero-text p { text-align: center; }
             .teacher-img { max-height: 50vh; }
+        }
+
+        @media (max-width: 650px) {
+            header { padding: 10px 15px; top: 0; width: 100%; border-radius: 0 0 20px 20px; }
+            nav ul { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg); padding: 15px; justify-content: space-around; border-radius: 25px 25px 0 0; border-top: 1px solid var(--glass); }
+            nav ul li a span { display: none; }
+            .hero { padding-bottom: 100px; }
+            .btn { width: 100%; justify-content: center; }
+            .logo span { font-size: 1rem; }
         }
     </style>
 </head>
@@ -136,41 +152,42 @@
         <div class="logo">🧬 <span>MR. HAMDY</span></div>
         <nav>
             <ul>
-                <li><a href="index.html"><i class="fas fa-home"></i>الرئيسية</a></li>
-                <li><a href="live.html"><i class="fas fa-video"></i>بث مباشر</a></li>
-                <li><a href="exams.html"><i class="fas fa-file-alt"></i>امتحانات</a></li>
-                <li><a href="gallery.html"><i class="fas fa-dna"></i>التشريح</a></li>
-                <li><a href="library.html"><i class="fas fa-book-open"></i>المكتبة</a></li>
-                <li><a href="videos.html"><i class="fas fa-play-circle"></i>فيديوهات</a></li>
-                <li><a href="contact.html"><i class="fas fa-paper-plane"></i>تواصل</a></li>
+                <li><a href="index.html"><i class="fas fa-home"></i><span>الرئيسية</span></a></li>
+                <li><a href="live.html"><i class="fas fa-video"></i><span>بث مباشر</span></a></li>
+                <li><a href="exams.html"><i class="fas fa-file-alt"></i><span>امتحانات</span></a></li>
+                <li><a href="gallery.html"><i class="fas fa-dna"></i><span>التشريح</span></a></li>
+                <li><a href="library.html"><i class="fas fa-book-open"></i><span>المكتبة</span></a></li>
+                <li><a href="videos.html"><i class="fas fa-play-circle"></i><span>فيديوهات</span></a></li>
+                <li><a href="contact.html"><i class="fas fa-paper-plane"></i><span>تواصل</span></a></li>
             </ul>
         </nav>
-        <div style="display: flex; gap: 12px; align-items: center;">
-            <a href="admin.html" style="text-decoration: none; color: var(--accent);"><i class="fas fa-user-shield" style="cursor:pointer; font-size: 1.1rem;" title="لوحة الإدارة"></i></a>
-            <i class="fas fa-share-alt" onclick="shareSite()" style="cursor:pointer; color: var(--primary); font-size: 1.1rem;" title="مشاركة الموقع"></i>
-            <i class="fas fa-adjust" id="theme-toggle" style="cursor:pointer; color: var(--primary); font-size: 1.1rem;" title="تغيير الوضع"></i>
+        <div style="display: flex; gap: 18px; align-items: center;">
+            <a href="admin.html" style="text-decoration: none; color: var(--accent);"><i class="fas fa-user-shield" style="cursor:pointer; font-size: 1.3rem;" title="لوحة الإدارة"></i></a>
+            <i class="fas fa-adjust" id="theme-toggle" style="cursor:pointer; color: var(--primary); font-size: 1.3rem;" title="تغيير الوضع"></i>
+            <i class="fas fa-share-nodes" onclick="shareSite()" style="cursor:pointer; color: var(--primary); font-size: 1.3rem;" title="مشاركة الموقع"></i>
         </div>
     </header>
 
     <main class="hero">
         <div class="hero-text animate__animated animate__fadeInRight">
             <h1>إمبراطورية الأحياء <br><span style="color: var(--primary);">مع مستر حمدي عيد</span></h1>
-            <p>مرحباً بك في المنصة التعليمية الأقوى في مصر. هنا حيث تتحول مادة الأحياء من مجرد حفظ إلى فهم عميق وتجربة ممتعة. نحن لا ندرس الأحياء، نحن نجعلك تعيش تفاصيلها لتضمن الدرجة النهائية بكل ثقة وسهولة.</p>
+            <p>أهلاً بك في المحطة الأخيرة للتميز. هنا حيث نقوم بتفكيك عقد الأحياء وتحويلها إلى متعة بصرية وعقلية. لا نكتفي بالشرح التقليدي، بل نغوص في أدق التفاصيل العلمية عبر تقنيات ربط المنهج والتشريح الفكري، لنضمن لك ليس فقط الدرجة النهائية، بل فهماً يرافقك طوال حياتك المهنية. انضم الآن لآلاف المتفوقين في جيش الإمبراطور.</p>
             
             <div class="btn-group">
-                <a href="live.html" class="btn btn-main"><i class="fas fa-bolt"></i> دخول المنصة</a>
-                <a href="library.html" class="btn btn-sub"><i class="fas fa-download"></i> المذكرات والكتب</a>
+                <a href="live.html" class="btn btn-main"><i class="fas fa-fire-alt"></i> ابدأ التعلم الآن</a>
+                <a href="library.html" class="btn btn-sub"><i class="fas fa-vault"></i> بنك المصادر الذهبي</a>
             </div>
 
             <div class="highlights">
-                <div class="h-item"><i class="fas fa-microscope"></i> شرح تفصيلي</div>
-                <div class="h-item"><i class="fas fa-vial"></i> تجارب عملية</div>
-                <div class="h-item"><i class="fas fa-trophy"></i> متابعة دورية</div>
+                <div class="h-item"><i class="fas fa-vr-cardboard"></i> <span>محاكاة واقعية</span></div>
+                <div class="h-item"><i class="fas fa-brain"></i> <span>خرائط ذهنية</span></div>
+                <div class="h-item"><i class="fas fa-award"></i> <span>تكريم الأوائل</span></div>
+                <div class="h-item"><i class="fas fa-headset"></i> <span>متابعة ذكية</span></div>
             </div>
         </div>
         
         <div class="teacher-img-container">
-            <div class="img-neon-frame animate__animated animate__fadeInLeft">
+            <div class="img-neon-frame animate__animated animate__zoomIn">
                 <img src="H.png" alt="مستر حمدي عيد" class="teacher-img">
             </div>
         </div>
@@ -178,14 +195,14 @@
 
     <footer>
         <div class="online-status">
-            <span class="online-dot"></span> المتصلون الآن من طلاب الإمبراطور: <span id="real-count">0</span>
+            <span class="online-dot"></span> المتواجدون في الإمبراطورية الآن: <span id="real-count">0</span> طالب
         </div>
-        <p>جميع الحقوق محفوظة لمنصة مستر حمدي عيد &copy; 2026</p>
-        <div class="dev-credits">
-            بناء وتطوير المبدعين: 
-            <a href="https://kemo-omar.github.io/Kareem/" target="_blank" class="dev-link">كريم</a> 
+        <p style="opacity: 0.8; font-weight: bold;">حقوق الملكية الفكرية محفوظة لمنصة مستر حمدي عيد &copy; 2026</p>
+        <div class="dev-credits" style="margin-top: 25px; font-size: 0.9rem;">
+            هندسة وتطوير النخبة: 
+            <a href="https://kemo-omar.github.io/Kareem/" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 900; border-bottom: 1px dashed;">كريم</a> 
             & 
-            <a href="https://mostafa7html7-pixel.github.io/Abqarieno-/" target="_blank" class="dev-link">عبقرينو</a>
+            <a href="https://mostafa7html7-pixel.github.io/Abqarieno-/" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 900; border-bottom: 1px dashed;">عبقرينو</a>
         </div>
     </footer>
 
@@ -193,39 +210,44 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // إعدادات جزيئات الخلفية
+        // إعدادات جزيئات الخلفية المتطورة
         particlesJS('particles-js', {
             "particles": {
                 "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#00bfa5" },
+                "color": { "value": ["#00e5ff", "#ff1744"] },
                 "shape": { "type": "circle" },
-                "opacity": { "value": 0.2 },
-                "size": { "value": 3 },
-                "line_linked": { "enable": true, "distance": 150, "color": "#00bfa5", "opacity": 0.1, "width": 1 },
-                "move": { "enable": true, "speed": 1.5 }
+                "opacity": { "value": 0.3, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#00e5ff", "opacity": 0.1, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": true, "out_mode": "out" }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } }
             }
         });
 
-        // تبديل الثيم
+        // نظام تبديل الثيم
         document.getElementById('theme-toggle').onclick = () => {
             const current = document.body.getAttribute('data-theme');
             document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+            localStorage.setItem('theme', current === 'dark' ? 'light' : 'dark');
         };
 
-        // ميزة المشاركة
+        // ميزة المشاركة الذكية
         function shareSite() {
             if (navigator.share) {
                 navigator.share({
                     title: 'منصة مستر حمدي للأحياء',
-                    text: 'تعلم الأحياء بأسلوب الإمبراطور!',
-                    url: 'https://k0m-a.github.io/Mrhamdy/'
+                    text: 'انضم الآن لإمبراطورية الأحياء مع مستر حمدي عيد!',
+                    url: window.location.href
                 });
             } else {
-                alert("رابط المنصة: https://k0m-a.github.io/Mrhamdy/");
+                navigator.clipboard.writeText(window.location.href);
+                alert("تم نسخ رابط المنصة بنجاح!");
             }
         }
 
-        // Firebase - المتصلون الآن
+        // Firebase Configuration & Real-time Integration
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -238,114 +260,41 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // Online Users Tracker
         const onlineRef = db.ref('admin/online_users');
         const userStatusRef = onlineRef.push(true);
         userStatusRef.onDisconnect().remove();
-
         onlineRef.on('value', (snapshot) => {
             document.getElementById('real-count').innerText = snapshot.numChildren() || 0;
         });
-        // أضف هذا الكود داخل سكريبت الفايربيس الموجود في index.html
-const notifyRef = db.ref('admin/notification');
-notifyRef.on('value', (snapshot) => {
-    const data = snapshot.val();
-    if(data && data.text) {
-        // إنشاء تنبيه جذاب للطلاب
-        const msg = document.createElement('div');
-        msg.style = "position:fixed; top:80px; left:50%; transform:translateX(-50%); background:var(--accent); color:white; padding:15px 30px; border-radius:10px; z-index:2000; box-shadow:0 5px 20px rgba(0,0,0,0.5); font-weight:bold; animation:bounceIn 0.5s;";
-        msg.innerHTML = `<i class="fas fa-bell"></i> تنبيه من المستر: ${data.text}`;
-        document.body.appendChild(msg);
-        
-        // يختفي بعد 10 ثواني
-        setTimeout(() => msg.remove(), 10000);
-    }
-});
 
-// خاصية تغيير البوستر تلقائياً
-const posterRef = db.ref('admin/poster_url');
-posterRef.on('value', (snapshot) => {
-    const url = snapshot.val();
-    if(url) {
-        document.querySelector('.teacher-img').src = url;
-    }
-});
-        // --- كود استقبال التنبيهات المطور ---
-const notifyRef = db.ref('admin/notification');
-
-notifyRef.on('value', (snapshot) => {
-    const data = snapshot.val();
-    
-    if(data && data.text && data.time) {
-        // نستخدم وقت التنبيه كمعرف فريد (ID)
-        const notificationID = data.time; 
-        const lastSeenID = localStorage.getItem('last_seen_notif');
-
-        // لا يظهر التنبيه إلا لو كان المعرف (الوقت) مختلف عن آخر واحد رآه الطالب
-        if (notificationID.toString() !== lastSeenID) {
-            
-            // إنشاء عنصر التنبيه
-            const msg = document.createElement('div');
-            msg.id = 'live-notification';
-            msg.style = `
-                position: fixed; 
-                top: 20px; 
-                left: 50%; 
-                transform: translateX(-50%); 
-                background: #ff1744; 
-                color: white; 
-                padding: 15px 25px; 
-                border-radius: 12px; 
-                z-index: 9999; 
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-                font-weight: bold; 
-                display: flex; 
-                align-items: center; 
-                gap: 12px; 
-                min-width: 300px;
-                cursor: pointer;
-                animation: fadeInDown 0.5s ease-out;
-            `;
-            
-            msg.innerHTML = `
-                <i class="fas fa-bell animate__animated animate__swing animate__infinite" style="font-size: 1.2rem;"></i>
-                <div style="flex:1">
-                    <small style="display:block; opacity:0.8; font-size:0.7rem;">تنبيه جديد من المستر</small>
-                    <span>${data.text}</span>
-                </div>
-                <i class="fas fa-times" id="close-notif" style="opacity:0.7; padding:5px;"></i>
-            `;
-            
-            document.body.appendChild(msg);
-
-            // حفظ أن الطالب رأى هذا التنبيه لكي لا يظهر مرة أخرى عند التحديث
-            localStorage.setItem('last_seen_notif', notificationID);
-
-            // إغلاق التنبيه عند الضغط على علامة X
-            document.getElementById('close-notif').onclick = () => {
-                msg.style.animation = "fadeOutUp 0.5s ease-in";
-                setTimeout(() => msg.remove(), 500);
-            };
-
-            // يختفي تلقائياً بعد 15 ثانية
-            setTimeout(() => {
-                if(document.body.contains(msg)){
-                    msg.style.animation = "fadeOutUp 0.5s ease-in";
-                    setTimeout(() => msg.remove(), 500);
+        // Notification System
+        const notifyRef = db.ref('admin/notification');
+        notifyRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if(data && data.text && data.time) {
+                const notificationID = data.time; 
+                const lastSeenID = localStorage.getItem('last_seen_notif');
+                if (notificationID.toString() !== lastSeenID) {
+                    const msg = document.createElement('div');
+                    msg.className = "animate__animated animate__fadeInDown";
+                    msg.style = `position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 20px 30px; border-radius: 20px; z-index: 10001; box-shadow: 0 20px 40px rgba(0,0,0,0.6); font-weight: bold; display: flex; align-items: center; gap: 15px; min-width: 320px; border: 2px solid rgba(255,255,255,0.2);`;
+                    msg.innerHTML = `<i class="fas fa-bell-on fa-lg"></i><div><small style="display:block; opacity:0.8;">رسالة عاجلة من المستر</small>${data.text}</div><i class="fas fa-circle-xmark" id="close-notif" style="margin-right:auto; cursor:pointer;"></i>`;
+                    document.body.appendChild(msg);
+                    localStorage.setItem('last_seen_notif', notificationID);
+                    document.getElementById('close-notif').onclick = () => msg.remove();
+                    setTimeout(() => { if(document.body.contains(msg)) msg.remove(); }, 12000);
                 }
-            }, 15000);
-        }
-    }
-});
+            }
+        });
 
-// كود تحديث البوستر (يُوضع في الرئيسية فقط أو الصفحات التي بها صورة المستر)
-const posterRef = db.ref('admin/poster_url');
-posterRef.on('value', (snapshot) => {
-    const url = snapshot.val();
-    const imgElement = document.querySelector('.teacher-img');
-    if(url && imgElement) {
-        imgElement.src = url;
-    }
-});
+        // Poster Update System
+        const posterRef = db.ref('admin/poster_url');
+        posterRef.on('value', (snapshot) => {
+            const url = snapshot.val();
+            const imgElement = document.querySelector('.teacher-img');
+            if(url && imgElement) { imgElement.src = url; }
+        });
     </script>
 </body>
 </html>
