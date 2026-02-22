@@ -11,105 +11,87 @@
         /* --- ستايل شاشة تسجيل الدخول --- */
         #loginOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 52, 96, 0.95); z-index: 9999;
+            background: rgba(15, 52, 96, 0.98); z-index: 10000;
             display: flex; justify-content: center; align-items: center; flex-direction: column;
         }
         .login-box {
-            background: #1a1a2e; padding: 30px; border-radius: 10px;
-            box-shadow: 0 0 20px #e94560; text-align: center; width: 300px;
+            background: #1a1a2e; padding: 40px; border-radius: 15px;
+            box-shadow: 0 0 30px #e94560; text-align: center; width: 320px;
         }
+        .login-box h2 { color: #fff; margin-bottom: 25px; font-family: 'Cairo', sans-serif; }
         .login-box input {
-            width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px;
-            border: 1px solid #cyan; background: #222; color: white;
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px;
+            border: 1px solid #00d2ff; background: #222; color: white; outline: none;
         }
         .login-box button {
-            background: #e94560; color: white; border: none; padding: 10px 20px;
-            border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;
+            background: #e94560; color: white; border: none; padding: 12px 20px;
+            border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; font-size: 1.1rem;
+            margin-top: 15px; transition: 0.3s;
         }
+        .login-box button:hover { background: #ff5e78; transform: scale(1.02); }
         
-        /* --- ستايل السبورة وقائمة الطلاب --- */
+        /* --- ستايل السبورة --- */
         #drawingCanvas {
             background-color: #ffffff; cursor: crosshair;
             width: 100%; height: 500px; border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); touch-action: none;
         }
-        .board-container { display: flex; gap: 15px; }
-        .canvas-area { flex-grow: 1; }
+        .board-container { display: flex; gap: 15px; flex-wrap: wrap; }
+        .canvas-area { flex: 1; min-width: 300px; }
         .students-panel {
-            width: 250px; background: #1a1a2e; padding: 15px; border-radius: 10px;
-            display: none; /* تظهر للمستر فقط */ color: white; height: 500px; overflow-y: auto;
+            width: 280px; background: #1a1a2e; padding: 15px; border-radius: 10px;
+            display: none; color: white; max-height: 500px; overflow-y: auto;
         }
         .student-item {
-            background: #0f3460; padding: 10px; margin-bottom: 10px; border-radius: 5px;
-            display: flex; justify-content: space-between; align-items: center;
+            background: #0f3460; padding: 12px; margin-bottom: 10px; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid #16213e;
         }
         .student-item button {
-            background: #e94560; color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer;
+            background: #e94560; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;
         }
-        .student-item button.allowed { background: #39ff14; color: black; }
-        .teacher-tools { display: none; margin-bottom: 10px; background: #0f3460; padding: 10px; border-radius: 5px; }
+        .student-item button.allowed { background: #39ff14; color: black; font-weight: bold; }
+        .teacher-tools { display: none; margin-bottom: 15px; background: #0f3460; padding: 15px; border-radius: 10px; gap: 15px; align-items: center; flex-wrap: wrap; }
     </style>
 </head>
 <body>
 
     <div id="loginOverlay">
         <div class="login-box">
-            <h2 style="color: white; margin-bottom: 20px;">تسجيل الدخول</h2>
-            <input type="text" id="userNameInput" placeholder="اكتب اسمك الحقيقي هنا..." required>
-            <input type="password" id="passwordInput" placeholder="كلمة السر..." required>
-            <button id="loginBtn">دخول للاستوديو</button>
-            <p id="loginError" style="color: #e94560; display: none; margin-top: 10px;">كلمة السر غير صحيحة!</p>
+            <h2><i class="fas fa-user-lock"></i> دخول الاستوديو</h2>
+            <input type="text" id="userNameInput" placeholder="أدخل اسمك الحقيقي..." autocomplete="off">
+            <input type="password" id="passwordInput" placeholder="كلمة السر (2026 للطالب)" autocomplete="off">
+            <button id="finalLoginBtn">ابدأ الآن</button>
+            <p id="loginError" style="color: #ff4d4d; display: none; margin-top: 15px; font-weight: bold;"></p>
         </div>
     </div>
 
     <header class="main-header">
         <div class="logo">BIO-<span class="neon-text">HAMDY</span></div>
-        <div id="userInfoDisplay" style="color: white; font-weight: bold;"></div>
+        <div id="userInfoDisplay" style="color: #39ff14; font-weight: bold; font-family: 'Cairo';"></div>
         <div class="menu-wrapper" id="menuBtn">
             <div class="hamburger"></div>
         </div>
     </header>
 
-    <nav class="side-nav" id="sideNav">
-        <ul>
-            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li><a href="live.html" class="active"><i class="fas fa-video"></i> البث المباشر</a></li>
-            <li><a href="exams.html"><i class="fas fa-microscope"></i> الامتحانات</a></li>
-        </ul>
-    </nav>
-
     <main class="studio-hub">
-        <div class="welcome-text">
-            <h1>مرحباً بك في <span class="cyan-text">النظام الحيوي</span></h1>
-            <p>اختر بيئة الشرح المناسبة للبدء</p>
-        </div>
-
         <div class="main-options">
             <div class="opt-card green-glow" onclick="switchSystem('board')">
                 <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
                 <h3>السبورة الذكية</h3>
             </div>
-            <div class="opt-card red-glow" onclick="switchSystem('files')">
-                <div class="icon-box"><i class="fas fa-file-pdf"></i></div>
-                <h3>عرض الملفات</h3>
             </div>
-            <div class="opt-card blue-glow" onclick="toggleChat()">
-                <div class="icon-box"><i class="fas fa-comments"></i></div>
-                <h3>قناة التواصل</h3>
-            </div>
-        </div>
     </main>
 
     <section class="workspace" id="workspace" style="display: none;">
         <button class="back-btn" onclick="closeWorkspace()"><i class="fas fa-times"></i> إغلاق</button>
         
         <div id="board-system" class="sys-content">
-            
             <div class="teacher-tools" id="teacherTools">
+                <label style="color: white;">اللون:</label>
                 <input type="color" id="colorPicker" value="#000000">
-                <button onclick="currentSize = 2">قلم رفيع</button>
-                <button onclick="currentSize = 8">قلم عريض</button>
-                <button id="clearBoardBtn" class="danger-btn">مسح السبورة للجميع</button>
+                <button onclick="window.currentSize = 2" class="btn-tool">قلم رفيع</button>
+                <button onclick="window.currentSize = 8" class="btn-tool">قلم عريض</button>
+                <button id="clearBoardBtn" class="danger-btn">مسح السبورة عند الجميع</button>
             </div>
 
             <div class="board-container">
@@ -117,58 +99,28 @@
                     <canvas id="drawingCanvas"></canvas>
                 </div>
                 <div class="students-panel" id="studentsPanel">
-                    <h3 style="border-bottom: 1px solid #555; padding-bottom: 10px;">الطلاب المتصلين</h3>
+                    <h3 style="border-bottom: 2px solid #e94560; padding-bottom: 10px; margin-bottom: 15px;"><i class="fas fa-users"></i> المتواجدون الآن</h3>
                     <div id="studentsList"></div>
                 </div>
             </div>
         </div>
-
-        <div id="file-system" class="sys-content" style="display: none;">
-            <div class="upload-area" id="dropZone">
-                <input type="file" id="fileInput" hidden accept=".pdf,image/*">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h2>اسحب الملف هنا أو انقر للرفع</h2>
-            </div>
-            <div id="previewArea"></div>
-        </div>
     </section>
 
-    <div class="chat-widget">
-        <div class="chat-btn" id="chatToggleBtn" onclick="toggleChatUI()">
-            <i class="fas fa-comment-dots"></i>
-        </div>
-        <div class="chat-container" id="chatContainer" style="display:none;">
-            <div class="chat-header">
-                <span><i class="fas fa-circle" style="color:#39ff14"></i> البث المباشر</span>
-                <button onclick="toggleChatUI()">×</button>
-            </div>
-            <div class="chat-messages" id="chatBox"></div>
-            <div class="chat-footer">
-                <input type="text" id="msgInput" placeholder="اكتب رسالتك هنا...">
-                <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
-    </div>
-
     <script>
+        // دوال التحكم بالواجهة (Global)
         function switchSystem(sys) {
             document.getElementById('workspace').style.display = 'block';
             document.getElementById('board-system').style.display = sys === 'board' ? 'block' : 'none';
-            document.getElementById('file-system').style.display = sys === 'files' ? 'block' : 'none';
-            if(sys === 'board') resizeCanvas();
+            if(sys === 'board') setTimeout(resizeCanvas, 100);
         }
         function closeWorkspace() { document.getElementById('workspace').style.display = 'none'; }
-        function toggleChatUI() { 
-            const chat = document.getElementById('chatContainer');
-            chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
-        }
     </script>
 
-    <script src="script.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, onChildAdded, set, onValue, remove, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+        // 1. الإعدادات (ثابتة)
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -182,186 +134,178 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // متغيرات المستخدم
+        // متغيرات الحالة
         let myName = "";
         let isTeacher = false;
         let canIDraw = false;
-        const myId = "user_" + Date.now() + Math.floor(Math.random() * 1000);
+        const myId = "id_" + Math.random().toString(36).substr(2, 9);
 
         // مراجع الداتا بيز
         const usersRef = ref(db, "active_users");
         const myUserRef = ref(db, `active_users/${myId}`);
         const boardRef = ref(db, "board_drawings");
-        const clearRef = ref(db, "board_commands/clear");
-        const messagesRef = ref(db, "chat_messages");
+        const clearCmdRef = ref(db, "board_commands/clear");
 
         // ----------------------------------------------------
-        // 1. نظام تسجيل الدخول
+        // المراجعة الأولى: تصحيح منطق تسجيل الدخول
         // ----------------------------------------------------
-        document.getElementById("loginBtn").onclick = () => {
-            const name = document.getElementById("userNameInput").value.trim();
-            const pass = document.getElementById("passwordInput").value;
-            const errorText = document.getElementById("loginError");
+        document.getElementById("finalLoginBtn").onclick = () => {
+            const nameField = document.getElementById("userNameInput");
+            const passField = document.getElementById("passwordInput");
+            const err = document.getElementById("loginError");
 
-            if (!name) { errorText.innerText = "يرجى كتابة اسمك!"; errorText.style.display = "block"; return; }
+            const name = nameField.value.trim();
+            const pass = passField.value.trim();
+
+            if (name.length < 2) {
+                err.innerText = "برجاء كتابة الاسم بشكل صحيح";
+                err.style.display = "block";
+                return;
+            }
 
             if (pass === "2027") {
-                isTeacher = true; canIDraw = true; myName = "أ. حمدي";
-                document.getElementById("teacherTools").style.display = "flex";
-                document.getElementById("studentsPanel").style.display = "block";
-                document.getElementById("userInfoDisplay").innerText = "👨‍🏫 وضع المعلم";
-                finishLogin();
+                isTeacher = true; canIDraw = true; myName = "أ. حمدي (المعلم)";
+                startSession();
             } else if (pass === "2026") {
                 isTeacher = false; canIDraw = false; myName = name;
-                document.getElementById("userInfoDisplay").innerText = `👨‍🎓 الطالب: ${myName}`;
-                finishLogin();
+                startSession();
             } else {
-                errorText.innerText = "كلمة السر غير صحيحة!"; errorText.style.display = "block";
+                err.innerText = "كلمة السر خاطئة!";
+                err.style.display = "block";
             }
         };
 
-        function finishLogin() {
-            document.getElementById("loginOverlay").style.display = "none";
+        function startSession() {
+            document.getElementById("loginOverlay").style.fadeOut = "0.5s";
+            setTimeout(() => document.getElementById("loginOverlay").style.display = "none", 400);
             
-            // تسجيل الدخول في فايربيز وتجهيز الحذف عند الخروج
+            document.getElementById("userInfoDisplay").innerText = "مرحباً: " + myName;
+
+            // إرسال البيانات لفايربيز
             set(myUserRef, { name: myName, role: isTeacher ? "teacher" : "student", canDraw: canIDraw });
-            onDisconnect(myUserRef).remove(); // لما يقفل الصفحة اسمه يتمسح من القائمة
-            
-            // لو مستر، نراقب الطلاب المتصلين
+            onDisconnect(myUserRef).remove();
+
             if (isTeacher) {
-                onValue(usersRef, (snapshot) => {
-                    const studentsList = document.getElementById("studentsList");
-                    studentsList.innerHTML = "";
-                    snapshot.forEach((child) => {
-                        const user = child.val();
-                        const uid = child.key;
-                        if (user.role === "student") {
-                            const div = document.createElement("div");
-                            div.className = "student-item";
-                            div.innerHTML = `
-                                <span>${user.name}</span>
-                                <button class="${user.canDraw ? 'allowed' : ''}" onclick="window.toggleStudentDraw('${uid}', ${user.canDraw})">
-                                    ${user.canDraw ? 'مسموح بالكتابة' : 'سماح بالكتابة'}
-                                </button>
-                            `;
-                            studentsList.appendChild(div);
-                        }
-                    });
-                });
+                document.getElementById("teacherTools").style.display = "flex";
+                document.getElementById("studentsPanel").style.display = "block";
+                monitorStudents();
             } else {
-                // لو طالب، نراقب حالته لو المستر اداله إذن
-                onValue(myUserRef, (snapshot) => {
-                    if(snapshot.exists()) {
-                        canIDraw = snapshot.val().canDraw;
-                        if (canIDraw) alert("المستر سمح لك بالكتابة على السبورة الآن!");
-                    }
-                });
+                monitorMyPermission();
             }
+            initCanvas();
         }
 
-        // دالة للمستر عشان يعكس صلاحية الطالب
-        window.toggleStudentDraw = (uid, currentState) => {
-            update(ref(db, `active_users/${uid}`), { canDraw: !currentState });
-        };
+        // ----------------------------------------------------
+        // المراجعة الثانية: تصحيح التحكم في الطلاب (للـ مستر)
+        // ----------------------------------------------------
+        function monitorStudents() {
+            onValue(usersRef, (snap) => {
+                const list = document.getElementById("studentsList");
+                list.innerHTML = "";
+                snap.forEach((child) => {
+                    const user = child.val();
+                    const uid = child.key;
+                    if (user.role === "student") {
+                        const div = document.createElement("div");
+                        div.className = "student-item";
+                        div.innerHTML = `
+                            <span>${user.name}</span>
+                            <button id="btn_${uid}" class="${user.canDraw ? 'allowed' : ''}">
+                                ${user.canDraw ? 'إلغاء الإذن' : 'إعطاء إذن'}
+                            </button>
+                        `;
+                        list.appendChild(div);
+                        div.querySelector('button').onclick = () => {
+                            update(ref(db, `active_users/${uid}`), { canDraw: !user.canDraw });
+                        };
+                    }
+                });
+            });
+        }
 
+        function monitorMyPermission() {
+            onValue(myUserRef, (snap) => {
+                if (snap.exists()) {
+                    canIDraw = snap.val().canDraw;
+                }
+            });
+        }
 
         // ----------------------------------------------------
-        // 2. نظام السبورة الذكية
+        // المراجعة الثالثة: تصحيح أداء السبورة (الرسم المباشر)
         // ----------------------------------------------------
         const canvas = document.getElementById("drawingCanvas");
         const ctx = canvas.getContext("2d");
         window.currentSize = 2;
-        let currentColor = "#000000";
-        let isDrawing = false;
 
-        window.resizeCanvas = function() {
-            canvas.width = canvas.parentElement.clientWidth;
+        window.resizeCanvas = () => {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
             canvas.height = 500;
         };
-        window.addEventListener("resize", window.resizeCanvas);
 
-        if(document.getElementById("colorPicker")) {
-            document.getElementById("colorPicker").onchange = (e) => currentColor = e.target.value;
-        }
+        function initCanvas() {
+            let drawing = false;
 
-        function getMousePos(e) {
-            const rect = canvas.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: clientX - rect.left, y: clientY - rect.top };
-        }
-
-        function startDrawing(e) {
-            if (!canIDraw) return; // الحماية الأساسية
-            isDrawing = true;
-            const pos = getMousePos(e);
-            push(boardRef, { type: "start", x: pos.x, y: pos.y, color: currentColor, size: window.currentSize });
-            drawLocal(pos.x, pos.y, currentColor, window.currentSize, false);
-        }
-
-        function draw(e) {
-            if (!isDrawing || !canIDraw) return;
-            e.preventDefault();
-            const pos = getMousePos(e);
-            push(boardRef, { type: "draw", x: pos.x, y: pos.y, color: currentColor, size: window.currentSize });
-            drawLocal(pos.x, pos.y, currentColor, window.currentSize, true);
-        }
-
-        function stopDrawing() { isDrawing = false; ctx.beginPath(); }
-
-        function drawLocal(x, y, color, size, isPath) {
-            ctx.lineWidth = size; ctx.lineCap = "round"; ctx.strokeStyle = color;
-            if (!isPath) { ctx.beginPath(); ctx.moveTo(x, y); } 
-            else { ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y); }
-        }
-
-        canvas.addEventListener("mousedown", startDrawing);
-        canvas.addEventListener("mousemove", draw);
-        canvas.addEventListener("mouseup", stopDrawing);
-        canvas.addEventListener("touchstart", startDrawing, {passive: false});
-        canvas.addEventListener("touchmove", draw, {passive: false});
-        canvas.addEventListener("touchend", stopDrawing);
-
-        // استقبال الرسم من الداتابيز
-        onChildAdded(boardRef, (data) => {
-            const pt = data.val();
-            if (pt.type === "start") { ctx.beginPath(); ctx.moveTo(pt.x, pt.y); } 
-            else { drawLocal(pt.x, pt.y, pt.color, pt.size, true); }
-        });
-
-        // مسح السبورة للكل (للمستر بس)
-        if(document.getElementById("clearBoardBtn")) {
-            document.getElementById("clearBoardBtn").onclick = () => {
-                remove(boardRef);
-                set(clearRef, Date.now());
+            const getCoords = (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+                return { x, y };
             };
+
+            const start = (e) => {
+                if (!canIDraw) return;
+                drawing = true;
+                const { x, y } = getCoords(e);
+                const color = document.getElementById("colorPicker").value;
+                push(boardRef, { t: "s", x, y, c: color, s: window.currentSize });
+            };
+
+            const move = (e) => {
+                if (!drawing || !canIDraw) return;
+                if (e.cancelable) e.preventDefault();
+                const { x, y } = getCoords(e);
+                const color = document.getElementById("colorPicker").value;
+                push(boardRef, { t: "d", x, y, c: color, s: window.currentSize });
+            };
+
+            const stop = () => { drawing = false; ctx.beginPath(); };
+
+            canvas.addEventListener("mousedown", start);
+            canvas.addEventListener("mousemove", move);
+            window.addEventListener("mouseup", stop);
+            canvas.addEventListener("touchstart", start, { passive: false });
+            canvas.addEventListener("touchmove", move, { passive: false });
+            canvas.addEventListener("touchend", stop);
         }
-        onValue(clearRef, (snapshot) => {
-            if(snapshot.exists()) ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // استقبال البيانات فوراً
+        onChildAdded(boardRef, (snap) => {
+            const data = snap.val();
+            ctx.lineWidth = data.s;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = data.c;
+
+            if (data.t === "s") {
+                ctx.beginPath();
+                ctx.moveTo(data.x, data.y);
+            } else {
+                ctx.lineTo(data.x, data.y);
+                ctx.stroke();
+            }
         });
 
-
-        // ----------------------------------------------------
-        // 3. نظام الشات
-        // ----------------------------------------------------
-        const msgInput = document.getElementById("msgInput");
-        const chatBox = document.getElementById("chatBox");
-
-        document.getElementById("sendBtn").onclick = () => {
-            const text = msgInput.value;
-            if (text.trim() !== "") {
-                push(messagesRef, { sender: myName, message: text, isTeacherMsg: isTeacher });
-                msgInput.value = "";
+        // مسح السبورة
+        document.getElementById("clearBoardBtn").onclick = () => {
+            if (isTeacher) {
+                remove(boardRef);
+                set(clearCmdRef, Date.now());
             }
         };
 
-        onChildAdded(messagesRef, (data) => {
-            const msg = data.val();
-            const div = document.createElement("div");
-            div.style.padding = "8px"; div.style.borderBottom = "1px solid #ddd";
-            div.innerHTML = `<strong style="color: ${msg.isTeacherMsg ? '#e94560' : '#000'}">${msg.sender}:</strong> ${msg.message}`;
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
+        onValue(clearCmdRef, () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         });
 
     </script>
