@@ -318,6 +318,11 @@
             const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             body.setAttribute('data-theme', newTheme);
         };
+        const studentName = localStorage.getItem('userName');
+if(studentName) {
+   document.querySelector('.logo span').innerText = "أهلاً، " + studentName.split(' ')[0]; 
+   // هيعرض أول اسم للطالب بجانب اللوجو
+};
     </script>
 </body>
 </html>
