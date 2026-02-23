@@ -130,7 +130,6 @@
 
         @media (min-width: 993px) { .mobile-nav { display: none; } }
 
-        /* إخفاء أيقونة الأدمن افتراضياً */
         #admin-link { display: none; }
     </style>
 </head>
@@ -153,7 +152,6 @@
         </nav>
         <div style="display: flex; gap: 15px; align-items: center;">
             <a href="admin.html" id="admin-link" style="text-decoration: none; color: var(--accent);"><i class="fas fa-user-shield" style="font-size: 1.2rem;" title="لوحة الإدارة"></i></a>
-            
             <i class="fas fa-adjust" id="theme-toggle" style="cursor:pointer; color: var(--primary); font-size: 1.2rem;"></i>
             <i class="fas fa-sign-out-alt" onclick="localStorage.clear(); location.reload();" style="cursor:pointer; color: var(--accent); font-size: 1.2rem;" title="تسجيل الخروج"></i>
         </div>
@@ -172,7 +170,7 @@
     <main class="hero">
         <div class="hero-text animate__animated animate__fadeInRight">
             <h1>خبير الأحياء <br><span style="color: var(--primary);">مستر حمدي عيد</span></h1>
-            <p>انضم الآن للمنصة التعليمية الأكثر تطوراً. نحوّل لك مادة الأحياء من مادة صعبة إلى قصة تفاعلية ممتعة. نضمن لك الفهم قبل الحفظ، والوصول للدرجة النهائية بذكاء واحترافية.</p>
+            <p>انضم الآن للمنصة التعليمية الأكثر تطوراً. نحوّل لك مادة الأحياء من مادة صعبة إلى قصة تفاعلية ممتعة. نضمن لك الفهم قبل الحفظ، والوصول للدرجة النهائية بذكاء واحترافية. أهلاً بك في المحطة الأخيرة للتميز. هنا حيث نقوم بتفكيك عقد الأحياء وتحويلها إلى متعة بصرية وعقلية. لا نكتفي بالشرح التقليدي، بل نغوص في أدق التفاصيل العلمية عبر تقنيات ربط المنهج والتشريح الفكري، لنضمن لك ليس فقط الدرجة النهائية، بل فهماً يرافقك طوال حياتك المهنية. انضم الآن لآلاف المتفوقين في جيش الإمبراطور.</p>
             
             <div class="btn-group">
                 <a href="live.html" class="btn btn-main"><i class="fas fa-bolt"></i> ابدأ المذاكرة الآن</a>
@@ -198,6 +196,9 @@
             <span class="online-dot"></span> طلابنا الآن: <span id="real-count">0</span>
         </div>
         <p>حقوق النشر محفوظة © مستر حمدي عيد 2026</p>
+        <div class="dev-credits" style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
+            تطوير: <a href="https://kemo-omar.github.io/Kareem/" style="color:var(--primary); text-decoration:none;" target="_blank">كريم</a> & <a href="https://mostafa7html7-pixel.github.io/Abqarieno-/" style="color:var(--primary); text-decoration:none;" target="_blank">عبقرينو</a>
+        </div>
     </footer>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -206,12 +207,9 @@
     <script>
         // 1. حماية الصفحة
         const userPhone = localStorage.getItem('userLoggedIn');
-        if (!userPhone) {
-            window.location.href = "go.html";
-        }
+        if (!userPhone) { window.location.href = "go.html"; }
 
-        // 2. إظهار أيقونة الأدمن لمستر حمدي فقط
-        // استبدل الرقم بالرقم الخاص بك إذا تغير
+        // 2. إظهار أيقونة الأدمن للرقم المحدد فقط
         if (userPhone === "01111276700") {
             document.getElementById('admin-link').style.display = "block";
         }
@@ -226,7 +224,6 @@
             messagingSenderId: "806268398144",
             appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
         };
-
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
@@ -234,18 +231,15 @@
         const studentName = localStorage.getItem('userName');
         if(studentName) {
             const logoSpan = document.querySelector('.logo span');
-            if(logoSpan) {
-                logoSpan.innerText = "أهلاً، " + studentName.split(' ')[0];
-            }
+            if(logoSpan) { logoSpan.innerText = "أهلاً، " + studentName.split(' ')[0]; }
         }
 
-        // 5. التنبيهات
+        // 5. نظام التنبيهات
         const notifyRef = db.ref('admin/notifications'); 
         notifyRef.limitToLast(5).on('value', (snapshot) => {
             const notifications = snapshot.val();
             if (!notifications) return;
             let seenNotifs = JSON.parse(localStorage.getItem('seen_notifs_list')) || [];
-
             Object.keys(notifications).forEach((key) => {
                 const data = notifications[key];
                 const notificationID = data.time.toString();
@@ -293,6 +287,12 @@
             const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             body.setAttribute('data-theme', newTheme);
         };
+        
+        // جزيئات الخلفية
+        particlesJS('particles-js', {
+            particles: { number: { value: 80 }, color: { value: '#00e5ff' }, shape: { type: 'circle' }, opacity: { value: 0.5 }, size: { value: 3 }, line_linked: { enable: true, distance: 150, color: '#00e5ff', opacity: 0.4, width: 1 }, move: { enable: true, speed: 2 } },
+            interactivity: { events: { onhover: { enable: true, mode: 'repulse' } } }
+        });
     </script>
 </body>
 </html>
