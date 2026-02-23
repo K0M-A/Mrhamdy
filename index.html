@@ -34,14 +34,13 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: background 0.4s, color 0.4s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; line-height: 1.6; padding-bottom: 70px; } /* مسافة عشان المنيو التحتانية */
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; line-height: 1.6; padding-bottom: 70px; }
 
         #particles-js { 
             position: fixed; width: 100%; height: 100%; z-index: -1; 
             background: radial-gradient(circle at center, #0d1b2a 0%, #05080f 100%);
         }
 
-        /* التصميم الأساسي للهيدر - كمبيوتر */
         header {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 1200px;
@@ -52,7 +51,7 @@
             border: 1px solid var(--glass);
         }
 
-        .logo { font-weight: 900; font-size: 1.4rem; color: var(--primary); text-shadow: 0 0 10px var(--glow); display: flex; align-items: center; gap: 8px; }
+        .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); text-shadow: 0 0 10px var(--glow); display: flex; align-items: center; gap: 8px; }
 
         nav ul { display: flex; list-style: none; align-items: center; gap: 12px; }
         nav ul li a { 
@@ -104,12 +103,9 @@
 
         footer { padding: 40px 8%; background: rgba(0,0,0,0.6); text-align: center; border-top: 1px solid var(--glass); }
 
-        /* التجاوب مع الموبايل (نظام الـ Tab Bar) */
         @media (max-width: 992px) {
-            header { width: 95%; padding: 10px 20px; top: 10px; }
-            header nav { display: none; } /* إخفاء المنيو العادية */
-            
-            /* المنيو السفلي للموبايل */
+            header { width: 95%; padding: 10px 15px; top: 10px; }
+            header nav { display: none; }
             .mobile-nav {
                 position: fixed; bottom: 0; left: 0; width: 100%;
                 background: var(--nav-bg); backdrop-filter: blur(25px);
@@ -124,7 +120,6 @@
             }
             .mobile-nav a i { font-size: 1.3rem; color: var(--primary); }
             .mobile-nav a.active, .mobile-nav a:hover { opacity: 1; transform: translateY(-5px); color: var(--primary); }
-
             .hero { flex-direction: column-reverse; text-align: center; padding-top: 120px; gap: 30px; }
             .hero-text { text-align: center; display: flex; flex-direction: column; align-items: center; }
             .btn-group { justify-content: center; width: 100%; }
@@ -133,10 +128,10 @@
             .teacher-img { max-height: 40vh; }
         }
 
-        /* إخفاء منيو الموبايل في الشاشات الكبيرة */
-        @media (min-width: 993px) {
-            .mobile-nav { display: none; }
-        }
+        @media (min-width: 993px) { .mobile-nav { display: none; } }
+
+        /* إخفاء أيقونة الأدمن افتراضياً */
+        #admin-link { display: none; }
     </style>
 </head>
 <body data-theme="dark">
@@ -157,8 +152,10 @@
             </ul>
         </nav>
         <div style="display: flex; gap: 15px; align-items: center;">
-            <a href="admin.html" style="text-decoration: none; color: var(--accent);"><i class="fas fa-user-shield" style="font-size: 1.2rem;" title="لوحة الإدارة"></i></a>
+            <a href="admin.html" id="admin-link" style="text-decoration: none; color: var(--accent);"><i class="fas fa-user-shield" style="font-size: 1.2rem;" title="لوحة الإدارة"></i></a>
+            
             <i class="fas fa-adjust" id="theme-toggle" style="cursor:pointer; color: var(--primary); font-size: 1.2rem;"></i>
+            <i class="fas fa-sign-out-alt" onclick="localStorage.clear(); location.reload();" style="cursor:pointer; color: var(--accent); font-size: 1.2rem;" title="تسجيل الخروج"></i>
         </div>
     </header>
 
@@ -175,7 +172,7 @@
     <main class="hero">
         <div class="hero-text animate__animated animate__fadeInRight">
             <h1>خبير الأحياء <br><span style="color: var(--primary);">مستر حمدي عيد</span></h1>
-            <p>انضم الآن للمنصة التعليمية الأكثر تطوراً. نحوّل لك مادة الأحياء من مادة صعبة إلى قصة تفاعلية ممتعة. نضمن لك الفهم قبل الحفظ، والوصول للدرجة النهائية بذكاء واحترافية.أهلاً بك في المحطة الأخيرة للتميز. هنا حيث نقوم بتفكيك عقد الأحياء وتحويلها إلى متعة بصرية وعقلية. لا نكتفي بالشرح التقليدي، بل نغوص في أدق التفاصيل العلمية عبر تقنيات ربط المنهج والتشريح الفكري، لنضمن لك ليس فقط الدرجة النهائية، بل فهماً يرافقك طوال حياتك المهنية. انضم الآن لآلاف المتفوقين في جيش الإمبراطور</p>
+            <p>انضم الآن للمنصة التعليمية الأكثر تطوراً. نحوّل لك مادة الأحياء من مادة صعبة إلى قصة تفاعلية ممتعة. نضمن لك الفهم قبل الحفظ، والوصول للدرجة النهائية بذكاء واحترافية.</p>
             
             <div class="btn-group">
                 <a href="live.html" class="btn btn-main"><i class="fas fa-bolt"></i> ابدأ المذاكرة الآن</a>
@@ -201,14 +198,25 @@
             <span class="online-dot"></span> طلابنا الآن: <span id="real-count">0</span>
         </div>
         <p>حقوق النشر محفوظة © مستر حمدي عيد 2026</p>
-        <div class="dev-credits" style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
-            تطوير: <a href="https://kemo-omar.github.io/Kareem/" style="color:var(--primary); text-decoration:none;">كريم</a> & <a href="https://mostafa7html7-pixel.github.io/Abqarieno-/" style="color:var(--primary); text-decoration:none;">عبقرينو</a>
-        </div>
-    </footer><script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // 1. إعدادات فايربيس
+        // 1. حماية الصفحة
+        const userPhone = localStorage.getItem('userLoggedIn');
+        if (!userPhone) {
+            window.location.href = "go.html";
+        }
+
+        // 2. إظهار أيقونة الأدمن لمستر حمدي فقط
+        // استبدل الرقم بالرقم الخاص بك إذا تغير
+        if (userPhone === "01111276700") {
+            document.getElementById('admin-link').style.display = "block";
+        }
+
+        // 3. إعدادات فايربيس
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -219,39 +227,28 @@
             appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
         };
 
-        if (!firebase.apps.length) { 
-            firebase.initializeApp(firebaseConfig); 
-        }
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
-        // ----------------------------------------------------
-        // 2. إنشاء حاوية التنبيهات
-        // ----------------------------------------------------
-        if (!document.getElementById('notif-container')) {
-            const container = document.createElement('div');
-            container.id = 'notif-container';
-            container.style = "position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px;";
-            document.body.appendChild(container);
+        // 4. عرض اسم الطالب
+        const studentName = localStorage.getItem('userName');
+        if(studentName) {
+            const logoSpan = document.querySelector('.logo span');
+            if(logoSpan) {
+                logoSpan.innerText = "أهلاً، " + studentName.split(' ')[0];
+            }
         }
 
-        // ----------------------------------------------------
-        // 3. نظام التنبيهات المطور (يقرأ من notifications بالجمع)
-        // ----------------------------------------------------
-        // ملاحظة: تم تغيير المسار ليتوافق مع لوحة الإدارة الجديدة
+        // 5. التنبيهات
         const notifyRef = db.ref('admin/notifications'); 
-        
         notifyRef.limitToLast(5).on('value', (snapshot) => {
             const notifications = snapshot.val();
             if (!notifications) return;
-
-            // جلب قائمة التنبيهات التي شاهدها الطالب سابقاً
             let seenNotifs = JSON.parse(localStorage.getItem('seen_notifs_list')) || [];
 
             Object.keys(notifications).forEach((key) => {
                 const data = notifications[key];
                 const notificationID = data.time.toString();
-
-                // التحقق هل التنبيه جديد أم لا
                 if (!seenNotifs.includes(notificationID)) {
                     showNotificationUI(data.text);
                     seenNotifs.push(notificationID);
@@ -261,38 +258,21 @@
         });
 
         function showNotificationUI(text) {
+            if (!document.getElementById('notif-container')) {
+                const container = document.createElement('div');
+                container.id = 'notif-container';
+                container.style = "position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px;";
+                document.body.appendChild(container);
+            }
             const msg = document.createElement('div');
             msg.className = "animate__animated animate__fadeInDown";
-            msg.style = `
-                background: var(--accent); color: white; padding: 15px 20px;
-                border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-                font-weight: bold; display: flex; align-items: center; gap: 12px;
-                border-right: 5px solid white;
-            `;
-            
-            msg.innerHTML = `
-                <i class="fas fa-bell animate__animated animate__swing animate__infinite"></i>
-                <div style="flex:1">
-                    <small style="display:block; opacity:0.8; font-size:0.7rem;">تنبيه من مستر حمدي</small>
-                    <span style="font-size: 0.9rem;">${text}</span>
-                </div>
-                <i class="fas fa-times" style="cursor:pointer; opacity:0.7;" onclick="this.parentElement.remove()"></i>
-            `;
-
+            msg.style = "background: var(--accent); color: white; padding: 15px 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-weight: bold; display: flex; align-items: center; gap: 12px; border-right: 5px solid white;";
+            msg.innerHTML = `<i class="fas fa-bell animate__animated animate__swing animate__infinite"></i><div style="flex:1"><small style="display:block; opacity:0.8; font-size:0.7rem;">تنبيه من مستر حمدي</small><span style="font-size: 0.9rem;">${text}</span></div><i class="fas fa-times" style="cursor:pointer; opacity:0.7;" onclick="this.parentElement.remove()"></i>`;
             document.getElementById('notif-container').appendChild(msg);
-
-            // الخروج التلقائي
-            setTimeout(() => {
-                if (msg) {
-                    msg.classList.replace('animate__fadeInDown', 'animate__fadeOutUp');
-                    setTimeout(() => msg.remove(), 500);
-                }
-            }, 12000);
+            setTimeout(() => { if (msg) { msg.classList.replace('animate__fadeInDown', 'animate__fadeOutUp'); setTimeout(() => msg.remove(), 500); } }, 12000);
         }
 
-        // ----------------------------------------------------
-        // 4. المتصلون الآن
-        // ----------------------------------------------------
+        // 6. المتصلون الآن
         const onlineRef = db.ref('admin/online_users');
         const userStatusRef = onlineRef.push(true);
         userStatusRef.onDisconnect().remove();
@@ -301,28 +281,18 @@
             if (count) count.innerText = snapshot.numChildren() || 0;
         });
 
-        // ----------------------------------------------------
-        // 5. تغيير البوستر
-        // ----------------------------------------------------
+        // 7. البوستر والثيم
         db.ref('admin/poster_url').on('value', (snapshot) => {
             const url = snapshot.val();
             const img = document.querySelector('.teacher-img');
             if (url && img) img.src = url;
         });
 
-        // ----------------------------------------------------
-        // 6. التبديل بين الألوان (Theme)
-        // ----------------------------------------------------
         document.getElementById('theme-toggle').onclick = () => {
             const body = document.body;
             const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             body.setAttribute('data-theme', newTheme);
         };
-        const studentName = localStorage.getItem('userName');
-if(studentName) {
-   document.querySelector('.logo span').innerText = "أهلاً، " + studentName.split(' ')[0]; 
-   // هيعرض أول اسم للطالب بجانب اللوجو
-};
     </script>
 </body>
 </html>
