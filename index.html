@@ -320,8 +320,7 @@ notifyRef.on('value', (snapshot) => {
             }, 15000);
         }
     }
-<script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script><script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
@@ -336,28 +335,21 @@ notifyRef.on('value', (snapshot) => {
             appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
         };
 
-        // تهيئة فايربيس
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
         // ----------------------------------------------------
-        // 2. نظام المتصلين الآن
+        // 2. إنشاء حاوية التنبيهات (لو مش موجودة)
         // ----------------------------------------------------
-        const onlineRef = db.ref('admin/online_users');
-        const userStatusRef = onlineRef.push(true);
-        userStatusRef.onDisconnect().remove();
-
-        onlineRef.on('value', (snapshot) => {
-            const countElement = document.getElementById('real-count');
-            if (countElement) {
-                countElement.innerText = snapshot.numChildren() || 0;
-            }
-        });
+        if (!document.getElementById('notif-container')) {
+            const container = document.createElement('div');
+            container.id = 'notif-container';
+            container.style = "position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px;";
+            document.body.appendChild(container);
+        }
 
         // ----------------------------------------------------
-        // 3. نظام التنبيهات المطور (منع التكرار)
+        // 3. نظام التنبيهات المطور (يدعم التنبيهات المتعددة)
         // ----------------------------------------------------
         const notifyRef = db.ref('admin/notification');
         notifyRef.on('value', (snapshot) => {
@@ -368,53 +360,65 @@ notifyRef.on('value', (snapshot) => {
 
                 if (notificationID.toString() !== lastSeenID) {
                     const msg = document.createElement('div');
+                    msg.className = "animate__animated animate__fadeInDown";
                     msg.style = `
-                        position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
-                        background: var(--accent); color: white; padding: 15px 25px;
-                        border-radius: 12px; z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                        background: var(--accent); color: white; padding: 15px 20px;
+                        border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
                         font-weight: bold; display: flex; align-items: center; gap: 12px;
-                        min-width: 300px; animation: fadeInDown 0.5s ease-out;
+                        border-right: 5px solid white;
                     `;
+                    
                     msg.innerHTML = `
                         <i class="fas fa-bell animate__animated animate__swing animate__infinite"></i>
                         <div style="flex:1">
-                            <small style="display:block; opacity:0.8; font-size:0.7rem;">تنبيه من مستر حمدي</small>
-                            <span>${data.text}</span>
+                            <small style="display:block; opacity:0.8; font-size:0.7rem;">تنبيه جديد</small>
+                            <span style="font-size: 0.9rem;">${data.text}</span>
                         </div>
-                        <i class="fas fa-times" id="close-notif" style="cursor:pointer; padding:5px;"></i>
+                        <i class="fas fa-times" style="cursor:pointer; opacity:0.7;" onclick="this.parentElement.remove()"></i>
                     `;
-                    document.body.appendChild(msg);
+
+                    document.getElementById('notif-container').appendChild(msg);
                     localStorage.setItem('last_seen_notif', notificationID);
 
-                    document.getElementById('close-notif').onclick = () => msg.remove();
-                    setTimeout(() => { if(msg) msg.remove(); }, 12000);
+                    // يختفي التنبيه تلقائياً بعد 10 ثواني مع حركة خروج
+                    setTimeout(() => {
+                        if (msg) {
+                            msg.classList.replace('animate__fadeInDown', 'animate__fadeOutUp');
+                            setTimeout(() => msg.remove(), 500);
+                        }
+                    }, 10000);
                 }
             }
         });
 
         // ----------------------------------------------------
-        // 4. تغيير البوستر تلقائياً
+        // 4. المتصلون الآن
         // ----------------------------------------------------
-        const posterRef = db.ref('admin/poster_url');
-        posterRef.on('value', (snapshot) => {
-            const url = snapshot.val();
-            const imgElement = document.querySelector('.teacher-img');
-            if (url && imgElement) {
-                imgElement.src = url;
-            }
+        const onlineRef = db.ref('admin/online_users');
+        const userStatusRef = onlineRef.push(true);
+        userStatusRef.onDisconnect().remove();
+        onlineRef.on('value', (snapshot) => {
+            const count = document.getElementById('real-count');
+            if (count) count.innerText = snapshot.numChildren() || 0;
         });
 
         // ----------------------------------------------------
-        // 5. ميزة إضافية: تبديل الوضع الليلي (Dark Mode)
+        // 5. تغيير البوستر
         // ----------------------------------------------------
-        const themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = document.body.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                document.body.setAttribute('data-theme', newTheme);
-            });
-        }
+        db.ref('admin/poster_url').on('value', (snapshot) => {
+            const url = snapshot.val();
+            const img = document.querySelector('.teacher-img');
+            if (url && img) img.src = url;
+        });
+
+        // ----------------------------------------------------
+        // 6. التبديل بين الـ Dark & Light Mode
+        // ----------------------------------------------------
+        document.getElementById('theme-toggle')?.addEventListener('click', () => {
+            const body = document.body;
+            const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+        });
     </script>
 </body>
 </html>
