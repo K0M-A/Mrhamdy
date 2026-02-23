@@ -20,6 +20,7 @@
             --nav-bg: rgba(10, 15, 28, 0.85);
             --glow: rgba(0, 229, 255, 0.4);
             --glass: rgba(255, 255, 255, 0.05);
+            --gold: #ffd700;
         }
 
         [data-theme="light"] {
@@ -60,6 +61,21 @@
         }
         nav ul li a i { font-size: 1.2rem; color: var(--primary); }
         nav ul li a:hover { opacity: 1; transform: translateY(-3px); }
+
+        /* ستايل الرصيد المحسن */
+        .wallet-box {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--gold);
+            padding: 5px 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gold);
+            font-weight: 900;
+            font-size: 0.9rem;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+        }
 
         .hero {
             min-height: 100vh; display: flex; align-items: center; justify-content: space-between;
@@ -106,6 +122,7 @@
         @media (max-width: 992px) {
             header { width: 95%; padding: 10px 15px; top: 10px; }
             header nav { display: none; }
+            .wallet-box { font-size: 0.75rem; padding: 4px 8px; }
             .mobile-nav {
                 position: fixed; bottom: 0; left: 0; width: 100%;
                 background: var(--nav-bg); backdrop-filter: blur(25px);
@@ -115,10 +132,10 @@
                 box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
             }
             .mobile-nav a {
-                color: var(--text); text-decoration: none; font-size: 0.7rem; font-weight: 700;
-                display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.6; width: 14%;
+                color: var(--text); text-decoration: none; font-size: 0.65rem; font-weight: 700;
+                display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.6; width: 13%;
             }
-            .mobile-nav a i { font-size: 1.3rem; color: var(--primary); }
+            .mobile-nav a i { font-size: 1.2rem; color: var(--primary); }
             .mobile-nav a.active, .mobile-nav a:hover { opacity: 1; transform: translateY(-5px); color: var(--primary); }
             .hero { flex-direction: column-reverse; text-align: center; padding-top: 120px; gap: 30px; }
             .hero-text { text-align: center; display: flex; flex-direction: column; align-items: center; }
@@ -139,6 +156,12 @@
 
     <header>
         <div class="logo">🧬 <span>MR. HAMDY</span></div>
+        
+        <div class="wallet-box animate__animated animate__fadeInLeft">
+            <i class="fas fa-wallet"></i>
+            <span id="user-balance">0.00</span> ج.م
+        </div>
+
         <nav>
             <ul>
                 <li><a href="index.html"><i class="fas fa-home"></i>الرئيسية</a></li>
@@ -150,6 +173,7 @@
                 <li><a href="contact.html"><i class="fas fa-paper-plane"></i>تواصل</a></li>
             </ul>
         </nav>
+
         <div style="display: flex; gap: 15px; align-items: center;">
             <a href="admin.html" id="admin-link" style="text-decoration: none; color: var(--accent);"><i class="fas fa-user-shield" style="font-size: 1.2rem;" title="لوحة الإدارة"></i></a>
             <i class="fas fa-adjust" id="theme-toggle" style="cursor:pointer; color: var(--primary); font-size: 1.2rem;"></i>
@@ -161,7 +185,7 @@
         <a href="index.html" class="active"><i class="fas fa-home"></i><span>الرئيسية</span></a>
         <a href="live.html"><i class="fas fa-video"></i><span>لايف</span></a>
         <a href="exams.html"><i class="fas fa-file-pen"></i><span>اختبارات</span></a>
-        <a href="gallery.html"><i class="fas fa-dna"></i><span>تشريح</span></a>
+        <a href="#" style="color: var(--gold); opacity: 1;"><i class="fas fa-coins"></i><span id="user-balance-mob">0</span></a>
         <a href="library.html"><i class="fas fa-book"></i><span>كتب</span></a>
         <a href="videos.html"><i class="fas fa-play"></i><span>دروس</span></a>
         <a href="contact.html"><i class="fas fa-message"></i><span>تواصل</span></a>
@@ -209,12 +233,7 @@
         const userPhone = localStorage.getItem('userLoggedIn');
         if (!userPhone) { window.location.href = "go.html"; }
 
-        // 2. إظهار أيقونة الأدمن للرقم المحدد فقط
-        if (userPhone === "01111276700") {
-            document.getElementById('admin-link').style.display = "block";
-        }
-
-        // 3. إعدادات فايربيس
+        // 2. إعدادات فايربيس
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -227,14 +246,34 @@
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
-        // 4. عرض اسم الطالب
+        // 3. جلب رصيد الطالب لحظياً
+        function syncUserWallet() {
+            db.ref('users').orderByChild('phone').equalTo(userPhone).on('value', snapshot => {
+                if(snapshot.exists()) {
+                    const userData = Object.values(snapshot.val())[0];
+                    const balance = userData.balance || 0;
+                    document.getElementById('user-balance').innerText = balance.toLocaleString();
+                    if(document.getElementById('user-balance-mob')) {
+                        document.getElementById('user-balance-mob').innerText = balance.toLocaleString();
+                    }
+                }
+            });
+        }
+        syncUserWallet();
+
+        // 4. إظهار أيقونة الأدمن للرقم المحدد فقط
+        if (userPhone === "01111276700") {
+            document.getElementById('admin-link').style.display = "block";
+        }
+
+        // 5. عرض اسم الطالب
         const studentName = localStorage.getItem('userName');
         if(studentName) {
             const logoSpan = document.querySelector('.logo span');
             if(logoSpan) { logoSpan.innerText = "أهلاً، " + studentName.split(' ')[0]; }
         }
 
-        // 5. نظام التنبيهات
+        // 6. نظام التنبيهات
         const notifyRef = db.ref('admin/notifications'); 
         notifyRef.limitToLast(5).on('value', (snapshot) => {
             const notifications = snapshot.val();
@@ -266,7 +305,7 @@
             setTimeout(() => { if (msg) { msg.classList.replace('animate__fadeInDown', 'animate__fadeOutUp'); setTimeout(() => msg.remove(), 500); } }, 12000);
         }
 
-        // 6. المتصلون الآن
+        // 7. المتصلون الآن
         const onlineRef = db.ref('admin/online_users');
         const userStatusRef = onlineRef.push(true);
         userStatusRef.onDisconnect().remove();
@@ -275,7 +314,7 @@
             if (count) count.innerText = snapshot.numChildren() || 0;
         });
 
-        // 7. البوستر والثيم
+        // 8. البوستر والثيم
         db.ref('admin/poster_url').on('value', (snapshot) => {
             const url = snapshot.val();
             const img = document.querySelector('.teacher-img');
@@ -288,7 +327,6 @@
             body.setAttribute('data-theme', newTheme);
         };
         
-        // جزيئات الخلفية
         particlesJS('particles-js', {
             particles: { number: { value: 80 }, color: { value: '#00e5ff' }, shape: { type: 'circle' }, opacity: { value: 0.5 }, size: { value: 3 }, line_linked: { enable: true, distance: 150, color: '#00e5ff', opacity: 0.4, width: 1 }, move: { enable: true, speed: 2 } },
             interactivity: { events: { onhover: { enable: true, mode: 'repulse' } } }
