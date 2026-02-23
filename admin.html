@@ -19,8 +19,9 @@
         .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
         .box { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); height: fit-content; }
         
-        .msg-item, .log-item { background: #0f172a; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-right: 4px solid var(--accent); }
-        .log-item { border-right-color: var(--primary); font-size: 0.85.rem; }
+        .msg-item, .log-item, .ban-item { background: #0f172a; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-right: 4px solid var(--accent); }
+        .log-item { border-right-color: var(--primary); font-size: 0.85rem; }
+        .ban-item { border-right-color: #ef4444; display: flex; justify-content: space-between; align-items: center; }
         
         input, textarea, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #334155; background: #0b111e; color: white; outline: none; font-size: 0.9rem; }
         input:focus, textarea:focus { border-color: var(--primary); }
@@ -32,6 +33,7 @@
         .btn-back { background: #64748b; color: white; margin-bottom: 20px; width: auto; display: inline-flex; }
         .btn:hover { opacity: 0.8; transform: translateY(-2px); }
         
+        .btn-unban { width: auto; padding: 5px 15px; font-size: 0.8rem; margin: 0; background: #10b981; }
         .btn-delete-all { background: transparent; color: #94a3b8; border: 1px solid #334155; font-size: 0.8rem; margin-top: 20px; }
         
         h2 { font-size: 1.2rem; margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
@@ -60,6 +62,14 @@
         </header>
 
         <div class="admin-grid">
+            
+            <div class="box">
+                <h2><i class="fas fa-user-slash"></i> إدارة الطلاب المحظورين</h2>
+                <div id="banned-users-display" style="max-height: 300px; overflow-y: auto;">
+                    <p style="text-align: center; opacity: 0.5;">جاري فحص قائمة الحظر...</p>
+                </div>
+            </div>
+
             <div class="box">
                 <h2><i class="fas fa-wallet"></i> إدارة رصيد الطلاب</h2>
                 <input type="text" id="std-phone" placeholder="رقم هاتف الطالب">
@@ -144,7 +154,43 @@
                 document.getElementById('admin-content').style.display='block';
                 loadAdmin();
                 loadLogs();
+                loadBannedUsers();
             } else { alert("كلمة السر خاطئة يا مستر!"); }
+        }
+
+        // --- وظائف إدارة المحظورين (جديد) ---
+        function loadBannedUsers() {
+            db.ref('users').orderByChild('status').equalTo('banned').on('value', s => {
+                const display = document.getElementById('banned-users-display');
+                display.innerHTML = "";
+                if(s.exists()){
+                    s.forEach(child => {
+                        const u = child.val();
+                        display.innerHTML += `
+                            <div class="ban-item">
+                                <div>
+                                    <strong>${u.name}</strong><br>
+                                    <small>${u.phone}</small><br>
+                                    <span style="color:#ef4444; font-size:0.7rem;">السبب: ${u.banReason || 'غير محدد'}</span>
+                                </div>
+                                <button class="btn btn-unban" onclick="unbanUser('${child.key}', '${u.name}')">فك الحظر</button>
+                            </div>`;
+                    });
+                } else {
+                    display.innerHTML = '<p style="text-align: center; opacity: 0.5;">لا يوجد طلاب محظورين حالياً</p>';
+                }
+            });
+        }
+
+        function unbanUser(key, name) {
+            if(confirm(`هل أنت متأكد من فك الحظر عن ${name}؟`)) {
+                db.ref('users/' + key).update({
+                    status: 'active',
+                    banReason: null
+                }).then(() => {
+                    alert("تم فك الحظر بنجاح");
+                });
+            }
         }
 
         // --- وظائف الرصيد ---
@@ -159,8 +205,6 @@
                     const key = Object.keys(snapshot.val())[0];
                     const currentBal = snapshot.val()[key].balance || 0;
                     db.ref('users/'+key+'/balance').set(currentBal + amt);
-                    
-                    // تسجيل الحركة
                     logAction(snapshot.val()[key].name, phone, `تم ${amt > 0 ? 'شحن' : 'سحب'} رصيد بقيمة ${Math.abs(amt)} ج.م`);
                     alert("تمت العملية بنجاح");
                 } else { alert("الطالب غير مسجل!"); }
@@ -209,7 +253,6 @@
             const title = document.getElementById('vid-title').value;
             const url = document.getElementById('vid-url').value;
             const price = document.getElementById('vid-price').value || 0;
-
             if(title && url) {
                 db.ref('videos').push({ title, url, price: parseInt(price), date: Date.now() });
                 alert("تم إضافة الفيديو للمكتبة");
@@ -240,7 +283,7 @@
             });
         }
 
-        // --- الأكواد الأصلية (بدون تغيير) ---
+        // --- الأكواد الأصلية ---
         function loadAdmin() {
             db.ref('admin/online_users').on('value', s => {
                 document.getElementById('online-count').innerText = s.numChildren() || 0;
