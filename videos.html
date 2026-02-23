@@ -1,1 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الفيديوهات | مستر حمدي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        :root { --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; --card: #111827; --text: #e2e8f0; --gold: #ffd700; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 50px; }
 
+        header { background: var(--card); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 100; }
+        .back-btn { color: var(--primary); text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+
+        .video-card { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; position: relative; }
+        .video-card:hover { transform: translateY(-10px); border-color: var(--primary); }
+        
+        .thumbnail { width: 100%; height: 180px; background: #000; display: flex; align-items: center; justify-content: center; position: relative; }
+        .thumbnail i { font-size: 3rem; color: var(--primary); opacity: 0.5; }
+        .lock-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; }
+
+        .video-info { padding: 20px; }
+        .video-info h3 { font-size: 1.1rem; margin-bottom: 10px; }
+        .price-tag { color: var(--gold); font-weight: bold; display: flex; align-items: center; gap: 5px; margin-bottom: 15px; }
+
+        .btn-play { background: var(--primary); color: #000; width: 100%; padding: 12px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-buy { background: var(--accent); color: white; }
+
+        /* مشغل الفيديو والماية */
+        #player-modal { position: fixed; inset: 0; background: #000; z-index: 2000; display: none; }
+        #video-frame { width: 100%; height: 100%; border: none; }
+        .watermark { 
+            position: absolute; color: rgba(255,255,255,0.3); font-size: 0.9rem; 
+            pointer-events: none; z-index: 2001; font-weight: bold; white-space: nowrap;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .close-player { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; cursor: pointer; z-index: 2002; }
+
+        /* الحظر */
+        #banned-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="banned-overlay">
+        <div class="animate__animated animate__zoomIn">
+            <i class="fas fa-user-slash" style="font-size: 5rem; color: var(--accent); margin-bottom: 20px;"></i>
+            <h1 style="color: white; margin-bottom: 15px;">تم حظر حسابك نهائياً!</h1>
+            <p style="color: #94a3b8; margin-bottom: 30px;">تم اكتشاف محاولة تسجيل شاشة أو انتهاك لسياسات المنصة.</p>
+            <a href="https://wa.me/201159562785" class="btn-play" style="background: #25d366; color: white; text-decoration: none;">
+                تواصل مع الدعم لفك الحظر <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+    </div>
+
+    <div id="player-modal">
+        <span class="close-player" onclick="closeVideo()">&times;</span>
+        <div id="watermark" class="watermark"></div>
+        <div id="video-container" style="width: 100%; height: 100%;">
+            </div>
+    </div>
+
+    <header>
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+        <div class="logo">🎥 مكتبة الفيديوهات</div>
+    </header>
+
+    <div class="container">
+        <div class="video-grid" id="videos-display">
+            </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
+            authDomain: "mrhamdy-1c406.firebaseapp.com",
+            databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
+            projectId: "mrhamdy-1c406",
+            storageBucket: "mrhamdy-1c406.firebasestorage.app",
+            messagingSenderId: "806268398144",
+            appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const userPhone = localStorage.getItem('userLoggedIn');
+        const userName = localStorage.getItem('userName') || "طالب غير معروف";
+
+        // 1. التحقق من الحظر
+        function checkBanStatus() {
+            db.ref('users').orderByChild('phone').equalTo(userPhone).on('value', snapshot => {
+                if(snapshot.exists()) {
+                    const key = Object.keys(snapshot.val())[0];
+                    const user = snapshot.val()[key];
+                    if(user.status === "banned") {
+                        document.getElementById('banned-overlay').style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                    }
+                }
+            });
+        }
+        checkBanStatus();
+
+        // 2. كشف تسجيل الشاشة (بسيط ولكنه رادع)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "PrintScreen" || (e.ctrlKey && e.shiftKey && e.key === "S")) {
+                banUser("محاولة تصوير شاشة");
+            }
+        });
+
+        function banUser(reason) {
+            db.ref('users').orderByChild('phone').equalTo(userPhone).once('value', snapshot => {
+                if(snapshot.exists()) {
+                    const key = Object.keys(snapshot.val())[0];
+                    db.ref('users/'+key).update({ status: 'banned', banReason: reason });
+                    db.ref('admin/logs').push({
+                        name: userName, phone: userPhone, action: "🚫 تم حظره تلقائياً: " + reason, time: new Date().toLocaleString('ar-EG')
+                    });
+                }
+            });
+        }
+
+        // 3. تحميل الفيديوهات
+        db.ref('videos').on('value', snapshot => {
+            const display = document.getElementById('videos-display');
+            display.innerHTML = "";
+            const videos = snapshot.val();
+            
+            db.ref('users').orderByChild('phone').equalTo(userPhone).once('value', userSnap => {
+                const userData = Object.values(userSnap.val())[0];
+                const myVids = userData.purchasedVideos || {};
+
+                for(let id in videos) {
+                    const v = videos[id];
+                    const isBought = v.price === 0 || myVids[id];
+                    
+                    display.innerHTML += `
+                        <div class="video-card">
+                            <div class="thumbnail">
+                                <i class="fas fa-play-circle"></i>
+                                ${!isBought ? `<div class="lock-overlay"><i class="fas fa-lock"></i><p>محتوى مدفوع</p></div>` : ''}
+                            </div>
+                            <div class="video-info">
+                                <h3>${v.title}</h3>
+                                <div class="price-tag">
+                                    <i class="fas fa-coins"></i> ${v.price === 0 ? 'مجاني' : v.price + ' ج.م'}
+                                </div>
+                                ${isBought ? 
+                                    `<button class="btn-play" onclick="playVideo('${v.url}', '${id}')"><i class="fas fa-play"></i> مشاهدة الآن</button>` :
+                                    `<button class="btn-play btn-buy" onclick="buyVideo('${id}', ${v.price})"><i class="fas fa-shopping-cart"></i> شراء الفيديو</button>`
+                                }
+                            </div>
+                        </div>`;
+                }
+            });
+        });
+
+        // 4. عملية الشراء
+        function buyVideo(vidId, price) {
+            db.ref('users').orderByChild('phone').equalTo(userPhone).once('value', snapshot => {
+                const key = Object.keys(snapshot.val())[0];
+                const currentBal = snapshot.val()[key].balance || 0;
+
+                if(currentBal >= price) {
+                    if(confirm(`هل تريد خصم ${price} ج.م لمشاهدة هذا الفيديو؟`)) {
+                        db.ref('users/'+key).update({
+                            balance: currentBal - price
+                        });
+                        db.ref('users/'+key+'/purchasedVideos/'+vidId).set(true);
+                        db.ref('admin/logs').push({
+                            name: userName, phone: userPhone, action: "💸 اشترى فيديو بمبلغ " + price, time: new Date().toLocaleString('ar-EG')
+                        });
+                        alert("تم الاشتراك بنجاح! استمتع بالمشاهدة");
+                    }
+                } else {
+                    alert("رصيدك غير كافٍ! تواصل مع المستر لشحن المحفظة.");
+                }
+            });
+        }
+
+        // 5. المشغل والعلامة المائية
+        function playVideo(url, id) {
+            const modal = document.getElementById('player-modal');
+            const container = document.getElementById('video-container');
+            modal.style.display = 'block';
+            
+            // تحويل رابط اليوتيوب العادي لـ Embed لو لزم الأمر
+            let finalUrl = url;
+            if(url.includes('youtube.com/watch?v=')) {
+                finalUrl = url.replace('watch?v=', 'embed/');
+            }
+
+            container.innerHTML = `<iframe id="video-frame" src="${finalUrl}?autoplay=1&rel=0&modestbranding=1" allow="autoplay; fullscreen"></iframe>`;
+            
+            startWatermark();
+            
+            // تسجيل الدخول للفيديو
+            db.ref('admin/logs').push({
+                name: userName, phone: userPhone, action: "📺 بدأ مشاهدة فيديو", time: new Date().toLocaleString('ar-EG')
+            });
+        }
+
+        function startWatermark() {
+            const wm = document.getElementById('watermark');
+            wm.innerText = `${userName} - ${userPhone}`;
+            
+            setInterval(() => {
+                const x = Math.random() * (window.innerWidth - 200);
+                const y = Math.random() * (window.innerHeight - 50);
+                wm.style.left = x + 'px';
+                wm.style.top = y + 'px';
+            }, 4000);
+        }
+
+        function closeVideo() {
+            document.getElementById('player-modal').style.display = 'none';
+            document.getElementById('video-container').innerHTML = '';
+        }
+
+        // منع كليك يمين
+        document.addEventListener('contextmenu', event => event.preventDefault());
+    </script>
+</body>
+</html>
