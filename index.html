@@ -204,123 +204,7 @@
         <div class="dev-credits" style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
             تطوير: <a href="https://kemo-omar.github.io/Kareem/" style="color:var(--primary); text-decoration:none;">كريم</a> & <a href="https://mostafa7html7-pixel.github.io/Abqarieno-/" style="color:var(--primary); text-decoration:none;">عبقرينو</a>
         </div>
-    </footer>
-
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
-    <script>
-        // Firebase - المتصلون الآن
-        const firebaseConfig = {
-            apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
-            authDomain: "mrhamdy-1c406.firebaseapp.com",
-            databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
-            projectId: "mrhamdy-1c406",
-            storageBucket: "mrhamdy-1c406.firebasestorage.app",
-            messagingSenderId: "806268398144",
-            appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        const onlineRef = db.ref('admin/online_users');
-        const userStatusRef = onlineRef.push(true);
-        userStatusRef.onDisconnect().remove();
-
-        onlineRef.on('value', (snapshot) => {
-            document.getElementById('real-count').innerText = snapshot.numChildren() || 0;
-        });
-        // أضف هذا الكود داخل سكريبت الفايربيس الموجود في index.html
-const notifyRef = db.ref('admin/notification');
-notifyRef.on('value', (snapshot) => {
-    const data = snapshot.val();
-    if(data && data.text) {
-        // إنشاء تنبيه جذاب للطلاب
-        const msg = document.createElement('div');
-        msg.style = "position:fixed; top:80px; left:50%; transform:translateX(-50%); background:var(--accent); color:white; padding:15px 30px; border-radius:10px; z-index:2000; box-shadow:0 5px 20px rgba(0,0,0,0.5); font-weight:bold; animation:bounceIn 0.5s;";
-        msg.innerHTML = `<i class="fas fa-bell"></i> تنبيه من المستر: ${data.text}`;
-        document.body.appendChild(msg);
-        
-        // يختفي بعد 10 ثواني
-        setTimeout(() => msg.remove(), 10000);
-    }
-});
-
-// خاصية تغيير البوستر تلقائياً
-const posterRef = db.ref('admin/poster_url');
-posterRef.on('value', (snapshot) => {
-    const url = snapshot.val();
-    if(url) {
-        document.querySelector('.teacher-img').src = url;
-    }
-});
-        // --- كود استقبال التنبيهات المطور ---
-const notifyRef = db.ref('admin/notification');
-
-notifyRef.on('value', (snapshot) => {
-    const data = snapshot.val();
-    
-    if(data && data.text && data.time) {
-        // نستخدم وقت التنبيه كمعرف فريد (ID)
-        const notificationID = data.time; 
-        const lastSeenID = localStorage.getItem('last_seen_notif');
-
-        // لا يظهر التنبيه إلا لو كان المعرف (الوقت) مختلف عن آخر واحد رآه الطالب
-        if (notificationID.toString() !== lastSeenID) {
-            
-            // إنشاء عنصر التنبيه
-            const msg = document.createElement('div');
-            msg.id = 'live-notification';
-            msg.style = `
-                position: fixed; 
-                top: 20px; 
-                left: 50%; 
-                transform: translateX(-50%); 
-                background: #ff1744; 
-                color: white; 
-                padding: 15px 25px; 
-                border-radius: 12px; 
-                z-index: 9999; 
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-                font-weight: bold; 
-                display: flex; 
-                align-items: center; 
-                gap: 12px; 
-                min-width: 300px;
-                cursor: pointer;
-                animation: fadeInDown 0.5s ease-out;
-            `;
-            
-            msg.innerHTML = `
-                <i class="fas fa-bell animate__animated animate__swing animate__infinite" style="font-size: 1.2rem;"></i>
-                <div style="flex:1">
-                    <small style="display:block; opacity:0.8; font-size:0.7rem;">تنبيه جديد من المستر</small>
-                    <span>${data.text}</span>
-                </div>
-                <i class="fas fa-times" id="close-notif" style="opacity:0.7; padding:5px;"></i>
-            `;
-            
-            document.body.appendChild(msg);
-
-            // حفظ أن الطالب رأى هذا التنبيه لكي لا يظهر مرة أخرى عند التحديث
-            localStorage.setItem('last_seen_notif', notificationID);
-
-            // إغلاق التنبيه عند الضغط على علامة X
-            document.getElementById('close-notif').onclick = () => {
-                msg.style.animation = "fadeOutUp 0.5s ease-in";
-                setTimeout(() => msg.remove(), 500);
-            };
-
-            // يختفي تلقائياً بعد 15 ثانية
-            setTimeout(() => {
-                if(document.body.contains(msg)){
-                    msg.style.animation = "fadeOutUp 0.5s ease-in";
-                    setTimeout(() => msg.remove(), 500);
-                }
-            }, 15000);
-        }
-    }
-<script><script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    </footer><script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
@@ -335,61 +219,76 @@ notifyRef.on('value', (snapshot) => {
             appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
         };
 
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        if (!firebase.apps.length) { 
+            firebase.initializeApp(firebaseConfig); 
+        }
         const db = firebase.database();
 
         // ----------------------------------------------------
-        // 2. إنشاء حاوية التنبيهات (لو مش موجودة)
+        // 2. إنشاء حاوية التنبيهات
         // ----------------------------------------------------
         if (!document.getElementById('notif-container')) {
             const container = document.createElement('div');
             container.id = 'notif-container';
-            container.style = "position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px;";
+            container.style = "position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px;";
             document.body.appendChild(container);
         }
 
         // ----------------------------------------------------
-        // 3. نظام التنبيهات المطور (يدعم التنبيهات المتعددة)
+        // 3. نظام التنبيهات المطور (يقرأ من notifications بالجمع)
         // ----------------------------------------------------
-        const notifyRef = db.ref('admin/notification');
-        notifyRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data && data.text && data.time) {
-                const notificationID = data.time;
-                const lastSeenID = localStorage.getItem('last_seen_notif');
+        // ملاحظة: تم تغيير المسار ليتوافق مع لوحة الإدارة الجديدة
+        const notifyRef = db.ref('admin/notifications'); 
+        
+        notifyRef.limitToLast(5).on('value', (snapshot) => {
+            const notifications = snapshot.val();
+            if (!notifications) return;
 
-                if (notificationID.toString() !== lastSeenID) {
-                    const msg = document.createElement('div');
-                    msg.className = "animate__animated animate__fadeInDown";
-                    msg.style = `
-                        background: var(--accent); color: white; padding: 15px 20px;
-                        border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-                        font-weight: bold; display: flex; align-items: center; gap: 12px;
-                        border-right: 5px solid white;
-                    `;
-                    
-                    msg.innerHTML = `
-                        <i class="fas fa-bell animate__animated animate__swing animate__infinite"></i>
-                        <div style="flex:1">
-                            <small style="display:block; opacity:0.8; font-size:0.7rem;">تنبيه جديد</small>
-                            <span style="font-size: 0.9rem;">${data.text}</span>
-                        </div>
-                        <i class="fas fa-times" style="cursor:pointer; opacity:0.7;" onclick="this.parentElement.remove()"></i>
-                    `;
+            // جلب قائمة التنبيهات التي شاهدها الطالب سابقاً
+            let seenNotifs = JSON.parse(localStorage.getItem('seen_notifs_list')) || [];
 
-                    document.getElementById('notif-container').appendChild(msg);
-                    localStorage.setItem('last_seen_notif', notificationID);
+            Object.keys(notifications).forEach((key) => {
+                const data = notifications[key];
+                const notificationID = data.time.toString();
 
-                    // يختفي التنبيه تلقائياً بعد 10 ثواني مع حركة خروج
-                    setTimeout(() => {
-                        if (msg) {
-                            msg.classList.replace('animate__fadeInDown', 'animate__fadeOutUp');
-                            setTimeout(() => msg.remove(), 500);
-                        }
-                    }, 10000);
+                // التحقق هل التنبيه جديد أم لا
+                if (!seenNotifs.includes(notificationID)) {
+                    showNotificationUI(data.text);
+                    seenNotifs.push(notificationID);
+                    localStorage.setItem('seen_notifs_list', JSON.stringify(seenNotifs));
                 }
-            }
+            });
         });
+
+        function showNotificationUI(text) {
+            const msg = document.createElement('div');
+            msg.className = "animate__animated animate__fadeInDown";
+            msg.style = `
+                background: var(--accent); color: white; padding: 15px 20px;
+                border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                font-weight: bold; display: flex; align-items: center; gap: 12px;
+                border-right: 5px solid white;
+            `;
+            
+            msg.innerHTML = `
+                <i class="fas fa-bell animate__animated animate__swing animate__infinite"></i>
+                <div style="flex:1">
+                    <small style="display:block; opacity:0.8; font-size:0.7rem;">تنبيه من مستر حمدي</small>
+                    <span style="font-size: 0.9rem;">${text}</span>
+                </div>
+                <i class="fas fa-times" style="cursor:pointer; opacity:0.7;" onclick="this.parentElement.remove()"></i>
+            `;
+
+            document.getElementById('notif-container').appendChild(msg);
+
+            // الخروج التلقائي
+            setTimeout(() => {
+                if (msg) {
+                    msg.classList.replace('animate__fadeInDown', 'animate__fadeOutUp');
+                    setTimeout(() => msg.remove(), 500);
+                }
+            }, 12000);
+        }
 
         // ----------------------------------------------------
         // 4. المتصلون الآن
@@ -412,13 +311,13 @@ notifyRef.on('value', (snapshot) => {
         });
 
         // ----------------------------------------------------
-        // 6. التبديل بين الـ Dark & Light Mode
+        // 6. التبديل بين الألوان (Theme)
         // ----------------------------------------------------
-        document.getElementById('theme-toggle')?.addEventListener('click', () => {
+        document.getElementById('theme-toggle').onclick = () => {
             const body = document.body;
             const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             body.setAttribute('data-theme', newTheme);
-        });
+        };
     </script>
 </body>
 </html>
