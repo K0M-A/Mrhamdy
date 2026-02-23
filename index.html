@@ -320,17 +320,116 @@ notifyRef.on('value', (snapshot) => {
             }, 15000);
         }
     }
-});
-
-// كود تحديث البوستر (يُوضع في الرئيسية فقط أو الصفحات التي بها صورة المستر)
-const posterRef = db.ref('admin/poster_url');
-posterRef.on('value', (snapshot) => {
-    const url = snapshot.val();
-    const imgElement = document.querySelector('.teacher-img');
-    if(url && imgElement) {
-        imgElement.src = url;
+<script>
+    // 1. إعدادات فايربيس
+    const firebaseConfig = {
+        apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
+        authDomain: "mrhamdy-1c406.firebaseapp.com",
+        databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
+        projectId: "mrhamdy-1c406",
+        storageBucket: "mrhamdy-1c406.firebasestorage.app",
+        messagingSenderId: "806268398144",
+        appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
+    };
+    
+    // تهيئة فايربيس إذا لم تكن مهيأة مسبقاً
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
     }
-});
+    const db = firebase.database();
+
+    // ----------------------------------------------------
+    // 2. نظام المتصلين الآن
+    // ----------------------------------------------------
+    const onlineRef = db.ref('admin/online_users');
+    const userStatusRef = onlineRef.push(true);
+    
+    // حذف المستخدم من قاعدة البيانات عند إغلاق الصفحة
+    userStatusRef.onDisconnect().remove();
+
+    // تحديث العداد في الصفحة
+    onlineRef.on('value', (snapshot) => {
+        const countElement = document.getElementById('real-count');
+        if (countElement) {
+            countElement.innerText = snapshot.numChildren() || 0;
+        } else {
+            console.warn("لم يتم العثور على عنصر HTML الذي يحمل الـ id 'real-count'");
+        }
+    });
+
+    // ----------------------------------------------------
+    // 3. نظام التنبيهات المطور
+    // ----------------------------------------------------
+    const notifyRef = db.ref('admin/notification');
+
+    notifyRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        
+        if(data && data.text && data.time) {
+            const notificationID = data.time; 
+            const lastSeenID = localStorage.getItem('last_seen_notif');
+
+            if (notificationID.toString() !== lastSeenID) {
+                const msg = document.createElement('div');
+                msg.id = 'live-notification';
+                msg.style = `
+                    position: fixed; 
+                    top: 20px; 
+                    left: 50%; 
+                    transform: translateX(-50%); 
+                    background: #ff1744; 
+                    color: white; 
+                    padding: 15px 25px; 
+                    border-radius: 12px; 
+                    z-index: 9999; 
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+                    font-weight: bold; 
+                    display: flex; 
+                    align-items: center; 
+                    gap: 12px; 
+                    min-width: 300px;
+                    cursor: pointer;
+                    animation: fadeInDown 0.5s ease-out;
+                `;
+                
+                msg.innerHTML = `
+                    <i class="fas fa-bell animate__animated animate__swing animate__infinite" style="font-size: 1.2rem;"></i>
+                    <div style="flex:1">
+                        <small style="display:block; opacity:0.8; font-size:0.7rem;">تنبيه جديد من المستر</small>
+                        <span>${data.text}</span>
+                    </div>
+                    <i class="fas fa-times" id="close-notif" style="opacity:0.7; padding:5px;"></i>
+                `;
+                
+                document.body.appendChild(msg);
+                localStorage.setItem('last_seen_notif', notificationID);
+
+                document.getElementById('close-notif').onclick = () => {
+                    msg.style.animation = "fadeOutUp 0.5s ease-in";
+                    setTimeout(() => msg.remove(), 500);
+                };
+
+                setTimeout(() => {
+                    if(document.body.contains(msg)){
+                        msg.style.animation = "fadeOutUp 0.5s ease-in";
+                        setTimeout(() => msg.remove(), 500);
+                    }
+                }, 15000);
+            }
+        }
+    });
+
+    // ----------------------------------------------------
+    // 4. خاصية تغيير البوستر
+    // ----------------------------------------------------
+    const posterRef = db.ref('admin/poster_url');
+    posterRef.on('value', (snapshot) => {
+        const url = snapshot.val();
+        const imgElement = document.querySelector('.teacher-img');
+        if(url && imgElement) {
+            imgElement.src = url;
+        }
+    });
     </script>
     
 </body>
