@@ -3,272 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة خبير الأحياء التعليمية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>منصة الخبير حمدي عيد | تسجيل الدخول</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; --card: #1e293b; --text: #ffffff; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
-        body { background: radial-gradient(circle at center, #0d1b2a 0%, #05080f 100%); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-x: hidden; }
-        
-        .auth-container { 
-            background: rgba(30, 41, 59, 0.7); 
-            backdrop-filter: blur(15px); 
-            padding: 30px; 
-            border-radius: 25px; 
-            border: 1px solid rgba(0, 229, 255, 0.2); 
-            width: 100%; 
-            max-width: 450px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            position: relative;
-            z-index: 2;
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #27ae60; /* لون حيوي يرمز للأحياء */
+            --bg-color: #1a1a2e;
+            --text-color: #ffffff;
         }
 
-        .logo { text-align: center; margin-bottom: 30px; }
-        .logo i { font-size: 4rem; color: var(--primary); text-shadow: 0 0 20px var(--primary); }
-        
-        h2 { text-align: center; margin-bottom: 25px; font-weight: 900; line-height: 1.4; }
-        h3 { margin-bottom: 20px; color: var(--primary); text-align: center; }
-
-        .btn-group-main { display: flex; flex-direction: column; gap: 15px; }
-        
-        .btn { 
-            width: 100%; padding: 15px; border-radius: 15px; border: none; 
-            cursor: pointer; font-weight: bold; font-size: 1rem; 
-            display: flex; align-items: center; justify-content: center; gap: 10px; 
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-color);
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); /* نقش بسيط */
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
         }
-        
-        .btn-primary { background: var(--primary); color: #000; box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3); }
-        .btn-primary:hover { transform: translateY(-3px); background: #fff; }
-        
-        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
-        .btn-outline:hover { background: var(--primary); color: #000; }
 
-        .auth-form { display: none; animation: fadeIn 0.5s; }
-        
-        .form-group { margin-bottom: 15px; }
-        
-        input, select { 
-            width: 100%; padding: 14px; border-radius: 12px; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            background: rgba(11, 17, 30, 0.8); 
-            color: white; outline: none; font-size: 0.9rem;
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 450px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
         }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
 
-        #otp-view, #banned-view { display: none; text-align: center; animation: fadeIn 0.5s; }
-        
-        .back-btn { 
-            cursor: pointer; color: var(--primary); font-size: 0.9rem; 
-            margin-bottom: 20px; display: inline-block; opacity: 0.8;
-        }
-        .back-btn:hover { opacity: 1; }
+        .logo { width: 100px; margin-bottom: 10px; }
+        h2 { color: var(--accent-color); margin-bottom: 25px; }
 
-        .loader {
-            display: none; border: 3px solid #f3f3f3; border-top: 3px solid var(--primary);
-            border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite;
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        input:focus { background: rgba(255,255,255,0.2); border: 1px solid var(--accent-color); }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: var(--accent-color);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover { transform: scale(1.02); filter: brightness(1.2); }
+
+        .switch-form { margin-top: 15px; font-size: 14px; cursor: pointer; color: #aaa; }
+        .switch-form span { color: var(--accent-color); text-decoration: underline; }
+
+        /* Modal Style */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #2c3e50;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 300px;
+            border: 2px solid var(--accent-color);
+        }
+        .verify-code {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin: 15px 0;
+            color: var(--accent-color);
+        }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="auth-container">
-        <div class="logo"><i class="fas fa-microscope"></i></div>
-        
-        <div id="main-view" class="btn-group-main">
-            <h2>مرحباً بك في منصة <br><span style="color: var(--primary);">خبير الأحياء</span></h2>
-            <button class="btn btn-primary" onclick="showForm('signup')"><i class="fas fa-user-plus"></i> إنشاء حساب جديد</button>
-            <button class="btn btn-outline" onclick="showForm('login')"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</button>
-            <p style="text-align: center; font-size: 0.7rem; opacity: 0.5; margin-top: 10px;">بإشراف مستر حمدي عيد</p>
-        </div>
+<div class="container" id="mainBox">
+    <img src="H.png" alt="Logo" class="logo">
+    <h2 id="formTitle">عالم الأحياء: حمدي عيد</h2>
 
-        <div id="signup-view" class="auth-form">
-            <span class="back-btn" onclick="showMain()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</span>
-            <h3>بيانات الطالب الجديد</h3>
-            <div class="form-group"><input type="text" id="reg-name" placeholder="الاسم بالكامل"></div>
-            <div class="form-group"><input type="tel" id="reg-phone" placeholder="رقم الهاتف"></div>
-            <div class="form-group"><input type="text" id="reg-country" placeholder="الدولة / المدينة"></div>
-            <div class="form-group">
-                <select id="reg-grade">
-                    <option value="">اختر المستوى الدراسي</option>
-                    <option value="1">الصف الأول</option>
-                    <option value="2">الصف الثاني</option>
-                    <option value="3">الصف الثالث</option>
-                </select>
-            </div>
-            <div class="form-group"><input type="password" id="reg-pass" placeholder="كلمة السر"></div>
-            <button class="btn btn-primary" id="reg-btn" onclick="window.startRegistration()">
-                <span id="reg-text">إنشاء الحساب</span>
-                <div class="loader" id="reg-loader"></div>
-            </button>
+    <div id="loginForm">
+        <input type="tel" id="loginPhone" placeholder="رقم الهاتف" oninput="checkMaster(this.value)">
+        <div id="masterSection" class="hidden">
+            <p style="color: #f1c40f;">مرحباً قائد المنصة، مستر حمدي عيد</p>
         </div>
-
-        <div id="login-view" class="auth-form">
-            <span class="back-btn" onclick="showMain()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</span>
-            <h3>تسجيل الدخول</h3>
-            <div class="form-group"><input type="tel" id="login-phone" placeholder="رقم الهاتف"></div>
-            <div class="form-group"><input type="password" id="login-pass" placeholder="كلمة السر"></div>
-            <button class="btn btn-primary" onclick="window.attemptLogin()">
-                <span>دخول المنصة</span>
-            </button>
-        </div>
-
-        <div id="otp-view">
-            <h3>تحقق من الكود</h3>
-            <p style="margin: 10px 0; font-size: 0.8rem; opacity: 0.7;">أدخل كود التفعيل الممنوح لك من مستر حمدي</p>
-            <input type="text" id="otp-input" placeholder="000000" style="text-align: center; font-size: 2rem; letter-spacing: 5px; font-weight: bold; color: var(--primary);">
-            <button class="btn btn-primary" style="margin-top: 20px;" onclick="window.verifyOTP()">تفعيل الحساب والدخول</button>
-        </div>
-
-        <div id="banned-view">
-            <i class="fas fa-user-slash" style="font-size: 4rem; color: var(--accent); margin-bottom: 20px;"></i>
-            <h3 style="color: var(--accent);">تم حظر حسابك!</h3>
-            <p style="margin-bottom: 25px; opacity: 0.8;">عذراً، لقد تم إيقاف وصولك للمنصة. يرجى التواصل مع الإدارة لفك الحظر.</p>
-            <button class="btn btn-outline" onclick="window.location.href='contact.html'">
-                <i class="fas fa-headset"></i> تواصل مع الدعم الفني
-            </button>
-            <span class="back-btn" style="margin-top: 20px;" onclick="location.reload()">العودة للخلف</span>
-        </div>
+        <input type="password" id="loginPass" placeholder="كلمة السر">
+        <button onclick="handleLogin()">تسجيل الدخول</button>
+        <p class="switch-form" onclick="toggleForm()">ليس لديك حساب؟ <span>إنشاء حساب جديد</span></p>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+    <div id="signupForm" class="hidden">
+        <input type="text" id="userName" placeholder="الاسم ثلاثي">
+        <select id="userGrade">
+            <option value="">اختر المرحلة الدراسية</option>
+            <option value="1">الصف الأول الثانوي</option>
+            <option value="2">الصف الثاني الثانوي</option>
+            <option value="3">الصف الثالث الثانوي</option>
+        </select>
+        <input type="text" id="userCity" placeholder="المدينة">
+        <input type="tel" id="userPhone" placeholder="رقم الهاتف">
+        <button onclick="showVerifyModal()">تحقق</button>
+        <p class="switch-form" onclick="toggleForm()">لديك حساب بالفعل؟ <span>تسجيل دخول</span></p>
+    </div>
+</div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
-            authDomain: "mrhamdy-1c406.firebaseapp.com",
-            databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
-            projectId: "mrhamdy-1c406",
-            storageBucket: "mrhamdy-1c406.firebasestorage.app",
-            messagingSenderId: "806268398144",
-            appId: "1:806268398144:web:c40aef6b378377f72b4da5",
-            measurementId: "G-CM2YSVZ1XB"
-        };
+<div class="modal" id="verifyModal">
+    <div class="modal-content">
+        <p>أهلاً بك في رحلة عالم الأحياء!<br>كود التفعيل الخاص بك من المستر حمدي عيد هو:</p>
+        <span class="verify-code" id="generatedCode">5521</span>
+        <button onclick="copyCode()">نسخ الكود</button>
+        <button style="background: #7f8c8d; margin-top: 5px;" onclick="closeModal()">تم النسخ، تعيين كلمة السر</button>
+    </div>
+</div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const analytics = getAnalytics(app);
+<script>
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
+        authDomain: "mrhamdy-1c406.firebaseapp.com",
+        projectId: "mrhamdy-1c406",
+        storageBucket: "mrhamdy-1c406.firebasestorage.app",
+        databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
+        messagingSenderId: "806268398144",
+        appId: "1:806268398144:web:c40aef6b378377f72b4da5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        let tempUserData = {};
-        let genCode;
+    const MASTER_PHONE = "01111276700";
 
-        if(localStorage.getItem('userLoggedIn')) {
-            window.location.href = "index.html";
-        }
-
-        window.showForm = (type) => {
-            document.getElementById('main-view').style.display = 'none';
-            document.getElementById(type + '-view').style.display = 'block';
-        };
-
-        window.showMain = () => {
-            document.querySelectorAll('.auth-form, #otp-view, #banned-view').forEach(v => v.style.display = 'none');
-            document.getElementById('main-view').style.display = 'flex';
-        };
-
-        window.startRegistration = async () => {
-            const name = document.getElementById('reg-name').value.trim();
-            const phone = document.getElementById('reg-phone').value.trim();
-            const pass = document.getElementById('reg-pass').value.trim();
-            const country = document.getElementById('reg-country').value.trim();
-            const grade = document.getElementById('reg-grade').value;
-            
-            if(!name || !phone || !pass || !country || !grade) {
-                return alert("يرجى ملء جميع البيانات المطلوبة");
-            }
-
-            document.getElementById('reg-text').style.display = 'none';
-            document.getElementById('reg-loader').style.display = 'block';
-
-            try {
-                const dbRef = ref(db);
-                const snapshot = await get(child(dbRef, `students/${phone}`));
-                
-                if (snapshot.exists()) {
-                    alert("هذا الرقم مسجل بالفعل مسبقاً!");
-                    location.reload();
-                } else {
-                    tempUserData = {
-                        name: name,
-                        phone: phone,
-                        country: country,
-                        grade: grade,
-                        pass: pass,
-                        role: "student", // الرتبة الافتراضية طالب
-                        status: "active", // الحالة الافتراضية نشط
-                        createdAt: new Date().toISOString()
-                    };
-
-                    genCode = Math.floor(100000 + Math.random() * 900000);
-                    alert("كود التفعيل الخاص بك (للتجربة): " + genCode);
-                    
-                    document.getElementById('signup-view').style.display = 'none';
-                    document.getElementById('otp-view').style.display = 'block';
-                }
-            } catch (error) {
-                alert("خطأ في الاتصال بالخادم");
-            } finally {
-                document.getElementById('reg-text').style.display = 'block';
-                document.getElementById('reg-loader').style.display = 'none';
-            }
-        };
-
-        window.verifyOTP = async () => {
-            const input = document.getElementById('otp-input').value;
-            if(input == genCode) {
-                try {
-                    await set(ref(db, 'students/' + tempUserData.phone), tempUserData);
-                    localStorage.setItem('userLoggedIn', tempUserData.phone);
-                    localStorage.setItem('userName', tempUserData.name);
-                    localStorage.setItem('userRole', tempUserData.role);
-                    window.location.href = "index.html";
-                } catch (e) {
-                    alert("فشل في حفظ البيانات");
-                }
-            } else {
-                alert("كود التحقق الذي أدخلته غير صحيح");
-            }
-        };
-
-        window.attemptLogin = async () => {
-            const p = document.getElementById('login-phone').value.trim();
-            const s = document.getElementById('login-pass').value.trim();
-
-            if(!p || !s) return alert("يرجى إدخال رقم الهاتف وكلمة السر");
-
-            try {
-                const dbRef = ref(db);
-                const snapshot = await get(child(dbRef, `students/${p}`));
-                
-                if (snapshot.exists()) {
-                    const user = snapshot.val();
-                    
-                    // فحص الحظر أولاً
-                    if(user.status === "banned") {
-                        document.getElementById('login-view').style.display = 'none';
-                        document.getElementById('banned-view').style.display = 'block';
-                        return;
-                    }
-
-                    if(user.pass === s) {
-                        localStorage.setItem('userLoggedIn', p);
-                        localStorage.setItem('userName', user.name);
-                        localStorage.setItem('userRole', user.role); // سيحمل القيمة سواء student أو admin
-                        window.location.href = "index.html";
+    // 1. التوجيه التلقائي (Security Check)
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+            db.collection("users").doc(user.uid).get().then(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.status === "blocked") {
+                        window.location.href = "contact.html";
                     } else {
-                        alert("كلمة السر غير صحيحة");
+                        window.location.href = "index.html";
                     }
-                } else {
-                    alert("عذراً، هذا الحساب غير موجود");
                 }
-            } catch (error) {
-                alert("خطأ في تسجيل الدخول");
-            }
-        };
-    </script>
+            });
+        }
+    });
+
+    function toggleForm() {
+        document.getElementById('loginForm').classList.toggle('hidden');
+        document.getElementById('signupForm').classList.toggle('hidden');
+        document.getElementById('formTitle').innerText = 
+            document.getElementById('signupForm').classList.contains('hidden') ? "عالم الأحياء: حمدي عيد" : "انضم لرحلة العلم";
+    }
+
+    function checkMaster(val) {
+        if (val === MASTER_PHONE) {
+            document.getElementById('masterSection').classList.remove('hidden');
+        } else {
+            document.getElementById('masterSection').classList.add('hidden');
+        }
+    }
+
+    function showVerifyModal() {
+        const code = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('generatedCode').innerText = code;
+        document.getElementById('verifyModal').style.display = 'flex';
+    }
+
+    function copyCode() {
+        const code = document.getElementById('generatedCode').innerText;
+        navigator.clipboard.writeText(code);
+        alert("تم نسخ كود التحقق بنجاح");
+    }
+
+    function closeModal() {
+        document.getElementById('verifyModal').style.display = 'none';
+        // هنا يتم تحويل الواجهة لطلب كلمة السر فقط لإكمال التسجيل في Firebase
+        alert("الآن قم بكتابة كلمة السر لإتمام التسجيل");
+    }
+
+    function handleLogin() {
+        // منطق تسجيل الدخول بـ Firebase Auth
+        // يتم هنا فحص الرقم وكلمة السر
+        alert("جاري التحقق من البيانات...");
+    }
+</script>
+
 </body>
 </html>
