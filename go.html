@@ -56,7 +56,7 @@
         }
         input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
 
-        #otp-view { display: none; text-align: center; animation: fadeIn 0.5s; }
+        #otp-view, #banned-view { display: none; text-align: center; animation: fadeIn 0.5s; }
         
         .back-btn { 
             cursor: pointer; color: var(--primary); font-size: 0.9rem; 
@@ -64,13 +64,12 @@
         }
         .back-btn:hover { opacity: 1; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
         .loader {
             display: none; border: 3px solid #f3f3f3; border-top: 3px solid var(--primary);
             border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -122,6 +121,16 @@
             <input type="text" id="otp-input" placeholder="000000" style="text-align: center; font-size: 2rem; letter-spacing: 5px; font-weight: bold; color: var(--primary);">
             <button class="btn btn-primary" style="margin-top: 20px;" onclick="window.verifyOTP()">تفعيل الحساب والدخول</button>
         </div>
+
+        <div id="banned-view">
+            <i class="fas fa-user-slash" style="font-size: 4rem; color: var(--accent); margin-bottom: 20px;"></i>
+            <h3 style="color: var(--accent);">تم حظر حسابك!</h3>
+            <p style="margin-bottom: 25px; opacity: 0.8;">عذراً، لقد تم إيقاف وصولك للمنصة. يرجى التواصل مع الإدارة لفك الحظر.</p>
+            <button class="btn btn-outline" onclick="window.location.href='contact.html'">
+                <i class="fas fa-headset"></i> تواصل مع الدعم الفني
+            </button>
+            <span class="back-btn" style="margin-top: 20px;" onclick="location.reload()">العودة للخلف</span>
+        </div>
     </div>
 
     <script type="module">
@@ -144,23 +153,20 @@
         const db = getDatabase(app);
         const analytics = getAnalytics(app);
 
-        // Global variables
         let tempUserData = {};
         let genCode;
 
-        // Redirect if already logged in
         if(localStorage.getItem('userLoggedIn')) {
             window.location.href = "index.html";
         }
 
-        // Exposed functions to window scope for HTML onclick
         window.showForm = (type) => {
             document.getElementById('main-view').style.display = 'none';
             document.getElementById(type + '-view').style.display = 'block';
         };
 
         window.showMain = () => {
-            document.querySelectorAll('.auth-form, #otp-view').forEach(v => v.style.display = 'none');
+            document.querySelectorAll('.auth-form, #otp-view, #banned-view').forEach(v => v.style.display = 'none');
             document.getElementById('main-view').style.display = 'flex';
         };
 
@@ -192,11 +198,11 @@
                         country: country,
                         grade: grade,
                         pass: pass,
-                        role: "student",
+                        role: "student", // الرتبة الافتراضية طالب
+                        status: "active", // الحالة الافتراضية نشط
                         createdAt: new Date().toISOString()
                     };
 
-                    // Generate Verification Code
                     genCode = Math.floor(100000 + Math.random() * 900000);
                     alert("كود التفعيل الخاص بك (للتجربة): " + genCode);
                     
@@ -205,7 +211,6 @@
                 }
             } catch (error) {
                 alert("خطأ في الاتصال بالخادم");
-                console.error(error);
             } finally {
                 document.getElementById('reg-text').style.display = 'block';
                 document.getElementById('reg-loader').style.display = 'none';
@@ -219,7 +224,7 @@
                     await set(ref(db, 'students/' + tempUserData.phone), tempUserData);
                     localStorage.setItem('userLoggedIn', tempUserData.phone);
                     localStorage.setItem('userName', tempUserData.name);
-                    localStorage.setItem('userRole', "student");
+                    localStorage.setItem('userRole', tempUserData.role);
                     window.location.href = "index.html";
                 } catch (e) {
                     alert("فشل في حفظ البيانات");
@@ -241,10 +246,18 @@
                 
                 if (snapshot.exists()) {
                     const user = snapshot.val();
+                    
+                    // فحص الحظر أولاً
+                    if(user.status === "banned") {
+                        document.getElementById('login-view').style.display = 'none';
+                        document.getElementById('banned-view').style.display = 'block';
+                        return;
+                    }
+
                     if(user.pass === s) {
                         localStorage.setItem('userLoggedIn', p);
                         localStorage.setItem('userName', user.name);
-                        localStorage.setItem('userRole', user.role || "student");
+                        localStorage.setItem('userRole', user.role); // سيحمل القيمة سواء student أو admin
                         window.location.href = "index.html";
                     } else {
                         alert("كلمة السر غير صحيحة");
