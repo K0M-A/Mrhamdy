@@ -3,102 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مكتبة الفيديوهات | مستر حمدي</title>
+    <title>المحاضرات | الخبير حمدي عيد</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
     <style>
-        :root { --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; --card: #111827; --text: #e2e8f0; --gold: #ffd700; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: var(--bg); color: var(--text); padding-bottom: 50px; overflow-x: hidden; }
-
-        header { background: var(--card); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .back-btn { color: var(--primary); text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
-        .back-btn:hover { transform: translateX(-5px); }
-
-        .warning-banner {
-            background: linear-gradient(90deg, #ff1744, #b2102f);
-            color: white; padding: 15px; text-align: center; font-weight: bold; border-radius: 12px;
-            margin: 20px auto; max-width: 1160px; border: 2px solid rgba(255,255,255,0.2);
-            box-shadow: 0 5px 15px rgba(255, 23, 68, 0.3);
+        :root {
+            --primary: #22c55e;
+            --bg: #020617;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-top: 20px; }
-
-        .video-card { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; position: relative; }
-        .video-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,229,255,0.2); }
-        
-        .thumbnail { width: 100%; height: 180px; background: #000; display: flex; align-items: center; justify-content: center; position: relative; background-image: linear-gradient(45deg, #111, #222); }
-        .thumbnail i { font-size: 4rem; color: var(--primary); opacity: 0.4; transition: 0.3s; }
-        .video-card:hover .thumbnail i { opacity: 1; transform: scale(1.1); }
-        
-        .lock-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; color: var(--accent); }
-        .lock-overlay i { font-size: 2.5rem; margin-bottom: 10px; color: var(--accent) !important; opacity: 1 !important; }
-
-        .video-info { padding: 20px; }
-        .video-info h3 { font-size: 1.1rem; margin-bottom: 15px; color: #fff; line-height: 1.4; height: 3rem; overflow: hidden; }
-        .price-tag { color: var(--gold); font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 1rem; }
-
-        .btn-play { background: var(--primary); color: #000; width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
-        .btn-play:hover { background: #fff; transform: scale(1.02); }
-        .btn-buy { background: var(--accent); color: white; }
-        .btn-buy:hover { background: #ff4081; color: white; }
-
-        /* مشغل الفيديو */
-        #player-modal { position: fixed; inset: 0; background: #000; z-index: 2000; display: none; }
-        #video-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        #video-frame { width: 100%; height: 100%; border: none; }
-        
-        .watermark { 
-            position: absolute; color: rgba(255,255,255,0.2); font-size: 1.2rem; 
-            pointer-events: none; z-index: 2001; font-weight: 900; white-space: nowrap;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); transition: 0.5s;
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: white;
+            margin: 0;
+            user-select: none; /* منع النسخ */
         }
-        .close-player { position: absolute; top: 25px; right: 25px; color: white; font-size: 2.5rem; cursor: pointer; z-index: 2002; background: rgba(0,0,0,0.5); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 
-        /* واجهة الحظر */
-        #banned-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-        
-        /* Loading */
-        #loader { text-align: center; padding: 50px; color: var(--primary); font-size: 1.5rem; }
+        header {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 25px 5%;
+        }
+
+        .course-card {
+            background: var(--glass);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 180px;
+            background: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            color: var(--primary);
+        }
+
+        .course-info { padding: 15px; }
+        .course-info h3 { margin: 0 0 10px 0; font-size: 1.1rem; }
+        .course-info p { font-size: 0.85rem; color: #94a3b8; height: 40px; overflow: hidden; }
+
+        .price-tag {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .btn-watch {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* مٌشغل الفيديو والحماية */
+        #videoPlayerContainer {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: black;
+            z-index: 2000;
+        }
+
+        video { width: 100%; height: 100%; }
+
+        /* العلامة المائية العائمة */
+        #watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.2rem;
+            pointer-events: none;
+            z-index: 2100;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        .close-video {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: rgba(255,0,0,0.5);
+            color: white; border: none;
+            padding: 10px 15px; border-radius: 50%;
+            cursor: pointer; z-index: 2200;
+        }
     </style>
 </head>
-<body>
-
-    <div id="banned-overlay">
-        <div class="animate__animated animate__fadeInDown">
-            <i class="fas fa-user-slash" style="font-size: 6rem; color: var(--accent); margin-bottom: 25px;"></i>
-            <h1 style="color: white; margin-bottom: 15px; font-size: 2.5rem;">تم حظر حسابك!</h1>
-            <p style="color: #94a3b8; margin-bottom: 35px; font-size: 1.2rem;">عذراً، تم رصد محاولة انتهاك لسياسات الخصوصية (تصوير شاشة).</p>
-            <a href="contact.html" class="btn-play" style="max-width: 300px; margin: 0 auto; text-decoration: none;">
-                <i class="fas fa-headset"></i> مراسلة المستر لفك الحظر
-            </a>
+<body oncontextmenu="return false;"> <header>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <a href="index.html" style="color: white;"><i class="fas fa-arrow-right"></i></a>
+            <h2 style="font-size: 1.2rem; margin: 0;">محاضرات عالم الأحياء</h2>
         </div>
-    </div>
-
-    <div id="player-modal">
-        <span class="close-player" onclick="closeVideo()">&times;</span>
-        <div id="watermark" class="watermark"></div>
-        <div id="video-container"></div>
-    </div>
-
-    <header>
-        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
-        <div class="logo" style="font-weight: 900; color: var(--primary); font-size: 1.3rem;">🧬 أكاديمية الإمبراطور</div>
+        <div id="studentBalance" style="color: #fcc419; font-weight: 900;">
+            رصيدك: 0 ج.م
+        </div>
     </header>
 
-    <div class="container">
-        <div class="warning-banner animate__animated animate__pulse animate__infinite">
-            <i class="fas fa-exclamation-triangle"></i> تنبيه: تصوير الشاشة يؤدي للحظر التلقائي. شاهد بتركيز دون محاولة النسخ.
+    <div class="video-grid" id="coursesList">
         </div>
 
-        <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري تحميل المحاضرات...</div>
-        <div class="video-grid" id="videos-display"></div>
+    <div id="videoPlayerContainer">
+        <button class="close-video" onclick="closePlayer()"><i class="fas fa-times"></i></button>
+        <div id="watermark"></div>
+        <video id="mainVideo" controlsList="nodownload" onplay="startWatermark()"></video>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script>
         const firebaseConfig = {
@@ -108,178 +146,120 @@
             projectId: "mrhamdy-1c406",
             storageBucket: "mrhamdy-1c406.firebasestorage.app",
             messagingSenderId: "806268398144",
-            appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
+            appId: "1:806268398144:web:c40aef6b378377f72b4da5"
         };
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const db = firebase.firestore();
+        const auth = firebase.auth();
 
-        const userPhone = localStorage.getItem('userLoggedIn');
-        const userName = localStorage.getItem('userName') || "طالب مجهول";
+        let userData = {};
 
-        if (!userPhone) {
-            window.location.href = "login.html";
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadUserData(user);
+                loadCourses();
+            } else {
+                window.location.href = "go.html";
+            }
+        });
+
+        async function loadUserData(user) {
+            const doc = await db.collection("users").doc(user.uid).get();
+            userData = doc.data();
+            document.getElementById('studentBalance').innerText = `رصيدك: ${userData.balance || 0} ج.م`;
+            
+            // وضع بيانات العلامة المائية
+            document.getElementById('watermark').innerText = `${userData.name} - ${userData.phone}`;
         }
 
-        // 1. فحص الحظر
-        function checkBan() {
-            db.ref('users').orderByChild('phone').equalTo(userPhone).on('value', snap => {
-                if(snap.exists()) {
-                    const u = Object.values(snap.val())[0];
-                    if(u.status === 'banned') {
-                        document.getElementById('banned-overlay').style.display = 'flex';
-                        document.body.style.overflow = 'hidden';
-                    }
-                }
+        async function loadCourses() {
+            const snapshot = await db.collection("courses").get();
+            const list = document.getElementById('coursesList');
+            list.innerHTML = "";
+
+            snapshot.forEach(doc => {
+                const course = doc.data();
+                const isOwned = (userData.ownedCourses || []).includes(doc.id);
+
+                list.innerHTML += `
+                    <div class="course-card">
+                        <div class="thumbnail"><i class="fas fa-microscope"></i></div>
+                        <div class="course-info">
+                            <h3>${course.title}</h3>
+                            <p>${course.description}</p>
+                            <div class="price-tag">
+                                <span style="font-weight:bold">${isOwned ? 'تم الشراء' : course.price + ' ج.م'}</span>
+                                <button class="btn-watch" onclick="handleCourse('${doc.id}', ${course.price}, '${course.videoUrl}', ${isOwned})">
+                                    ${isOwned ? 'مشاهدة الآن' : 'شراء المحاضرة'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
             });
         }
-        checkBan();
 
-        // 2. تحميل كافة الفيديوهات
-        function loadAllVideos() {
-            db.ref('videos').on('value', vSnap => {
-                const display = document.getElementById('videos-display');
-                const loader = document.getElementById('loader');
-                display.innerHTML = "";
-                loader.style.display = "none";
-
-                if (!vSnap.exists()) {
-                    display.innerHTML = "<p style='grid-column: 1/-1; text-align:center; opacity:0.5;'>لا توجد فيديوهات مرفوعة حالياً.</p>";
-                    return;
-                }
-
-                db.ref('users').orderByChild('phone').equalTo(userPhone).once('value', uSnap => {
-                    const userData = Object.values(uSnap.val())[0];
-                    const myPurchases = userData.purchasedVideos || {};
-
-                    vSnap.forEach(child => {
-                        const v = child.val();
-                        const vId = child.key;
-                        const isBought = v.price === 0 || myPurchases[vId];
-
-                        const card = `
-                            <div class="video-card animate__animated animate__fadeInUp">
-                                <div class="thumbnail">
-                                    <i class="fas fa-play-circle"></i>
-                                    ${!isBought ? `
-                                        <div class="lock-overlay">
-                                            <i class="fas fa-lock"></i>
-                                            <p>محتوى مطلوب اشتراكه</p>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                                <div class="video-info">
-                                    <h3>${v.title}</h3>
-                                    <div class="price-tag">
-                                        <i class="fas fa-coins"></i> 
-                                        ${v.price === 0 ? 'مجاني تماماً' : v.price + ' ج.م'}
-                                    </div>
-                                    ${isBought ? 
-                                        `<button class="btn-play" onclick="playVideo('${v.url}', '${vId}')"><i class="fas fa-play"></i> فتح المحاضرة</button>` :
-                                        `<button class="btn-play btn-buy" onclick="buyVideo('${vId}', ${v.price})"><i class="fas fa-shopping-cart"></i> اشتراك الآن</button>`
-                                    }
-                                </div>
-                            </div>`;
-                        display.innerHTML += card;
-                    });
-                });
-            });
-        }
-        loadAllVideos();
-
-        // 3. شراء الفيديو
-        function buyVideo(id, price) {
-            db.ref('users').orderByChild('phone').equalTo(userPhone).once('value', snap => {
-                const key = Object.keys(snap.val())[0];
-                const balance = snap.val()[key].balance || 0;
-
-                if (balance >= price) {
-                    if (confirm(`هل أنت متأكد من خصم ${price} ج.م من رصيدك لفتح هذه المحاضرة؟`)) {
-                        db.ref('users/' + key).update({ balance: balance - price });
-                        db.ref('users/' + key + '/purchasedVideos/' + id).set(true);
-                        db.ref('admin/logs').push({
-                            name: userName, phone: userPhone, action: "💸 اشترى فيديو بمبلغ " + price, time: new Date().toLocaleString('ar-EG')
+        async function handleCourse(id, price, url, isOwned) {
+            if (isOwned || userData.phone === "01111276700") {
+                playVideo(url);
+            } else {
+                if (userData.balance >= price) {
+                    if (confirm(`هل تريد خصم ${price} ج.م لمشاهدة هذه المحاضرة؟`)) {
+                        const newBalance = userData.balance - price;
+                        const owned = userData.ownedCourses || [];
+                        owned.push(id);
+                        
+                        await db.collection("users").doc(auth.currentUser.uid).update({
+                            balance: newBalance,
+                            ownedCourses: owned,
+                            totalSpent: (userData.totalSpent || 0) + price
                         });
-                        alert("تم الاشتراك بنجاح! استمتع بالمشاهدة.");
+                        alert("تم الشراء بنجاح!");
+                        location.reload();
                     }
                 } else {
-                    alert("رصيدك الحالي (" + balance + " ج.م) لا يكفي. تواصل مع المستر للشحن.");
-                    window.location.href = "contact.html";
+                    alert("عذراً، رصيدك غير كافٍ. تواصل مع المستر لشحن رصيدك.");
                 }
-            });
-        }
-
-        // 4. تشغيل وحماية
-        let watermarkInterval;
-        function playVideo(url, id) {
-            const modal = document.getElementById('player-modal');
-            const container = document.getElementById('video-container');
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-
-            let embedUrl = url;
-            if (url.includes('youtube.com/watch?v=')) {
-                const vidId = url.split('v=')[1].split('&')[0];
-                embedUrl = `https://www.youtube.com/embed/${vidId}?autoplay=1&rel=0&modestbranding=1&controls=1`;
             }
-
-            container.innerHTML = `<iframe id="video-frame" src="${embedUrl}" allow="autoplay; fullscreen"></iframe>`;
-            
-            // تفعيل العلامة المائية
-            const wm = document.getElementById('watermark');
-            wm.innerText = `${userName} - ${userPhone}`;
-            
-            watermarkInterval = setInterval(() => {
-                const x = Math.random() * (window.innerWidth - 200);
-                const y = Math.random() * (window.innerHeight - 50);
-                wm.style.left = x + 'px';
-                wm.style.top = y + 'px';
-            }, 3000);
-
-            db.ref('admin/logs').push({
-                name: userName, phone: userPhone, action: "📺 بدأ مشاهدة: " + id, time: new Date().toLocaleString('ar-EG')
-            });
         }
 
-        function closeVideo() {
-            document.getElementById('player-modal').style.display = 'none';
-            document.getElementById('video-container').innerHTML = '';
-            document.body.style.overflow = 'auto';
-            clearInterval(watermarkInterval);
+        function playVideo(url) {
+            const player = document.getElementById('mainVideo');
+            const container = document.getElementById('videoPlayerContainer');
+            player.src = url;
+            container.style.display = 'block';
+            player.play();
         }
 
-        // 5. نظام الحماية الصارم
-        function banUser(reason) {
-            db.ref('users').orderByChild('phone').equalTo(userPhone).once('value', snap => {
-                if(snap.exists()) {
-                    const key = Object.keys(snap.val())[0];
-                    db.ref('users/' + key).update({ status: 'banned', banReason: reason });
-                    db.ref('admin/logs').push({
-                        name: userName, phone: userPhone, action: "🚫 حظر آلي: " + reason, time: new Date().toLocaleString('ar-EG')
-                    });
-                    location.reload();
-                }
-            });
+        function closePlayer() {
+            const player = document.getElementById('mainVideo');
+            player.pause();
+            document.getElementById('videoPlayerContainer').style.display = 'none';
         }
 
-        document.addEventListener('keydown', e => {
-            if (e.key === "PrintScreen") {
-                banUser("تصوير شاشة (PrintScreen)");
-            }
-            if (e.ctrlKey && (e.key === "p" || e.key === "u" || e.key === "s")) {
-                e.preventDefault();
-                banUser("محاولة استخدام اختصارات المتصفح");
+        // تحريك العلامة المائية عشوائياً
+        function startWatermark() {
+            const mark = document.getElementById('watermark');
+            setInterval(() => {
+                const x = Math.random() * 70;
+                const y = Math.random() * 80;
+                mark.style.left = x + "%";
+                mark.style.top = y + "%";
+            }, 5000);
+        }
+
+        // حماية متقدمة: كشف محاولة تصوير الشاشة (عبر مفاتيح الكيبورد)
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen' || e.metaKey || e.ctrlKey) {
+                alert("محاولة تصوير الشاشة تسبب الحظر التلقائي!");
+                blockStudent();
             }
         });
 
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        
-        // كشف برامج التسجيل عند تغيير حالة النافذة أثناء التشغيل
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden && document.getElementById('player-modal').style.display === 'block') {
-                closeVideo();
-            }
-        });
-
+        async function blockStudent() {
+            await db.collection("users").doc(auth.currentUser.uid).update({ status: 'blocked' });
+            window.location.href = "contact.html";
+        }
     </script>
 </body>
 </html>
