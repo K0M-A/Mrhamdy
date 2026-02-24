@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم الإمبراطور | مستر حمدي</title>
+    <title>إدارة الإمبراطور | مستر حمدي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -11,7 +11,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
 
-        /* شاشة الدخول */
+        /* الشاشة الافتتاحية */
         #login-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; }
         .login-card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--primary); text-align: center; width: 90%; max-width: 400px; }
 
@@ -35,74 +35,83 @@
         .btn-a { background: var(--accent); color: white; }
 
         /* الشات */
-        .chat-list-item { background: #0f172a; padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; border-right: 4px solid var(--primary); }
-        .chat-window { height: 400px; overflow-y: auto; background: #0b111e; padding: 15px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; }
-        .m-student { background: #1e293b; padding: 10px; border-radius: 10px; align-self: flex-start; }
-        .m-admin { background: var(--primary); color: black; padding: 10px; border-radius: 10px; align-self: flex-end; }
+        .chat-list-item { background: #0f172a; padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; border-right: 4px solid var(--primary); transition: 0.2s; }
+        .chat-list-item:hover { background: #1e293b; }
+        .chat-window { height: 400px; overflow-y: auto; background: #0b111e; padding: 15px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #334155; }
+        .m-student { background: #1e293b; padding: 12px; border-radius: 15px 15px 0 15px; align-self: flex-start; max-width: 80%; border: 1px solid #444; }
+        .m-admin { background: var(--primary); color: black; padding: 12px; border-radius: 15px 15px 15px 0; align-self: flex-end; max-width: 80%; }
         
-        /* قائمة المتصلين */
-        .online-user { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .online-user { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 10px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
 
     <div id="login-overlay">
         <div class="login-card">
+            <i class="fas fa-crown" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
             <h2>دخول مستر حمدي</h2>
-            <input type="password" id="admin-pass" placeholder="كلمة السر">
-            <button class="btn btn-p" onclick="login()">دخول</button>
+            <input type="password" id="admin-pass" placeholder="كلمة السر الخاصة بك">
+            <button class="btn btn-p" onclick="login()">دخول للوحة التحكم</button>
         </div>
     </div>
 
     <div class="wrapper" id="admin-content" style="display:none;">
         <aside>
-            <h2 style="color: var(--primary); margin-bottom: 20px;">🧬 الإدارة</h2>
-            <div class="nav-item active" onclick="showSec('home', this)"><i class="fas fa-chart-pie"></i> الرقابة والنشاط</div>
-            <div class="nav-item" onclick="showSec('alerts', this)"><i class="fas fa-bell"></i> تنبيهات طارئة</div>
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: var(--primary);">🧬 الإمبراطور</h2>
+                <small>لوحة الإدارة الشاملة</small>
+            </div>
+            <div class="nav-item active" onclick="showSec('home', this)"><i class="fas fa-users-viewfinder"></i> الرقابة والنشاط</div>
+            <div class="nav-item" onclick="showSec('alerts', this)"><i class="fas fa-bullhorn"></i> تنبيهات طارئة</div>
             <div class="nav-item" onclick="showSec('chat', this)"><i class="fas fa-comments"></i> دردشة الطلاب</div>
-            <div class="nav-item" onclick="showSec('wallet', this)"><i class="fas fa-wallet"></i> الرصيد والمحافظ</div>
-            <div class="nav-item" onclick="showSec('content', this)"><i class="fas fa-upload"></i> فيديوهات وامتحانات</div>
+            <div class="nav-item" onclick="showSec('wallet', this)"><i class="fas fa-money-bill-transfer"></i> شحن وسحب رصيد</div>
+            <div class="nav-item" onclick="showSec('content', this)"><i class="fas fa-cloud-arrow-up"></i> رفع محتوى</div>
+            <div class="nav-item" onclick="showSec('exams', this)"><i class="fas fa-file-signature"></i> صنع امتحان</div>
             <div class="nav-item" onclick="showSec('bans', this)"><i class="fas fa-user-slash"></i> المحظورين</div>
-            <a href="index.html" class="nav-item" style="margin-top:20px; color:var(--accent)"><i class="fas fa-sign-out-alt"></i> الموقع الرئيسي</a>
+            <a href="index.html" class="nav-item" style="margin-top:20px; color:var(--accent); background: rgba(255,23,68,0.1);"><i class="fas fa-sign-out-alt"></i> خروج للموقع</a>
         </aside>
 
         <main>
             <header>
-                <div>لوحة التحكم المباشرة</div>
-                <div style="color: var(--primary)">المتصلون الآن: <span id="online-count">0</span></div>
+                <div>لوحة التحكم المباشرة | مستر حمدي</div>
+                <div style="background: rgba(0, 229, 255, 0.1); padding: 8px 15px; border-radius: 10px; border: 1px solid var(--primary);">
+                    <i class="fas fa-signal"></i> المتصلون الآن: <span id="online-count">0</span>
+                </div>
             </header>
 
             <section id="home" class="section active">
                 <div class="box">
-                    <h3>🟢 المتصلون حالياً (بالأسماء والأرقام)</h3>
-                    <div id="online-users-list" style="margin-top: 15px;"></div>
+                    <h3>🟢 المتصلون حالياً (بيانات تفصيلية)</h3>
+                    <div id="online-users-list" style="margin-top: 15px; max-height: 300px; overflow-y: auto;"></div>
                 </div>
                 <div class="box">
-                    <h3>📝 آخر سجلات النظام</h3>
-                    <div id="logs-display" style="font-size: 0.9rem; max-height: 300px; overflow-y: auto;"></div>
+                    <h3>📝 سجل النشاطات (Log)</h3>
+                    <div id="logs-display" style="font-size: 0.85rem; max-height: 250px; overflow-y: auto; color: #94a3b8;"></div>
                 </div>
             </section>
 
             <section id="alerts" class="section">
                 <div class="box">
-                    <h3>إرسال تنبيه للموقع الرئيسي</h3>
-                    <textarea id="alert-msg" placeholder="اكتب التنبيه الذي سيظهر لكل الطلاب الآن..."></textarea>
+                    <h3>إرسال تنبيه عاجل للموقع الرئيسي</h3>
+                    <p style="font-size: 0.8rem; color: var(--accent);">* سيظهر هذا النص في شريط متحرك أو رسالة منبثقة لكل الطلاب.</p>
+                    <textarea id="alert-msg" rows="4" placeholder="اكتب التنبيه هنا... مثال: تم رفع درس الأحياء الجديد، بالتوفيق للجميع!"></textarea>
                     <button class="btn btn-p" onclick="sendEmergencyAlert()">نشر التنبيه فوراً</button>
+                    <button class="btn btn-a" onclick="db.ref('admin/emergency_alert').remove(); alert('تم حذف التنبيه');">حذف التنبيه الحالي</button>
                 </div>
             </section>
 
             <section id="chat" class="section">
-                <div style="display: grid; grid-template-columns: 300px 1fr; gap: 20px;">
-                    <div class="box">
-                        <h4>الطلاب</h4>
+                <div style="display: grid; grid-template-columns: 320px 1fr; gap: 20px;">
+                    <div class="box" style="height: 550px; overflow-y: auto;">
+                        <h4>قائمة المحادثات</h4>
                         <div id="chat-users-list"></div>
                     </div>
-                    <div class="box">
-                        <h4 id="current-chat-name">اختر طالباً</h4>
+                    <div class="box" style="height: 550px; display: flex; flex-direction: column;">
+                        <h4 id="current-chat-name" style="border-bottom: 1px solid #334155; padding-bottom: 10px;">اختر طالباً للبدء</h4>
                         <div id="chat-window" class="chat-window"></div>
-                        <div style="display:flex; gap:10px; margin-top:10px;">
-                            <input type="text" id="admin-reply" placeholder="رد على الطالب...">
-                            <button class="btn btn-p" style="width:100px; margin:0" onclick="sendReply()">رد</button>
+                        <div style="display:flex; gap:10px; margin-top:15px;">
+                            <input type="text" id="admin-reply" placeholder="اكتب رسالتك هنا...">
+                            <button class="btn btn-p" style="width:100px; margin:0" onclick="sendReply()">إرسال</button>
                         </div>
                     </div>
                 </div>
@@ -110,33 +119,36 @@
 
             <section id="wallet" class="section">
                 <div class="box">
-                    <h3>إدارة الرصيد برقم الهاتف</h3>
-                    <input type="text" id="target-phone" placeholder="رقم هاتف الطالب">
-                    <input type="number" id="balance-amount" placeholder="المبلغ (موجب للشحن / سالب للسحب)">
-                    <button class="btn btn-p" onclick="manageBalance()">تحديث المحفظة</button>
+                    <h3>إدارة محافظ الطلاب</h3>
+                    <input type="text" id="target-phone" placeholder="رقم هاتف الطالب (بدون مسافات)">
+                    <input type="number" id="balance-amount" placeholder="المبلغ (استخدم - قبل الرقم للسحب)">
+                    <button class="btn btn-p" onclick="manageBalance()">تحديث رصيد المحفظة</button>
                 </div>
             </section>
 
             <section id="content" class="section">
                 <div class="box">
-                    <h4>رفع فيديو جديد</h4>
+                    <h3>رفع فيديو جديد للطلاب</h3>
                     <input type="text" id="v-title" placeholder="عنوان الدرس">
-                    <input type="text" id="v-url" placeholder="رابط الفيديو">
-                    <input type="number" id="v-price" placeholder="السعر (0 للمجاني)">
+                    <input type="text" id="v-url" placeholder="رابط الفيديو (Vimeo/YouTube/Custom)">
+                    <input type="number" id="v-price" placeholder="سعر الفيديو (0 للمجاني)">
                     <button class="btn btn-p" onclick="addVideo()">نشر الفيديو</button>
                 </div>
+            </section>
+
+            <section id="exams" class="section">
                 <div class="box">
-                    <h4>صنع امتحان سريع</h4>
+                    <h3>إنشاء امتحان إلكتروني</h3>
                     <input type="text" id="ex-title" placeholder="اسم الامتحان">
-                    <div id="q-container"></div>
-                    <button class="btn btn-a" onclick="addQ()">+ إضافة سؤال</button>
-                    <button class="btn btn-p" onclick="saveExam()">حفظ الامتحان</button>
+                    <div id="questions-container"></div>
+                    <button class="btn btn-a" onclick="addQuestionField()">+ إضافة سؤال جديد</button>
+                    <button class="btn btn-p" onclick="saveExam()">حفظ ونشر الامتحان</button>
                 </div>
             </section>
 
             <section id="bans" class="section">
                 <div class="box">
-                    <h3>قائمة الحظر</h3>
+                    <h3>قائمة الطلاب المحظورين</h3>
                     <div id="ban-list"></div>
                 </div>
             </section>
@@ -147,6 +159,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
+        // كود الفايرباز الخاص بك
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -161,14 +174,17 @@
 
         let currentChatPhone = null;
 
+        // الدخول للوحة التحكم
         function login() {
-            if(document.getElementById('admin-pass').value === 'hamdyhamdy012345') {
+            const pass = document.getElementById('admin-pass').value;
+            if(pass === 'hamdyhamdy012345') {
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'flex';
                 initDashboard();
-            }
+            } else { alert("كلمة السر خاطئة!"); }
         }
 
+        // التنقل بين الأقسام
         function showSec(id, el) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -176,8 +192,9 @@
             el.classList.add('active');
         }
 
+        // تهيئة البيانات
         function initDashboard() {
-            // رصد المتصلين أسمائهم وأرقامهم
+            // رصد المتصلين أسمائهم وأرقامهم (يتم إرسالها من index.html)
             db.ref('admin/online_users').on('value', s => {
                 const list = document.getElementById('online-users-list');
                 const count = document.getElementById('online-count');
@@ -186,59 +203,50 @@
                 s.forEach(child => {
                     const u = child.val();
                     list.innerHTML += `<div class="online-user">
-                        <span>👤 ${u.name || 'زائر'} (${u.phone || 'غير معروف'})</span>
-                        <span style="color:var(--primary)">متصل الآن</span>
+                        <span>👤 <strong>${u.name || 'زائر'}</strong> (${u.phone || 'غير معروف'})</span>
+                        <span style="color:var(--primary); font-size: 0.8rem;"><i class="fas fa-circle animate__animated animate__flash animate__infinite"></i> متصل الآن</span>
                     </div>`;
                 });
             });
 
             // السجلات
-            db.ref('admin/logs').limitToLast(20).on('value', s => {
+            db.ref('admin/logs').limitToLast(30).on('value', s => {
                 const disp = document.getElementById('logs-display');
                 disp.innerHTML = "";
-                s.forEach(child => {
-                    const log = child.val();
-                    disp.innerHTML += `<p>• ${log.time}: ${log.name} -> ${log.action}</p>`;
-                });
+                if(s.exists()){
+                    let logs = [];
+                    s.forEach(c => { logs.unshift(c.val()); });
+                    logs.forEach(log => {
+                        disp.innerHTML += `<p style="border-bottom:1px solid #222; padding:5px;">[${log.time}] <strong>${log.name}</strong>: ${log.action}</p>`;
+                    });
+                }
             });
 
             loadChats();
             loadBans();
         }
 
-        // إرسال تنبيه طارئ للصفحة الرئيسية
+        // --- التنبيهات الطارئة ---
         function sendEmergencyAlert() {
             const msg = document.getElementById('alert-msg').value;
             if(msg) {
                 db.ref('admin/emergency_alert').set({
                     text: msg,
-                    time: Date.now()
-                }).then(() => alert("تم نشر التنبيه"));
+                    time: new Date().toLocaleString('ar-EG')
+                }).then(() => alert("تم نشر التنبيه بنجاح"));
             }
         }
 
-        // إدارة الرصيد
-        function manageBalance() {
-            const phone = document.getElementById('target-phone').value;
-            const amt = parseFloat(document.getElementById('balance-amount').value);
-            db.ref('students/' + phone).once('value', s => {
-                if(s.exists()){
-                    const newBal = (s.val().wallet || 0) + amt;
-                    db.ref('students/' + phone).update({ wallet: newBal });
-                    db.ref('admin/logs').push({ name: s.val().name, action: `تعديل رصيد بـ ${amt}`, time: new Date().toLocaleTimeString() });
-                    alert("تم التحديث");
-                } else { alert("الهاتف غير مسجل"); }
-            });
-        }
-
-        // شات الطلاب (مثل واتساب)
+        // --- الدردشة ---
         function loadChats() {
             db.ref('admin/messages').on('value', s => {
                 const list = document.getElementById('chat-users-list');
                 list.innerHTML = "";
                 s.forEach(child => {
-                    list.innerHTML += `<div class="chat-list-item" onclick="openChat('${child.key}', '${child.val().sender}')">
-                        ${child.val().sender} <br> <small>${child.val().lastMsg || ''}</small>
+                    const data = child.val();
+                    list.innerHTML += `<div class="chat-list-item" onclick="openChat('${child.key}', '${data.sender}')">
+                        <strong>${data.sender}</strong> <br>
+                        <small style="color:var(--primary)">${data.lastMsg || 'اضغط للعرض'}</small>
                     </div>`;
                 });
             });
@@ -246,14 +254,14 @@
 
         function openChat(phone, name) {
             currentChatPhone = phone;
-            document.getElementById('current-chat-name').innerText = name;
+            document.getElementById('current-chat-name').innerText = "محادثة الطالب: " + name;
             db.ref('chats/' + phone).on('value', s => {
                 const win = document.getElementById('chat-window');
                 win.innerHTML = "";
                 s.forEach(c => {
                     const m = c.val();
                     const cls = m.type === 'admin' ? 'm-admin' : 'm-student';
-                    win.innerHTML += `<div class="${cls}">${m.message}</div>`;
+                    win.innerHTML += `<div class="${cls}">${m.message}<br><small style="font-size:0.6rem; opacity:0.7">${m.time}</small></div>`;
                 });
                 win.scrollTop = win.scrollHeight;
             });
@@ -262,50 +270,108 @@
         function sendReply() {
             const msg = document.getElementById('admin-reply').value;
             if(!currentChatPhone || !msg) return;
+            const now = new Date().toLocaleTimeString('ar-EG');
             db.ref('chats/' + currentChatPhone).push({
-                message: msg, type: 'admin', time: new Date().toLocaleTimeString()
+                message: msg, type: 'admin', time: now, timestamp: Date.now()
             });
+            db.ref('admin/messages/' + currentChatPhone).update({ lastMsg: msg });
             document.getElementById('admin-reply').value = "";
         }
 
-        // رفع فيديوهات
+        // --- المحفظة ---
+        function manageBalance() {
+            const phone = document.getElementById('target-phone').value.trim();
+            const amt = parseFloat(document.getElementById('balance-amount').value);
+            if(!phone || isNaN(amt)) return alert("أكمل البيانات");
+
+            db.ref('students/' + phone).once('value', s => {
+                if(s.exists()){
+                    const currentBal = s.val().wallet || 0;
+                    const newBal = currentBal + amt;
+                    db.ref('students/' + phone).update({ wallet: newBal });
+                    
+                    // إضافة للسجلات
+                    db.ref('admin/logs').push({
+                        name: s.val().name,
+                        action: `تعديل رصيد: ${amt} ج.م (الرصيد الحالي: ${newBal})`,
+                        time: new Date().toLocaleString('ar-EG')
+                    });
+                    alert("تم التحديث! الرصيد الجديد: " + newBal);
+                } else { alert("رقم الهاتف غير مسجل!"); }
+            });
+        }
+
+        // --- رفع فيديو ---
         function addVideo() {
             const title = document.getElementById('v-title').value;
             const url = document.getElementById('v-url').value;
-            const price = document.getElementById('v-price').value;
-            db.ref('videos').push({ title, url, price });
-            alert("تم الرفع");
+            const price = parseInt(document.getElementById('v-price').value) || 0;
+            if(title && url) {
+                db.ref('videos').push({ title, url, price, date: Date.now() });
+                alert("تم نشر الفيديو بنجاح");
+                document.getElementById('v-title').value = "";
+                document.getElementById('v-url').value = "";
+            }
         }
 
-        // صنع امتحان
-        function addQ() {
+        // --- الامتحانات ---
+        function addQuestionField() {
+            const container = document.getElementById('questions-container');
             const div = document.createElement('div');
-            div.innerHTML = `<input type="text" class="q-val" placeholder="السؤال"> <input type="text" class="a-val" placeholder="الإجابة الصحيحة">`;
-            document.getElementById('q-container').appendChild(div);
+            div.className = 'box';
+            div.style.border = "1px solid #444";
+            div.innerHTML = `
+                <input type="text" placeholder="السؤال" class="q-text">
+                <input type="text" placeholder="الإجابة الصحيحة" class="q-correct">
+                <input type="text" placeholder="خطأ 1" class="q-wrong">
+                <input type="text" placeholder="خطأ 2" class="q-wrong">
+                <input type="text" placeholder="خطأ 3" class="q-wrong">
+            `;
+            container.appendChild(div);
         }
 
         function saveExam() {
             const title = document.getElementById('ex-title').value;
-            const qs = [];
-            document.querySelectorAll('#q-container div').forEach(d => {
-                qs.push({ q: d.querySelector('.q-val').value, ans: d.querySelector('.a-val').value });
+            const qBoxes = document.querySelectorAll('#questions-container .box');
+            let questions = [];
+            qBoxes.forEach(box => {
+                const q = box.querySelector('.q-text').value;
+                const correct = box.querySelector('.q-correct').value;
+                if(q && correct) {
+                    questions.push({
+                        q: q,
+                        correct: correct,
+                        options: [correct, ...Array.from(box.querySelectorAll('.q-wrong')).map(i => i.value)].sort(() => Math.random() - 0.5)
+                    });
+                }
             });
-            db.ref('exams').push({ title, questions: qs });
-            alert("تم حفظ الامتحان");
+            if(title && questions.length > 0) {
+                db.ref('exams').push({ title, questions, date: Date.now() });
+                alert("تم نشر الامتحان بنجاح");
+                location.reload();
+            } else { alert("يرجى ملء بيانات الامتحان"); }
         }
 
+        // --- المحظورين ---
         function loadBans() {
             db.ref('students').orderByChild('status').equalTo('banned').on('value', s => {
                 const list = document.getElementById('ban-list');
                 list.innerHTML = "";
+                if(!s.exists()) { list.innerHTML = "<p>لا يوجد طلاب محظورين حالياً.</p>"; return; }
                 s.forEach(child => {
-                    list.innerHTML += `<div>${child.val().name} (${child.key}) <button onclick="unban('${child.key}')">فك</button></div>`;
+                    const u = child.val();
+                    list.innerHTML += `<div class="online-user">
+                        <span>👤 ${u.name} (${child.key}) <br> <small style="color:var(--accent)">السبب: ${u.banReason || 'تلقائي'}</small></span>
+                        <button class="btn btn-p" style="width:100px; margin:0" onclick="unban('${child.key}')">فك الحظر</button>
+                    </div>`;
                 });
             });
         }
 
-        function unban(p) { db.ref('students/' + p).update({ status: 'active' }); }
-
+        function unban(phone) {
+            db.ref('students/' + phone).update({ status: 'active', banReason: null })
+            .then(() => alert("تم فك حظر الطالب بنجاح"));
+        }
     </script>
 </body>
 </html>
