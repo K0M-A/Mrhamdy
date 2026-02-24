@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة الإمبراطور | مستر حمدي</title>
+    <title>لوحة تحكم الإمبراطور | مستر حمدي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #00bfa5; --accent: #ff1744; --bg: #0b111e; --card: #1e293b; --text: #ffffff; }
+        :root { --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; --card: #1e293b; --text: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
 
-        /* شاشة تسجيل الدخول للوحة التحكم */
+        /* شاشة الدخول */
         #login-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; }
         .login-card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--primary); text-align: center; width: 90%; max-width: 400px; }
 
-        /* الهيكل العام للوحة */
         .wrapper { display: flex; min-height: 100vh; }
-        
         aside { width: 280px; background: #0f172a; padding: 20px; border-left: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; height: 100vh; }
         .nav-item { padding: 15px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; transition: 0.3s; color: #94a3b8; text-decoration: none; }
-        .nav-item:hover, .nav-item.active { background: var(--primary); color: white; }
+        .nav-item:hover, .nav-item.active { background: var(--primary); color: #000; font-weight: bold; }
 
         main { flex: 1; padding: 30px; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--card); padding: 20px; border-radius: 20px; }
@@ -32,118 +30,114 @@
         .box { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; }
         input, textarea, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #334155; background: #0b111e; color: white; outline: none; }
         
-        .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
-        .btn-p { background: var(--primary); color: white; }
-        .btn-g { background: #10b981; color: white; }
+        .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.3s; }
+        .btn-p { background: var(--primary); color: #000; }
         .btn-a { background: var(--accent); color: white; }
 
-        /* تصميم الشات والسجلات */
+        /* الشات */
         .chat-list-item { background: #0f172a; padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; border-right: 4px solid var(--primary); }
         .chat-window { height: 400px; overflow-y: auto; background: #0b111e; padding: 15px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; }
-        .m-student { background: #1e293b; padding: 10px; border-radius: 10px; align-self: flex-start; max-width: 80%; }
-        .m-admin { background: var(--primary); color: black; padding: 10px; border-radius: 10px; align-self: flex-end; max-width: 80%; }
-        .ban-item { background: #1e293b; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; margin-bottom: 10px; border-right: 4px solid var(--accent); }
-
-        @media (max-width: 768px) {
-            .wrapper { flex-direction: column; }
-            aside { width: 100%; height: auto; position: static; display: flex; overflow-x: auto; padding: 10px; }
-            .nav-item { white-space: nowrap; margin-bottom: 0; }
-        }
+        .m-student { background: #1e293b; padding: 10px; border-radius: 10px; align-self: flex-start; }
+        .m-admin { background: var(--primary); color: black; padding: 10px; border-radius: 10px; align-self: flex-end; }
+        
+        /* قائمة المتصلين */
+        .online-user { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
 
     <div id="login-overlay">
         <div class="login-card">
-            <i class="fas fa-unlock-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
-            <h2>لوحة إمبراطور الأحياء</h2>
-            <input type="password" id="pass" placeholder="كلمة السر الخاصة بك">
-            <button class="btn btn-p" onclick="login()">دخول للوحة التحكم</button>
+            <h2>دخول مستر حمدي</h2>
+            <input type="password" id="admin-pass" placeholder="كلمة السر">
+            <button class="btn btn-p" onclick="login()">دخول</button>
         </div>
     </div>
 
     <div class="wrapper" id="admin-content" style="display:none;">
         <aside>
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h2 style="color: var(--primary);">🧬 الإمبراطور</h2>
-                <small>لوحة الإدارة الشاملة</small>
-            </div>
-            <div class="nav-item active" onclick="showSec('home', this)"><i class="fas fa-home"></i> الرئيسية</div>
-            <div class="nav-item" onclick="showSec('chat', this)"><i class="fas fa-comments"></i> رسائل الطلاب</div>
-            <div class="nav-item" onclick="showSec('users', this)"><i class="fas fa-wallet"></i> شحن الرصيد</div>
-            <div class="nav-item" onclick="showSec('vids', this)"><i class="fas fa-video"></i> الفيديوهات</div>
-            <div class="nav-item" onclick="showSec('exams', this)"><i class="fas fa-file-pen"></i> الامتحانات</div>
+            <h2 style="color: var(--primary); margin-bottom: 20px;">🧬 الإدارة</h2>
+            <div class="nav-item active" onclick="showSec('home', this)"><i class="fas fa-chart-pie"></i> الرقابة والنشاط</div>
+            <div class="nav-item" onclick="showSec('alerts', this)"><i class="fas fa-bell"></i> تنبيهات طارئة</div>
+            <div class="nav-item" onclick="showSec('chat', this)"><i class="fas fa-comments"></i> دردشة الطلاب</div>
+            <div class="nav-item" onclick="showSec('wallet', this)"><i class="fas fa-wallet"></i> الرصيد والمحافظ</div>
+            <div class="nav-item" onclick="showSec('content', this)"><i class="fas fa-upload"></i> فيديوهات وامتحانات</div>
             <div class="nav-item" onclick="showSec('bans', this)"><i class="fas fa-user-slash"></i> المحظورين</div>
-            <a href="index.html" class="nav-item" style="text-decoration: none; margin-top: 50px; background: rgba(255,23,68,0.1); color: var(--accent);">
-                <i class="fas fa-sign-out-alt"></i> خروج للموقع
-            </a>
+            <a href="index.html" class="nav-item" style="margin-top:20px; color:var(--accent)"><i class="fas fa-sign-out-alt"></i> الموقع الرئيسي</a>
         </aside>
 
         <main>
             <header>
-                <div>مرحباً بك يا مستر حمدي 👋</div>
-                <div style="background: rgba(0, 191, 165, 0.1); padding: 8px 15px; border-radius: 10px; border: 1px solid var(--primary);">
-                    <i class="fas fa-users"></i> المتصلين الآن: <span id="online-count">0</span>
-                </div>
+                <div>لوحة التحكم المباشرة</div>
+                <div style="color: var(--primary)">المتصلون الآن: <span id="online-count">0</span></div>
             </header>
 
             <section id="home" class="section active">
                 <div class="box">
-                    <h2><i class="fas fa-chart-line"></i> أحدث سجلات نشاط الطلاب</h2>
-                    <div id="logs-display" style="max-height: 500px; overflow-y: auto; margin-top:15px;"></div>
+                    <h3>🟢 المتصلون حالياً (بالأسماء والأرقام)</h3>
+                    <div id="online-users-list" style="margin-top: 15px;"></div>
+                </div>
+                <div class="box">
+                    <h3>📝 آخر سجلات النظام</h3>
+                    <div id="logs-display" style="font-size: 0.9rem; max-height: 300px; overflow-y: auto;"></div>
+                </div>
+            </section>
+
+            <section id="alerts" class="section">
+                <div class="box">
+                    <h3>إرسال تنبيه للموقع الرئيسي</h3>
+                    <textarea id="alert-msg" placeholder="اكتب التنبيه الذي سيظهر لكل الطلاب الآن..."></textarea>
+                    <button class="btn btn-p" onclick="sendEmergencyAlert()">نشر التنبيه فوراً</button>
                 </div>
             </section>
 
             <section id="chat" class="section">
                 <div style="display: grid; grid-template-columns: 300px 1fr; gap: 20px;">
-                    <div class="box" style="height: 600px; overflow-y: auto;">
-                        <h3>قائمة الطلاب</h3>
+                    <div class="box">
+                        <h4>الطلاب</h4>
                         <div id="chat-users-list"></div>
                     </div>
                     <div class="box">
-                        <h3 id="current-chat-name">اختر طالباً للرد عليه</h3>
+                        <h4 id="current-chat-name">اختر طالباً</h4>
                         <div id="chat-window" class="chat-window"></div>
-                        <div style="display: flex; gap: 10px; margin-top: 15px;">
-                            <input type="text" id="admin-msg-input" placeholder="اكتب ردك هنا...">
-                            <button class="btn btn-p" style="width: 80px; margin: 0;" onclick="sendReply()">إرسال</button>
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+                            <input type="text" id="admin-reply" placeholder="رد على الطالب...">
+                            <button class="btn btn-p" style="width:100px; margin:0" onclick="sendReply()">رد</button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="users" class="section">
+            <section id="wallet" class="section">
                 <div class="box">
-                    <h2><i class="fas fa-hand-holding-dollar"></i> إدارة محافظ الطلاب</h2>
-                    <input type="text" id="std-phone" placeholder="رقم هاتف الطالب المسجل">
-                    <input type="number" id="amount" placeholder="المبلغ (مثال: 50 للشحن أو -50 للخصم)">
-                    <button class="btn btn-g" onclick="updateBalance()">تحديث الرصيد الآن</button>
+                    <h3>إدارة الرصيد برقم الهاتف</h3>
+                    <input type="text" id="target-phone" placeholder="رقم هاتف الطالب">
+                    <input type="number" id="balance-amount" placeholder="المبلغ (موجب للشحن / سالب للسحب)">
+                    <button class="btn btn-p" onclick="manageBalance()">تحديث المحفظة</button>
                 </div>
             </section>
 
-            <section id="vids" class="section">
+            <section id="content" class="section">
                 <div class="box">
-                    <h2><i class="fas fa-plus"></i> إضافة درس جديد</h2>
-                    <input type="text" id="vid-title" placeholder="عنوان الدرس">
-                    <input type="text" id="vid-url" placeholder="رابط الفيديو">
-                    <input type="number" id="vid-price" placeholder="سعر الدرس (0 للمجاني)">
-                    <button class="btn btn-p" onclick="uploadVideo()">نشر الدرس فوراً</button>
+                    <h4>رفع فيديو جديد</h4>
+                    <input type="text" id="v-title" placeholder="عنوان الدرس">
+                    <input type="text" id="v-url" placeholder="رابط الفيديو">
+                    <input type="number" id="v-price" placeholder="السعر (0 للمجاني)">
+                    <button class="btn btn-p" onclick="addVideo()">نشر الفيديو</button>
                 </div>
-            </section>
-
-            <section id="exams" class="section">
                 <div class="box">
-                    <h2><i class="fas fa-file-signature"></i> إنشاء امتحان إلكتروني</h2>
-                    <input type="text" id="exam-title" placeholder="عنوان الامتحان">
-                    <div id="questions-container"></div>
-                    <button class="btn btn-a" onclick="addQuestionField()">+ إضافة سؤال جديد</button>
-                    <button class="btn btn-p" onclick="saveExam()">حفظ ونشر الامتحان</button>
+                    <h4>صنع امتحان سريع</h4>
+                    <input type="text" id="ex-title" placeholder="اسم الامتحان">
+                    <div id="q-container"></div>
+                    <button class="btn btn-a" onclick="addQ()">+ إضافة سؤال</button>
+                    <button class="btn btn-p" onclick="saveExam()">حفظ الامتحان</button>
                 </div>
             </section>
 
             <section id="bans" class="section">
                 <div class="box">
-                    <h2><i class="fas fa-user-slash"></i> قائمة الحظر</h2>
-                    <div id="banned-users-display"></div>
+                    <h3>قائمة الحظر</h3>
+                    <div id="ban-list"></div>
                 </div>
             </section>
         </main>
@@ -153,7 +147,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // إعدادات Firebase المأخوذة من ملفاتك
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -161,24 +154,21 @@
             projectId: "mrhamdy-1c406",
             storageBucket: "mrhamdy-1c406.firebasestorage.app",
             messagingSenderId: "806268398144",
-            appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
+            appId: "1:806268398144:web:c40aef6b378377f72b4da5"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
         let currentChatPhone = null;
 
-        // وظيفة تسجيل دخول الأدمن
         function login() {
-            const pass = document.getElementById('pass').value;
-            if(pass === 'hamdyhamdy012345') {
-                document.getElementById('login-overlay').style.display='none';
-                document.getElementById('admin-content').style.display='flex';
+            if(document.getElementById('admin-pass').value === 'hamdyhamdy012345') {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'flex';
                 initDashboard();
-            } else { alert("كلمة السر خاطئة يا مستر!"); }
+            }
         }
 
-        // التنقل بين الأقسام
         function showSec(id, el) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -186,165 +176,136 @@
             el.classList.add('active');
         }
 
-        // تهيئة البيانات عند الدخول
         function initDashboard() {
-            loadLogs();
-            loadBannedUsers();
-            loadChatUsers();
-            // تحديث عدد المتصلين لحظياً
+            // رصد المتصلين أسمائهم وأرقامهم
             db.ref('admin/online_users').on('value', s => {
-                document.getElementById('online-count').innerText = s.numChildren() || 0;
+                const list = document.getElementById('online-users-list');
+                const count = document.getElementById('online-count');
+                list.innerHTML = "";
+                count.innerText = s.numChildren() || 0;
+                s.forEach(child => {
+                    const u = child.val();
+                    list.innerHTML += `<div class="online-user">
+                        <span>👤 ${u.name || 'زائر'} (${u.phone || 'غير معروف'})</span>
+                        <span style="color:var(--primary)">متصل الآن</span>
+                    </div>`;
+                });
+            });
+
+            // السجلات
+            db.ref('admin/logs').limitToLast(20).on('value', s => {
+                const disp = document.getElementById('logs-display');
+                disp.innerHTML = "";
+                s.forEach(child => {
+                    const log = child.val();
+                    disp.innerHTML += `<p>• ${log.time}: ${log.name} -> ${log.action}</p>`;
+                });
+            });
+
+            loadChats();
+            loadBans();
+        }
+
+        // إرسال تنبيه طارئ للصفحة الرئيسية
+        function sendEmergencyAlert() {
+            const msg = document.getElementById('alert-msg').value;
+            if(msg) {
+                db.ref('admin/emergency_alert').set({
+                    text: msg,
+                    time: Date.now()
+                }).then(() => alert("تم نشر التنبيه"));
+            }
+        }
+
+        // إدارة الرصيد
+        function manageBalance() {
+            const phone = document.getElementById('target-phone').value;
+            const amt = parseFloat(document.getElementById('balance-amount').value);
+            db.ref('students/' + phone).once('value', s => {
+                if(s.exists()){
+                    const newBal = (s.val().wallet || 0) + amt;
+                    db.ref('students/' + phone).update({ wallet: newBal });
+                    db.ref('admin/logs').push({ name: s.val().name, action: `تعديل رصيد بـ ${amt}`, time: new Date().toLocaleTimeString() });
+                    alert("تم التحديث");
+                } else { alert("الهاتف غير مسجل"); }
             });
         }
 
-        // --- نظام الشات (مرتبط بـ contact.html) ---
-        function loadChatUsers() {
+        // شات الطلاب (مثل واتساب)
+        function loadChats() {
             db.ref('admin/messages').on('value', s => {
                 const list = document.getElementById('chat-users-list');
                 list.innerHTML = "";
                 s.forEach(child => {
-                    const data = child.val();
-                    list.innerHTML += `
-                        <div class="chat-list-item" onclick="openChat('${child.key}', '${data.sender}')">
-                            <strong>${data.sender}</strong><br>
-                            <small style="opacity:0.6">${data.lastMsg || 'محادثة جديدة'}</small>
-                        </div>`;
+                    list.innerHTML += `<div class="chat-list-item" onclick="openChat('${child.key}', '${child.val().sender}')">
+                        ${child.val().sender} <br> <small>${child.val().lastMsg || ''}</small>
+                    </div>`;
                 });
             });
         }
 
         function openChat(phone, name) {
             currentChatPhone = phone;
-            document.getElementById('current-chat-name').innerText = "محادثة: " + name;
-            const chatWin = document.getElementById('chat-window');
-            
+            document.getElementById('current-chat-name').innerText = name;
             db.ref('chats/' + phone).on('value', s => {
-                chatWin.innerHTML = "";
-                s.forEach(child => {
-                    const m = child.val();
-                    const typeClass = m.type === 'student' ? 'm-student' : 'm-admin';
-                    chatWin.innerHTML += `<div class="${typeClass}">${m.message}<br><small style="font-size:0.6rem; opacity:0.7">${m.time}</small></div>`;
+                const win = document.getElementById('chat-window');
+                win.innerHTML = "";
+                s.forEach(c => {
+                    const m = c.val();
+                    const cls = m.type === 'admin' ? 'm-admin' : 'm-student';
+                    win.innerHTML += `<div class="${cls}">${m.message}</div>`;
                 });
-                chatWin.scrollTop = chatWin.scrollHeight;
+                win.scrollTop = win.scrollHeight;
             });
         }
 
         function sendReply() {
-            const txt = document.getElementById('admin-msg-input').value;
-            if(!currentChatPhone || !txt) return;
-            const msgData = {
-                sender: "المستر",
-                message: txt,
-                time: new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'}),
-                type: 'admin',
-                timestamp: Date.now()
-            };
-            db.ref('chats/' + currentChatPhone).push(msgData).then(() => {
-                document.getElementById('admin-msg-input').value = "";
+            const msg = document.getElementById('admin-reply').value;
+            if(!currentChatPhone || !msg) return;
+            db.ref('chats/' + currentChatPhone).push({
+                message: msg, type: 'admin', time: new Date().toLocaleTimeString()
             });
+            document.getElementById('admin-reply').value = "";
         }
 
-        // --- نظام الرصيد (مرتبط بـ go.html) ---
-        function updateBalance() {
-            const phone = document.getElementById('std-phone').value;
-            const amt = parseFloat(document.getElementById('amount').value);
-            
-            db.ref('users').orderByChild('phone').equalTo(phone).once('value', snapshot => {
-                if(snapshot.exists()) {
-                    const key = Object.keys(snapshot.val())[0];
-                    const currentBal = snapshot.val()[key].balance || 0;
-                    const newBal = currentBal + amt;
-                    db.ref('users/' + key).update({ balance: newBal });
-                    
-                    db.ref('admin/logs').push({
-                        name: snapshot.val()[key].name,
-                        action: `تم ${amt > 0 ? 'شحن' : 'سحب'} رصيد بقيمة ${Math.abs(amt)} ج.م`,
-                        time: new Date().toLocaleString('ar-EG')
-                    });
-                    alert("تمت العملية بنجاح!");
-                } else { alert("هذا الرقم غير مسجل!"); }
-            });
+        // رفع فيديوهات
+        function addVideo() {
+            const title = document.getElementById('v-title').value;
+            const url = document.getElementById('v-url').value;
+            const price = document.getElementById('v-price').value;
+            db.ref('videos').push({ title, url, price });
+            alert("تم الرفع");
         }
 
-        // --- إضافة الفيديوهات (مرتبط بـ videos.html) ---
-        function uploadVideo() {
-            const title = document.getElementById('vid-title').value;
-            const url = document.getElementById('vid-url').value;
-            const price = parseInt(document.getElementById('vid-price').value) || 0;
-            if(title && url) {
-                db.ref('videos').push({ title, url, price, date: Date.now() });
-                alert("تم نشر الفيديو");
-                document.getElementById('vid-title').value = "";
-                document.getElementById('vid-url').value = "";
-            }
-        }
-
-        // --- نظام الامتحانات ---
-        function addQuestionField() {
-            const container = document.getElementById('questions-container');
+        // صنع امتحان
+        function addQ() {
             const div = document.createElement('div');
-            div.className = 'box';
-            div.innerHTML = `
-                <input type="text" placeholder="السؤال" class="q-text">
-                <input type="text" placeholder="الإجابة الصحيحة" class="q-correct">
-                <input type="text" placeholder="خطأ 1" class="q-wrong">
-                <input type="text" placeholder="خطأ 2" class="q-wrong">
-                <input type="text" placeholder="خطأ 3" class="q-wrong">
-            `;
-            container.appendChild(div);
+            div.innerHTML = `<input type="text" class="q-val" placeholder="السؤال"> <input type="text" class="a-val" placeholder="الإجابة الصحيحة">`;
+            document.getElementById('q-container').appendChild(div);
         }
 
         function saveExam() {
-            const title = document.getElementById('exam-title').value;
-            const qBoxes = document.querySelectorAll('#questions-container .box');
-            let questions = [];
-            qBoxes.forEach(box => {
-                questions.push({
-                    q: box.querySelector('.q-text').value,
-                    correct: box.querySelector('.q-correct').value,
-                    options: [box.querySelector('.q-correct').value, ...Array.from(box.querySelectorAll('.q-wrong')).map(i => i.value)].sort(() => Math.random() - 0.5)
-                });
+            const title = document.getElementById('ex-title').value;
+            const qs = [];
+            document.querySelectorAll('#q-container div').forEach(d => {
+                qs.push({ q: d.querySelector('.q-val').value, ans: d.querySelector('.a-val').value });
             });
-            if(title && questions.length > 0) {
-                db.ref('exams').push({ title, questions, date: Date.now() });
-                alert("تم نشر الامتحان بنجاح");
-                location.reload();
-            }
+            db.ref('exams').push({ title, questions: qs });
+            alert("تم حفظ الامتحان");
         }
 
-        // --- السجلات والحظر ---
-        function loadLogs() {
-            db.ref('admin/logs').limitToLast(20).on('value', s => {
-                const disp = document.getElementById('logs-display');
-                disp.innerHTML = "";
-                if(s.exists()) {
-                    Object.values(s.val()).reverse().forEach(log => {
-                        disp.innerHTML += `<div class="chat-list-item">
-                            <strong>${log.name}</strong>: ${log.action} <br> <small>${log.time}</small>
-                        </div>`;
-                    });
-                }
-            });
-        }
-
-        function loadBannedUsers() {
-            db.ref('users').orderByChild('status').equalTo('banned').on('value', s => {
-                const disp = document.getElementById('banned-users-display');
-                disp.innerHTML = "";
+        function loadBans() {
+            db.ref('students').orderByChild('status').equalTo('banned').on('value', s => {
+                const list = document.getElementById('ban-list');
+                list.innerHTML = "";
                 s.forEach(child => {
-                    const u = child.val();
-                    disp.innerHTML += `<div class="ban-item">
-                        <div><strong>${u.name}</strong> (${u.phone}) <br> <small>السبب: ${u.banReason || 'تلقائي'}</small></div>
-                        <button class="btn btn-g" style="width:100px; margin:0;" onclick="unban('${child.key}')">فك الحظر</button>
-                    </div>`;
+                    list.innerHTML += `<div>${child.val().name} (${child.key}) <button onclick="unban('${child.key}')">فك</button></div>`;
                 });
             });
         }
 
-        function unban(key) {
-            db.ref('users/' + key).update({ status: 'active', banReason: null });
-            alert("تم فك الحظر عن الطالب");
-        }
+        function unban(p) { db.ref('students/' + p).update({ status: 'active' }); }
+
     </script>
 </body>
 </html>
