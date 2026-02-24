@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مستر حمدي | خبير الأحياء</title>
+    <title>خبير الأحياء | مستر حمدي عيد</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
     <style>
@@ -19,119 +19,180 @@
             --text: #e2e8f0;
             --nav-bg: rgba(10, 15, 28, 0.85);
             --glow: rgba(0, 229, 255, 0.4);
+            --glass: rgba(255, 255, 255, 0.05);
+            --gold: #ffd700;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-
-        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
-
-        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
-
-        /* تنبيهات الطوارئ */
-        #emergency-bar {
-            position: fixed; top: 0; width: 100%; background: var(--accent);
-            color: white; padding: 10px; text-align: center; z-index: 9999;
-            font-weight: bold; display: none; overflow: hidden;
+        [data-theme="light"] {
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --primary: #0891b2;
+            --glow: rgba(8, 145, 178, 0.2);
+            --card-bg: #ffffff;
+            --glass: rgba(0, 0, 0, 0.05);
         }
 
-        nav {
-            position: fixed; top: 0; width: 100%; padding: 15px 5%;
-            background: var(--nav-bg); backdrop-filter: blur(10px);
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000; border-bottom: 1px solid rgba(0, 229, 255, 0.1);
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: all 0.3s ease; }
+
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; padding-bottom: 80px; }
+
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+
+        /* Navbar Styling */
+        header {
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+            width: 95%; max-width: 1300px;
+            background: var(--nav-bg); backdrop-filter: blur(15px);
+            border-radius: 20px; padding: 10px 20px;
+            z-index: 1000; display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid var(--glass);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        .logo { font-size: 1.5rem; font-weight: 900; color: var(--primary); text-shadow: 0 0 10px var(--glow); }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        
+        .avatar-wrapper {
+            position: relative; width: 45px; height: 45px;
+            border-radius: 50%; border: 2px solid var(--primary);
+            overflow: hidden; cursor: pointer;
+        }
+        .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        #avatar-upload { display: none; }
 
-        .user-stats { display: flex; gap: 15px; align-items: center; }
-        .stat-item { background: var(--card-bg); padding: 5px 15px; border-radius: 20px; border: 1px solid var(--primary); font-size: 0.9rem; }
-
-        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 5%; position: relative; }
-        .hero-content { text-align: center; z-index: 2; }
-        .hero-content h1 { font-size: 3.5rem; margin-bottom: 20px; color: #fff; }
-        .hero-content span { color: var(--primary); }
-
-        .main-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px; padding: 50px 5%;
+        .balance-pill {
+            background: rgba(255, 215, 0, 0.1); border: 1px solid var(--gold);
+            padding: 4px 12px; border-radius: 10px; color: var(--gold);
+            font-weight: 800; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;
         }
 
-        .card {
-            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05);
-            padding: 30px; border-radius: 24px; text-align: center;
-            transition: 0.4s; cursor: pointer; position: relative; overflow: hidden;
-            text-decoration: none; color: inherit; display: block;
+        nav ul { display: flex; list-style: none; gap: 15px; }
+        nav ul li a { 
+            color: var(--text); text-decoration: none; font-weight: 700; font-size: 0.85rem; 
+            opacity: 0.7; padding: 5px 10px; border-radius: 8px;
+        }
+        nav ul li a:hover { opacity: 1; color: var(--primary); background: var(--glass); }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: space-between;
+            padding: 120px 8% 60px; gap: 50px;
         }
 
-        .card:hover { transform: translateY(-10px); border-color: var(--primary); background: rgba(0, 229, 255, 0.05); }
-        .card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 20px; }
+        .hero-text { flex: 1.2; }
+        .hero-text h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 25px; }
+        .hero-text p { font-size: 1.1rem; line-height: 1.8; opacity: 0.8; margin-bottom: 40px; max-width: 650px; }
 
-        /* شاشة الحظر */
-        #ban-screen {
-            position: fixed; inset: 0; background: #000; z-index: 10000;
-            display: none; align-items: center; justify-content: center; text-align: center; flex-direction: column;
+        .btn-main {
+            background: var(--primary); color: #000; padding: 16px 35px;
+            border-radius: 15px; text-decoration: none; font-weight: 900;
+            display: inline-flex; align-items: center; gap: 10px;
+            box-shadow: 0 10px 20px var(--glow);
         }
+        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 15px 30px var(--glow); background: #fff; }
 
-        @media (max-width: 768px) {
-            .hero-content h1 { font-size: 2.2rem; }
-            nav { padding: 10px 5%; }
-            .stat-item { font-size: 0.7rem; padding: 5px 10px; }
+        /* Teacher Image */
+        .img-container { flex: 0.8; position: relative; }
+        .img-glow {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 5px; border-radius: 30px; animation: float 6s ease-in-out infinite;
+        }
+        .img-glow img { width: 100%; border-radius: 25px; display: block; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        /* Bottom Mobile Nav */
+        .mobile-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--nav-bg); backdrop-filter: blur(20px);
+            display: none; justify-content: space-around; padding: 15px 5px;
+            z-index: 2000; border-top: 1px solid var(--glass);
+        }
+        .mobile-nav a { text-decoration: none; color: var(--text); font-size: 0.7rem; text-align: center; opacity: 0.6; }
+        .mobile-nav a i { font-size: 1.4rem; display: block; margin-bottom: 4px; color: var(--primary); }
+        .mobile-nav a.active { opacity: 1; font-weight: 900; }
+
+        #admin-btn { display: none; }
+
+        @media (max-width: 992px) {
+            header nav { display: none; }
+            .mobile-nav { display: flex; }
+            .hero { flex-direction: column-reverse; text-align: center; padding-top: 150px; }
+            .hero-text p { margin-inline: auto; }
         }
     </style>
 </head>
 <body data-theme="dark">
 
-    <div id="emergency-bar" class="animate__animated"></div>
     <div id="particles-js"></div>
 
-    <div id="ban-screen">
-        <i class="fas fa-user-slash" style="font-size: 5rem; color: var(--accent); margin-bottom: 20px;"></i>
-        <h1 style="color: white;">عذراً، لقد تم حظرك!</h1>
-        <p id="ban-reason" style="color: #94a3b8; margin-top: 10px;"></p>
-        <p style="margin-top: 20px;">يرجى التواصل مع المستر لفك الحظر.</p>
-    </div>
-
-    <nav>
-        <div class="logo animate__animated animate__fadeInLeft">🧬 MR HAMDY</div>
-        <div class="user-stats">
-            <div class="stat-item"><i class="fas fa-wallet"></i> <span id="user-balance">0</span> ج.م</div>
-            <div class="stat-item"><i class="fas fa-users"></i> <span id="real-count">0</span></div>
-            <button id="theme-toggle" class="stat-item" style="cursor: pointer; background: none;"><i class="fas fa-moon"></i></button>
-        </div>
-    </nav>
-
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="animate__animated animate__zoomIn">إمبراطور <span>الأحياء</span></h1>
-            <p class="animate__animated animate__fadeInUp" style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.8;">مع المستر حمدي.. الأحياء في جيبك</p>
-            <div style="display: flex; gap: 15px; justify-content: center;">
-                <a href="videos.html" class="stat-item" style="padding: 12px 30px; text-decoration: none; background: var(--primary); color: #000; font-weight: bold;">ابدأ التعلم الآن</a>
+    <header>
+        <div class="user-info">
+            <label for="avatar-upload" class="avatar-wrapper">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" id="user-img">
+                <input type="file" id="avatar-upload" accept="image/*">
+            </label>
+            <div>
+                <div style="font-size: 0.7rem; opacity: 0.6;">أهلاً بك</div>
+                <div id="student-name" style="font-weight: 900; font-size: 0.9rem; color: var(--primary);">طالبنا المتفوق</div>
             </div>
         </div>
-    </section>
 
-    <div class="main-grid">
-        <a href="videos.html" class="card animate__animated animate__fadeInUp">
-            <i class="fas fa-play-circle"></i>
-            <h3>المحاضرات</h3>
-            <p>شاهد جميع الدروس المسجلة بجودة عالية</p>
-        </a>
-        <a href="exams.html" class="card animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
-            <i class="fas fa-file-signature"></i>
-            <h3>الامتحانات</h3>
-            <p>اختبر مستواك مع امتحانات دورية</p>
-        </a>
-        <a href="contact.html" class="card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
-            <i class="fas fa-comments"></i>
-            <h3>تواصل معنا</h3>
-            <p>اسأل المستر مباشرة في أي وقت</p>
-        </a>
+        <div class="balance-pill">
+            <i class="fas fa-coins"></i> <span id="balance-val">0</span> ج.م
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="exams.html">الامتحانات</a></li>
+                <li><a href="library.html">المكتبة</a></li>
+                <li><a href="videos.html">المحاضرات</a></li>
+                <li><a href="contact.html">الدعم</a></li>
+            </ul>
+        </nav>
+
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="admin.html" id="admin-btn" title="لوحة الإدارة"><i class="fas fa-user-shield" style="color: var(--accent); font-size: 1.2rem;"></i></a>
+            <i class="fas fa-moon" id="theme-toggle" style="cursor: pointer; color: var(--primary);"></i>
+            <i class="fas fa-sign-out-alt" onclick="logout()" style="cursor: pointer; color: var(--accent);"></i>
+        </div>
+    </header>
+
+    <div class="mobile-nav">
+        <a href="index.html" class="active"><i class="fas fa-home"></i>الرئيسية</a>
+        <a href="exams.html"><i class="fas fa-file-signature"></i>اختبارات</a>
+        <a href="videos.html"><i class="fas fa-play-circle"></i>دروس</a>
+        <a href="library.html"><i class="fas fa-book"></i>مذكرات</a>
+        <a href="contact.html"><i class="fas fa-headset"></i>تواصل</a>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <main class="hero">
+        <div class="hero-text animate__animated animate__fadeInRight">
+            <h1>خبير الأحياء <br><span style="color: var(--primary);">مستر حمدي عيد</span></h1>
+            <p>مرحباً بك في وجهتك الأولى للتميز. هنا نحول تعقيدات مادة الأحياء إلى رحلة معرفية مشوقة. نعتمد على أحدث أساليب الربط الذهني والتحليل لضمان الفهم العميق والدرجة النهائية.</p>
+            <a href="videos.html" class="btn-main">
+                <i class="fas fa-rocket"></i> ابدأ رحلتك التعليمية
+            </a>
+        </div>
+        
+        <div class="img-container animate__animated animate__zoomIn">
+            <div class="img-glow">
+                <img src="H.png" alt="مستر حمدي عيد" id="hero-poster">
+            </div>
+        </div>
+    </main>
 
-    <script>
+    <footer style="padding: 40px; text-align: center; font-size: 0.8rem; opacity: 0.6;">
+        <p>جميع الحقوق محفوظة © مستر حمدي عيد 2026</p>
+        <p style="margin-top: 5px;">تطوير: <span style="color: var(--primary);">كريم & عبقرينو</span></p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set, push, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -139,94 +200,86 @@
             projectId: "mrhamdy-1c406",
             storageBucket: "mrhamdy-1c406.firebasestorage.app",
             messagingSenderId: "806268398144",
-            appId: "1:806268398144:web:c40aef6b378377f72b4da5"
+            appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
         };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
 
-        // بيانات المستخدم المحلي
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const storage = getStorage(app);
+
+        // 1. الأمان والتوجيه
         const userPhone = localStorage.getItem('userLoggedIn');
-        const userName = localStorage.getItem('userName') || 'زائر';
+        if (!userPhone) window.location.href = "go.html";
 
-        // 1. نظام الحظر والرصيد اللحظي
-        if (userPhone) {
-            db.ref('students/' + userPhone).on('value', (snapshot) => {
-                const userData = snapshot.val();
-                if (userData) {
-                    // تحديث الرصيد لحظياً
-                    document.getElementById('user-balance').innerText = userData.wallet || 0;
-
-                    // التحقق من الحظر
-                    if (userData.status === 'banned') {
-                        document.getElementById('ban-screen').style.display = 'flex';
-                        document.getElementById('ban-reason').innerText = "السبب: " + (userData.banReason || "غير محدد");
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        document.getElementById('ban-screen').style.display = 'none';
-                        document.body.style.overflow = 'auto';
-                    }
+        // 2. جلب بيانات الطالب (الاسم، الرصيد، الرتبة، الصورة)
+        const studentRef = ref(db, `students/${userPhone}`);
+        onValue(studentRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                document.getElementById('student-name').innerText = data.name.split(' ')[0];
+                document.getElementById('balance-val').innerText = (data.balance || 0).toLocaleString();
+                if (data.avatar) document.getElementById('user-img').src = data.avatar;
+                
+                // تفعيل زر الإدارة للأدمن فقط
+                if (data.role === "admin") {
+                    document.getElementById('admin-btn').style.display = "block";
                 }
-            });
-        } else {
-            // إذا لم يسجل دخول، يوجه لصفحة الدخول
-            window.location.href = "go.html";
-        }
-
-        // 2. استقبال التنبيهات العاجلة
-        db.ref('admin/emergency_alert').on('value', (snapshot) => {
-            const bar = document.getElementById('emergency-bar');
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                bar.innerText = "📣 " + data.text;
-                bar.style.display = 'block';
-                bar.classList.add('animate__fadeInDown');
-            } else {
-                bar.style.display = 'none';
             }
         });
 
-        // 3. إرسال بيانات المتصلين (أسمائهم وأرقامهم)
-        const onlineRef = db.ref('admin/online_users/' + userPhone);
-        if (userPhone) {
-            onlineRef.set({
-                name: userName,
-                phone: userPhone,
-                lastActive: Date.now()
-            });
-            onlineRef.onDisconnect().remove();
-        }
+        // 3. رفع وتغيير الصورة الشخصية
+        const uploadInput = document.getElementById('avatar-upload');
+        uploadInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        // 4. عرض عدد المتصلين الكلي
-        db.ref('admin/online_users').on('value', (snapshot) => {
-            document.getElementById('real-count').innerText = snapshot.numChildren() || 0;
+            const fileRef = sRef(storage, `avatars/${userPhone}`);
+            try {
+                const uploadTask = await uploadBytes(fileRef, file);
+                const url = await getDownloadURL(uploadTask.ref);
+                await update(ref(db, `students/${userPhone}`), { avatar: url });
+                alert("تم تحديث صورتك بنجاح!");
+            } catch (err) { alert("حدث خطأ في الرفع"); }
         });
 
-        // 5. التبديل بين الثيمات
+        // 4. نظام المتصلين (يعمل في الخلفية ولا يظهر في الواجهة)
+        const onlineRef = ref(db, 'admin/online_users');
+        const myPresenceRef = push(onlineRef);
+        
+        // عند انقطاع الاتصال يتم حذف السجل تلقائياً
+        onDisconnect(myPresenceRef).remove();
+        set(myPresenceRef, {
+            name: localStorage.getItem('userName') || 'طالب',
+            lastSeen: new Date().getTime()
+        });
+
+        // 5. تحديث البوستر من الإدارة
+        onValue(ref(db, 'admin/poster_url'), (snap) => {
+            if (snap.exists()) document.getElementById('hero-poster').src = snap.val();
+        });
+
+        // وظائف إضافية
+        window.logout = () => {
+            localStorage.clear();
+            window.location.href = "go.html";
+        };
+
+        // تبديل الثيم
         document.getElementById('theme-toggle').onclick = () => {
             const body = document.body;
-            const icon = document.querySelector('#theme-toggle i');
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.setAttribute('data-theme', 'light');
-                body.style.backgroundColor = '#f8fafc';
-                body.style.color = '#1e293b';
-                icon.className = 'fas fa-sun';
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                body.style.backgroundColor = 'var(--bg)';
-                body.style.color = 'var(--text)';
-                icon.className = 'fas fa-moon';
-            }
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('theme-toggle').className = isDark ? 'fas fa-sun' : 'fas fa-moon';
         };
 
-        // 6. جزيئات الخلفية
+        // خلفية الجزيئات
         particlesJS('particles-js', {
             particles: {
-                number: { value: 60 },
+                number: { value: 50 },
                 color: { value: '#00e5ff' },
-                shape: { type: 'circle' },
-                opacity: { value: 0.3 },
-                size: { value: 2 },
-                line_linked: { enable: true, distance: 150, color: '#00e5ff', opacity: 0.2, width: 1 },
+                opacity: { value: 0.2 },
+                size: { value: 3 },
+                line_linked: { enable: true, distance: 150, color: '#00e5ff', opacity: 0.1, width: 1 },
                 move: { enable: true, speed: 2 }
             }
         });
