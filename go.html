@@ -3,153 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الخبير حمدي عيد | تسجيل الدخول</title>
+    <title>بوابة خبير الأحياء | حمدي عيد</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --accent-color: #27ae60; /* لون حيوي يرمز للأحياء */
-            --bg-color: #1a1a2e;
-            --text-color: #ffffff;
-        }
-
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: var(--bg-color);
-            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); /* نقش بسيط */
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow-x: hidden;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            width: 90%;
-            max-width: 450px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-        }
-
-        .logo { width: 100px; margin-bottom: 10px; }
-        h2 { color: var(--accent-color); margin-bottom: 25px; }
-
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 10px;
-            border: none;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            font-size: 16px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        input:focus { background: rgba(255,255,255,0.2); border: 1px solid var(--accent-color); }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: var(--accent-color);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 18px;
-            margin-top: 15px;
-            transition: 0.3s;
-        }
-
-        button:hover { transform: scale(1.02); filter: brightness(1.2); }
-
-        .switch-form { margin-top: 15px; font-size: 14px; cursor: pointer; color: #aaa; }
-        .switch-form span { color: var(--accent-color); text-decoration: underline; }
-
-        /* Modal Style */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center; align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: #2c3e50;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 300px;
-            border: 2px solid var(--accent-color);
-        }
-        .verify-code {
-            display: block;
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 5px;
-            margin: 15px 0;
-            color: var(--accent-color);
-        }
-
+        :root { --primary: #22c55e; --bg: #050810; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: rgba(255,255,255,0.03); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: none; background: rgba(255,255,255,0.1); color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .hidden { display: none; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 100; }
+        .modal-box { background: #1e293b; padding: 25px; border-radius: 15px; border: 1px solid var(--primary); max-width: 300px; }
     </style>
 </head>
 <body>
 
-<div class="container" id="mainBox">
-    <img src="H.png" alt="Logo" class="logo">
+<div class="container">
+    <img src="H.png" width="80" alt="Logo">
     <h2 id="formTitle">عالم الأحياء: حمدي عيد</h2>
 
-    <div id="loginForm">
-        <input type="tel" id="loginPhone" placeholder="رقم الهاتف" oninput="checkMaster(this.value)">
-        <div id="masterSection" class="hidden">
-            <p style="color: #f1c40f;">مرحباً قائد المنصة، مستر حمدي عيد</p>
-        </div>
-        <input type="password" id="loginPass" placeholder="كلمة السر">
-        <button onclick="handleLogin()">تسجيل الدخول</button>
-        <p class="switch-form" onclick="toggleForm()">ليس لديك حساب؟ <span>إنشاء حساب جديد</span></p>
+    <div id="loginSection">
+        <input type="tel" id="logPhone" placeholder="رقم الهاتف" oninput="checkIfMaster(this.value)">
+        <div id="masterWelcome" class="hidden" style="color: #f1c40f; margin-bottom: 10px;">مرحباً قائد المنصة، مستر حمدي عيد</div>
+        <input type="password" id="logPass" placeholder="كلمة السر">
+        <button onclick="login()">دخول</button>
+        <p onclick="toggleForm()" style="cursor:pointer; font-size: 14px; margin-top: 15px;">جديد؟ <span style="color:var(--primary)">إنشاء حساب جديد</span></p>
     </div>
 
-    <div id="signupForm" class="hidden">
-        <input type="text" id="userName" placeholder="الاسم ثلاثي">
-        <select id="userGrade">
-            <option value="">اختر المرحلة الدراسية</option>
+    <div id="signupSection" class="hidden">
+        <input type="text" id="regName" placeholder="الاسم ثلاثي">
+        <select id="regGrade">
             <option value="1">الصف الأول الثانوي</option>
             <option value="2">الصف الثاني الثانوي</option>
             <option value="3">الصف الثالث الثانوي</option>
         </select>
-        <input type="text" id="userCity" placeholder="المدينة">
-        <input type="tel" id="userPhone" placeholder="رقم الهاتف">
-        <button onclick="showVerifyModal()">تحقق</button>
-        <p class="switch-form" onclick="toggleForm()">لديك حساب بالفعل؟ <span>تسجيل دخول</span></p>
+        <input type="text" id="regCity" placeholder="المدينة">
+        <input type="tel" id="regPhone" placeholder="رقم الهاتف">
+        <button onclick="startVerification()">تحقق وإنشاء الحساب</button>
+        <p onclick="toggleForm()" style="cursor:pointer; font-size: 14px; margin-top: 15px;">عندك حساب؟ <span style="color:var(--primary)">تسجيل دخول</span></p>
     </div>
 </div>
 
-<div class="modal" id="verifyModal">
-    <div class="modal-content">
-        <p>أهلاً بك في رحلة عالم الأحياء!<br>كود التفعيل الخاص بك من المستر حمدي عيد هو:</p>
-        <span class="verify-code" id="generatedCode">5521</span>
-        <button onclick="copyCode()">نسخ الكود</button>
-        <button style="background: #7f8c8d; margin-top: 5px;" onclick="closeModal()">تم النسخ، تعيين كلمة السر</button>
+<div class="modal" id="vModal">
+    <div class="modal-box">
+        <p>كود التفعيل الخاص بك من المستر:</p>
+        <h2 id="vCode" style="color:var(--primary); letter-spacing: 5px;"></h2>
+        <button onclick="copyAndContinue()">نسخ الكود وتعيين كلمة السر</button>
     </div>
 </div>
 
 <script>
-    // Firebase Configuration
+    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
         authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -161,64 +70,77 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
-    const MASTER_PHONE = "01111276700";
-
-    // 1. التوجيه التلقائي (Security Check)
-    firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-            db.collection("users").doc(user.uid).get().then(doc => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    if (data.status === "blocked") {
-                        window.location.href = "contact.html";
-                    } else {
-                        window.location.href = "index.html";
-                    }
-                }
-            });
-        }
-    });
+    const auth = firebase.auth();
 
     function toggleForm() {
-        document.getElementById('loginForm').classList.toggle('hidden');
-        document.getElementById('signupForm').classList.toggle('hidden');
-        document.getElementById('formTitle').innerText = 
-            document.getElementById('signupForm').classList.contains('hidden') ? "عالم الأحياء: حمدي عيد" : "انضم لرحلة العلم";
+        document.getElementById('loginSection').classList.toggle('hidden');
+        document.getElementById('signupSection').classList.toggle('hidden');
     }
 
-    function checkMaster(val) {
-        if (val === MASTER_PHONE) {
-            document.getElementById('masterSection').classList.remove('hidden');
+    function checkIfMaster(val) {
+        if (val === "01111276700") {
+            document.getElementById('masterWelcome').classList.remove('hidden');
         } else {
-            document.getElementById('masterSection').classList.add('hidden');
+            document.getElementById('masterWelcome').classList.add('hidden');
         }
     }
 
-    function showVerifyModal() {
+    // إنشاء حساب جديد
+    let tempUserData = {};
+    function startVerification() {
+        tempUserData = {
+            name: document.getElementById('regName').value,
+            grade: document.getElementById('regGrade').value,
+            city: document.getElementById('regCity').value,
+            phone: document.getElementById('regPhone').value
+        };
+
+        if(!tempUserData.name || !tempUserData.phone) return alert("اكمل البيانات");
+        
         const code = Math.floor(1000 + Math.random() * 9000);
-        document.getElementById('generatedCode').innerText = code;
-        document.getElementById('verifyModal').style.display = 'flex';
+        document.getElementById('vCode').innerText = code;
+        document.getElementById('vModal').style.display = 'flex';
     }
 
-    function copyCode() {
-        const code = document.getElementById('generatedCode').innerText;
-        navigator.clipboard.writeText(code);
-        alert("تم نسخ كود التحقق بنجاح");
+    async function copyAndContinue() {
+        const pass = prompt("قم بتعيين كلمة سر لحسابك:");
+        if(!pass || pass.length < 6) return alert("كلمة السر يجب أن تكون 6 أرقام أو حروف");
+
+        try {
+            // استخدام الهاتف كإيميل وهمي لـ Firebase Auth
+            const email = tempUserData.phone + "@mrhamdy.com";
+            const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
+            
+            await db.collection("users").doc(userCredential.user.uid).set({
+                name: tempUserData.name,
+                phone: tempUserData.phone,
+                grade: tempUserData.grade,
+                city: tempUserData.city,
+                role: (tempUserData.phone === "01111276700") ? "admin" : "student",
+                status: "active",
+                balance: 0,
+                ownedCourses: []
+            });
+
+            alert("تم إنشاء الحساب بنجاح!");
+            window.location.href = "index.html";
+        } catch (error) {
+            alert("خطأ: " + error.message);
+        }
     }
 
-    function closeModal() {
-        document.getElementById('verifyModal').style.display = 'none';
-        // هنا يتم تحويل الواجهة لطلب كلمة السر فقط لإكمال التسجيل في Firebase
-        alert("الآن قم بكتابة كلمة السر لإتمام التسجيل");
-    }
+    async function login() {
+        const phone = document.getElementById('logPhone').value;
+        const pass = document.getElementById('logPass').value;
+        const email = phone + "@mrhamdy.com";
 
-    function handleLogin() {
-        // منطق تسجيل الدخول بـ Firebase Auth
-        // يتم هنا فحص الرقم وكلمة السر
-        alert("جاري التحقق من البيانات...");
+        try {
+            await auth.signInWithEmailAndPassword(email, pass);
+            window.location.href = "index.html";
+        } catch (error) {
+            alert("رقم الهاتف أو كلمة السر خطأ");
+        }
     }
 </script>
-
 </body>
 </html>
