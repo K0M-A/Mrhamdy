@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>منصة مستر حمدي عيد | التواصل المتقدم</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -32,18 +32,19 @@
             width: 100%;
         }
 
-        /* شاشة اختيار القناة (من الكود الثاني) */
+        /* شاشة اختيار القناة */
         #selection-overlay {
             position: fixed; inset: 0; background: var(--bg); z-index: 2000;
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+            transition: 0.3s;
         }
         .select-card {
-            width: 80%; max-width: 350px; background: #111b27; padding: 30px;
+            width: 85%; max-width: 350px; background: #111b27; padding: 25px;
             border-radius: 20px; border: 1px solid var(--master-neon); text-align: center;
             cursor: pointer; transition: 0.3s;
         }
         .select-card:active { transform: scale(0.95); }
-        .select-card i { font-size: 3rem; color: var(--master-neon); margin-bottom: 15px; }
+        .select-card i { font-size: 2.5rem; color: var(--master-neon); margin-bottom: 15px; }
 
         /* Blocked Screen UI */
         #blocked-screen { 
@@ -52,20 +53,14 @@
         }
         .blocked-card {
             background: #111; padding: 30px; border-radius: 20px; border: 2px solid var(--accent);
-            box-shadow: 0 0 20px rgba(255, 23, 68, 0.2);
         }
 
-        /* Navigation */
         nav { 
             padding: 10px 15px; background: #0d141d; display: flex; 
             justify-content: space-between; align-items: center; border-bottom: 1px solid #222; flex-shrink: 0;
         }
-        .back-btn {
-            background: rgba(255,255,255,0.05); padding: 8px 15px; border-radius: 8px;
-            color: var(--text); text-decoration: none; font-size: 0.9rem; transition: 0.3s;
-        }
+        .back-btn { background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; color: var(--text); text-decoration: none; font-size: 0.8rem; }
 
-        /* Tabs System */
         .chat-tabs { display: flex; background: #0d141d; flex-shrink: 0; }
         .tab {
             flex: 1; padding: 12px; text-align: center; cursor: pointer; color: #888; 
@@ -73,65 +68,60 @@
         }
         .tab.active { color: var(--master-neon); border-bottom-color: var(--master-neon); background: rgba(0, 229, 255, 0.05); }
 
-        /* Chat Layout */
-        .chat-wrapper { 
-            flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;
-        }
+        .chat-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         
         #chat-container { 
-            flex: 1; overflow-y: scroll; display: flex; flex-direction: column; gap: 12px; 
-            padding: 15px; padding-bottom: 110px;
-            -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; 
+            padding: 15px; padding-bottom: 120px;
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* Message Styling */
         .msg-block { max-width: 85%; padding: 12px; border-radius: 15px; position: relative; animation: fadeIn 0.2s ease-out; line-height: 1.5; }
         .student-msg { align-self: flex-start; background: var(--user-msg); border-bottom-right-radius: 2px; }
         .admin-msg { align-self: flex-end; background: var(--admin-msg); border-bottom-left-radius: 2px; border-right: 3px solid var(--master-neon); }
         
-        /* Media Elements */
-        .msg-image { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; cursor: pointer; }
+        .msg-image { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
         .msg-video { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
-        .file-link { 
-            display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); 
-            padding: 12px; border-radius: 10px; text-decoration: none; color: var(--master-neon); 
-            margin-top: 8px; border: 1px dashed var(--master-neon); font-size: 0.85rem;
-        }
+        .file-link { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; text-decoration: none; color: var(--master-neon); font-size: 0.8rem; border: 1px dashed var(--master-neon); margin-top: 5px;}
 
+        /* زر الحذف */
         .delete-btn {
-            position: absolute; top: -8px; left: -8px; background: var(--accent); color: white;
-            width: 22px; height: 22px; border-radius: 50%; font-size: 10px; display: none;
-            align-items: center; justify-content: center; cursor: pointer; border: 2px solid #05080f; z-index: 10;
+            position: absolute; top: -10px; left: -10px; background: var(--accent); color: white;
+            width: 24px; height: 24px; border-radius: 50%; font-size: 12px;
+            display: none; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--bg); z-index: 5;
         }
+        /* يظهر فقط عندما يكون الجسم لديه كلاس is-admin */
         .is-admin .delete-btn { display: flex; }
 
-        /* Bottom Controls */
+        /* التحكم في أسفل الشاشة - ثابت ومستجيب */
         .bottom-controls {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background: #0d141d; border-top: 1px solid #222; padding-bottom: env(safe-area-inset-bottom);
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #0d141d; border-top: 1px solid #222; 
+            padding-bottom: env(safe-area-inset-bottom); z-index: 1000;
         }
-        .preview-bar { 
-            background: #111b21; padding: 10px; display: none; align-items: center; gap: 10px; 
-            border-top: 2px solid var(--master-neon); 
-        }
+        .preview-bar { background: #111b21; padding: 8px 15px; display: none; align-items: center; gap: 10px; border-top: 2px solid var(--master-neon); }
+        
         .input-area { 
-            padding: 10px; display: flex; gap: 8px; align-items: center; max-width: 900px; margin: 0 auto;
+            padding: 10px 15px; display: flex; gap: 10px; align-items: center; width: 100%;
         }
         .input-wrapper { 
             flex: 1; background: #1a2a3a; border-radius: 25px; display: flex; 
-            padding: 0 15px; align-items: center; 
+            padding: 0 15px; align-items: center; min-height: 45px;
         }
         #msg-input { 
             flex: 1; background: transparent; border: none; color: white; padding: 10px 0;
-            outline: none; font-size: 1rem;
+            outline: none; font-size: 1rem; width: 100%;
         }
-        .icon-btn { color: var(--master-neon); font-size: 1.2rem; cursor: pointer; }
+        
+        /* زر الإرسال - حجم ثابت وموقع محمي */
         .send-btn { 
-            width: 45px; height: 45px; background: var(--master-neon); 
+            width: 45px; height: 45px; min-width: 45px; background: var(--master-neon); 
             border-radius: 50%; border: none; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            box-shadow: 0 2px 10px rgba(0,229,255,0.3); transition: 0.2s;
         }
         .send-btn:active { transform: scale(0.9); }
+        .send-btn i { color: #000; font-size: 1.2rem; margin-right: -2px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -139,37 +129,35 @@
 <body class="not-admin">
 
     <div id="selection-overlay">
-        <h2 style="color: var(--master-neon); margin-bottom: 20px;">بماذا تريد البدء؟</h2>
+        <h2 style="color: var(--master-neon); margin-bottom: 20px;">مرحباً بك في المنصة</h2>
         <div class="select-card" onclick="startApp('public')">
             <i class="fas fa-bullhorn"></i>
             <h3>القناة العامة</h3>
-            <p style="color: #888; font-size: 0.8rem; margin-top: 5px;">أحدث تنبيهات وشروحات المستر</p>
+            <p style="color: #888; font-size: 0.75rem; margin-top: 5px;">أحدث تنبيهات المستر للجميع</p>
         </div>
         <div class="select-card" onclick="startApp('private')">
             <i class="fas fa-comment-medical"></i>
             <h3>المراسلة الخاصة</h3>
-            <p style="color: #888; font-size: 0.8rem; margin-top: 5px;">تواصل مباشر وسري مع المستر</p>
+            <p style="color: #888; font-size: 0.75rem; margin-top: 5px;">محادثة سرية مع المستر</p>
         </div>
     </div>
 
     <div id="blocked-screen">
         <div class="blocked-card">
             <i class="fas fa-user-slash" style="font-size: 3rem; color: var(--accent); margin-bottom: 20px;"></i>
-            <h2 style="color: var(--accent); margin-bottom: 10px;">عفواً، تم حظر حسابك!</h2>
-            <p style="color: #ccc; margin-bottom: 20px;">لقد تم تقييد وصولك للمنصة من قبل الإدارة.</p>
-            <a href="https://wa.me/201234567890" style="display: inline-block; padding: 12px 25px; background: #25d366; color: white; text-decoration: none; border-radius: 10px; font-weight: bold;">
-                <i class="fab fa-whatsapp"></i> تواصل مع المستر الآن
-            </a>
+            <h2 style="color: var(--accent);">تم حظر حسابك</h2>
+            <p style="color: #ccc; margin: 15px 0;">يرجى مراجعة الإدارة لفك الحظر.</p>
+            <a href="https://wa.me/201234567890" style="display: block; padding: 12px; background: #25d366; color: white; text-decoration: none; border-radius: 10px; font-weight: bold;">واتساب المستر</a>
         </div>
     </div>
 
     <nav>
-        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i></a>
         <div style="text-align: center;">
-            <span id="user-display-name" style="font-weight: 900; color: var(--master-neon); font-size: 1rem;">جاري التحميل...</span>
-            <div id="role-badge" style="font-size: 0.7rem; color: #888;">طالب</div>
+            <span id="user-display-name" style="font-weight: 900; color: var(--master-neon); font-size: 0.9rem;">...</span>
+            <div id="role-badge" style="font-size: 0.65rem; color: #888;">طالب</div>
         </div>
-        <div style="width: 25px;"></div>
+        <div style="width: 30px;"></div>
     </nav>
 
     <div class="chat-tabs">
@@ -182,23 +170,23 @@
 
         <div class="bottom-controls">
             <div id="preview-bar" class="preview-bar">
-                <div id="file-info" style="font-size: 0.8rem; color: var(--master-neon); flex: 1; overflow: hidden; text-overflow: ellipsis;"></div>
+                <div id="file-info" style="font-size: 0.75rem; color: var(--master-neon); flex: 1; overflow: hidden; text-overflow: ellipsis;"></div>
                 <i class="fas fa-times" onclick="cancelAttachment()" style="color: var(--accent); cursor: pointer;"></i>
             </div>
 
             <div class="input-area" id="input-section">
-                <label class="icon-btn">
-                    <i class="fa-solid fa-paperclip"></i>
+                <label class="icon-btn" style="cursor:pointer; padding: 0 5px;">
+                    <i class="fa-solid fa-paperclip" style="color: var(--master-neon); font-size: 1.2rem;"></i>
                     <input type="file" id="file-input" hidden onchange="handleFileSelect()">
                 </label>
                 <div class="input-wrapper">
-                    <input type="text" id="msg-input" placeholder="اكتب رسالتك..." autocomplete="off">
+                    <input type="text" id="msg-input" placeholder="اكتب هنا..." autocomplete="off">
                 </div>
-                <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane" style="color:#000"></i></button>
+                <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
             </div>
             
-            <div id="admin-only-note" style="display:none; text-align:center; padding:15px; color:#888; font-size:0.8rem; background: #0d141d;">
-                 المستر فقط يمكنه النشر في القناة العامة
+            <div id="admin-only-note" style="display:none; text-align:center; padding:15px; color:#888; font-size:0.8rem;">
+                 المستر فقط ينشر هنا، تابع الرسائل بالأسفل
             </div>
         </div>
     </div>
@@ -207,7 +195,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // --- إعدادات Firebase ---
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -228,7 +215,6 @@
 
         if (!userPhone) window.location.href = "login.html";
 
-        // وظيفة البدء من الكود الثاني
         function startApp(mode) {
             document.getElementById('selection-overlay').style.opacity = "0";
             setTimeout(() => {
@@ -237,7 +223,6 @@
             }, 300);
         }
 
-        // مراقبة بيانات المستخدم والحظر
         db.ref('students/' + userPhone).on('value', snap => {
             userData = snap.val();
             if (!userData) return;
@@ -261,54 +246,41 @@
             loadChat(); 
         });
 
-        // إدارة صلاحيات الإرسال
         function updateUIForRole() {
             const inputSection = document.getElementById('input-section');
             const adminNote = document.getElementById('admin-only-note');
-            const isPublic = currentTab === 'public';
             const isAdmin = userData?.role === 'admin';
             
-            if (isPublic) {
-                if (isAdmin) {
-                    inputSection.style.display = 'flex';
-                    adminNote.style.display = 'none';
-                } else {
-                    inputSection.style.display = 'none';
-                    adminNote.style.display = 'block';
-                }
+            if (currentTab === 'public') {
+                inputSection.style.display = isAdmin ? 'flex' : 'none';
+                adminNote.style.display = isAdmin ? 'none' : 'block';
             } else {
                 inputSection.style.display = 'flex';
                 adminNote.style.display = 'none';
             }
         }
 
-        // معالجة الملفات
         function handleFileSelect() {
             const file = document.getElementById('file-input').files[0];
             if (!file) return;
-            if (file.size > 10 * 1024 * 1024) return alert("الملف كبير جداً (الأقصى 10 ميجا)");
+            if (file.size > 15 * 1024 * 1024) return alert("الملف كبير جداً (15MB حد أقصى)");
 
             const reader = new FileReader();
             reader.onload = (e) => {
                 attachedFileData = e.target.result;
-                if (file.type.startsWith('image/')) attachedFileType = 'image';
-                else if (file.type.startsWith('video/')) attachedFileType = 'video';
-                else attachedFileType = 'file';
-                
+                attachedFileType = file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : 'file';
                 document.getElementById('preview-bar').style.display = 'flex';
-                document.getElementById('file-info').innerText = "تم إرفاق: " + file.name;
+                document.getElementById('file-info').innerText = "جاهز للإرسال: " + file.name;
             };
             reader.readAsDataURL(file);
         }
 
         function cancelAttachment() {
             attachedFileData = null;
-            attachedFileType = null;
             document.getElementById('file-input').value = "";
             document.getElementById('preview-bar').style.display = 'none';
         }
 
-        // إرسال الرسالة
         function sendMessage() {
             const input = document.getElementById('msg-input');
             const messageText = input.value.trim();
@@ -332,13 +304,12 @@
             cancelAttachment();
         }
 
-        // تحميل الرسائل
         function loadChat() {
             const chatBox = document.getElementById('chat-container');
             const path = currentTab === 'public' ? 'chats/public' : `chats/private/${userPhone}`;
             
             db.ref(path).off();
-            db.ref(path).limitToLast(50).on('value', snap => {
+            db.ref(path).limitToLast(60).on('value', snap => {
                 chatBox.innerHTML = "";
                 snap.forEach(child => {
                     const m = child.val();
@@ -350,18 +321,19 @@
                     if (m.media) {
                         if (m.mediaType === 'image') mediaHtml = `<img src="${m.media}" class="msg-image" onclick="window.open(this.src)">`;
                         else if (m.mediaType === 'video') mediaHtml = `<video src="${m.media}" controls class="msg-video"></video>`;
-                        else mediaHtml = `<a href="${m.media}" download="file" class="file-link"><i class="fas fa-file-pdf"></i> تحميل الملف المرفق</a>`;
+                        else mediaHtml = `<a href="${m.media}" download="file" class="file-link"><i class="fas fa-file-pdf"></i> تحميل الملف</a>`;
                     }
 
+                    // زر الحذف للمستر في كل مكان
                     let deleteHtml = (userData?.role === 'admin') ? 
-                        `<div class="delete-btn" onclick="deleteMsg('${child.key}')"><i class="fas fa-times"></i></div>` : '';
+                        `<div class="delete-btn" onclick="deleteMsg('${child.key}')"><i class="fas fa-trash-can"></i></div>` : '';
 
                     msgDiv.innerHTML = `
                         ${deleteHtml}
                         <div style="font-size:0.65rem; color:var(--master-neon); font-weight:bold; margin-bottom:4px;">${m.senderName}</div>
-                        <div style="word-break: break-word; font-size:0.95rem;">${m.message}</div>
+                        <div style="word-break: break-word; font-size:0.9rem;">${m.message}</div>
                         ${mediaHtml}
-                        <span style="font-size:0.6rem; color:#aaa; display:block; margin-top:5px; text-align:left;">${m.time}</span>
+                        <span style="font-size:0.55rem; color:#aaa; display:block; margin-top:5px; text-align:left;">${m.time}</span>
                     `;
                     chatBox.appendChild(msgDiv);
                 });
@@ -378,7 +350,7 @@
         }
 
         function deleteMsg(msgId) {
-            if (!confirm("حذف الرسالة؟")) return;
+            if (!confirm("هل تريد حذف هذه الرسالة نهائياً؟")) return;
             const path = currentTab === 'public' ? 'chats/public' : `chats/private/${userPhone}`;
             db.ref(`${path}/${msgId}`).remove();
         }
