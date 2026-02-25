@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دعم خبير الأحياء | مستر حمدي عيد</title>
+    <title>منصة مستر حمدي عيد | التواصل المتقدم</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -17,129 +17,109 @@
             --user-msg: #005c4b;
             --admin-msg: #202c33;
             --text: #ffffff;
-            --accent-glow: rgba(0, 229, 255, 0.2);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         
         body { 
             background: radial-gradient(circle at center, #0b141a 0%, #05080f 100%);
-            color: var(--text); 
-            height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
+            color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
         }
 
-        /* --- نظام بوابة الدخول --- */
-        #gate-overlay {
-            position: fixed; inset: 0; background: rgba(5, 8, 15, 0.98);
-            z-index: 10000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(15px);
+        /* Tabs System */
+        .chat-tabs { display: flex; background: #111b21; border-bottom: 1px solid #222; }
+        .tab {
+            flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #888; transition: 0.3s;
+            font-weight: bold; border-bottom: 3px solid transparent;
         }
-        .gate-card {
-            background: var(--glass-bg); padding: 40px; border-radius: 20px;
-            border: 1px solid var(--accent-glow); text-align: center; max-width: 400px; width: 90%;
-        }
+        .tab.active { color: var(--master-neon); border-bottom-color: var(--master-neon); background: rgba(0, 229, 255, 0.05); }
 
-        /* --- الهيدر --- */
-        nav { padding: 15px 5%; background: #202c33; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .back-btn { color: var(--master-neon); text-decoration: none; font-weight: bold; }
-        .status-info { display: flex; align-items: center; gap: 10px; }
-        .online-dot { width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-        /* --- منطقة الشات --- */
-        .chat-wrapper { flex: 1; max-width: 850px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; overflow: hidden; }
+        /* Chat Layout */
+        nav { padding: 10px 5%; background: #202c33; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .chat-wrapper { flex: 1; max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         
         #chat-container { 
             flex: 1; padding: 20px; overflow-y: auto; 
             background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-            background-blend-mode: overlay; background-color: #0b141a;
-            display: flex; flex-direction: column; gap: 15px; 
+            display: flex; flex-direction: column; gap: 12px; 
         }
 
-        .msg-block {
-            max-width: 80%; padding: 12px 15px; border-radius: 15px;
-            position: relative; animation: fadeIn 0.3s ease; line-height: 1.6;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
+        /* Message Styling */
+        .msg-block { max-width: 85%; padding: 12px; border-radius: 12px; position: relative; animation: fadeIn 0.3s; }
         .student-msg { align-self: flex-start; background: var(--user-msg); border-top-right-radius: 2px; }
-        .admin-msg { align-self: flex-end; background: var(--admin-msg); border-top-left-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
+        .admin-msg { align-self: flex-end; background: var(--admin-msg); border-top-left-radius: 2px; border: 1px solid #333; }
         
-        .msg-time { display: block; font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 5px; text-align: left; }
-        .msg-media { max-width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); }
-
-        /* --- منطقة الإدخال --- */
-        .input-area { padding: 15px 5%; background: #202c33; display: flex; gap: 12px; align-items: center; }
-        .input-wrapper { flex: 1; position: relative; background: #2a3942; border-radius: 25px; display: flex; align-items: center; padding: 0 15px; }
-        input#msg-input { flex: 1; background: transparent; border: none; color: white; padding: 12px 10px; outline: none; }
-        
-        .icon-btn { color: var(--master-neon); cursor: pointer; font-size: 1.2rem; transition: 0.3s; padding: 5px; }
-        .icon-btn:hover { transform: scale(1.1); }
-        
-        .send-btn { 
-            width: 45px; height: 45px; background: var(--master-neon); border: none; border-radius: 50%; 
-            color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        /* Media Elements */
+        .msg-image { max-width: 100%; border-radius: 8px; margin-top: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
+        .msg-video { max-width: 100%; border-radius: 8px; margin-top: 8px; background: #000; }
+        .file-link { 
+            display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); 
+            padding: 10px; border-radius: 8px; text-decoration: none; color: var(--master-neon); margin-top: 8px;
+            border: 1px solid var(--master-neon); font-size: 0.9rem;
         }
-        .send-btn:hover { box-shadow: 0 0 15px var(--master-neon); }
 
-        #img-preview-container { display: none; padding: 10px; background: #111b21; border-top: 1px solid var(--master-neon); }
-        .preview-img { height: 60px; border-radius: 5px; border: 1px solid var(--master-neon); }
+        .delete-btn {
+            position: absolute; top: -8px; left: -8px; background: var(--accent); color: white;
+            width: 24px; height: 24px; border-radius: 50%; font-size: 12px; display: none;
+            align-items: center; justify-content: center; cursor: pointer; border: 2px solid #05080f; z-index: 10;
+        }
+        .is-admin .delete-btn { display: flex; }
 
-        /* شاشة الحظر */
-        #blocked-screen { position: fixed; inset: 0; background: var(--bg); z-index: 20000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        /* Input System */
+        .preview-bar { 
+            background: #111b21; padding: 10px; display: none; align-items: center; gap: 10px; 
+            border-top: 2px solid var(--master-neon); 
+        }
+        .input-area { padding: 12px; background: #202c33; display: flex; gap: 10px; align-items: center; }
+        .input-wrapper { flex: 1; background: #2a3942; border-radius: 25px; display: flex; padding: 0 15px; align-items: center; }
+        #msg-input { flex: 1; background: transparent; border: none; color: white; padding: 12px; outline: none; }
+        
+        .icon-btn { color: var(--master-neon); font-size: 1.2rem; cursor: pointer; padding: 5px; }
+        .send-btn { width: 45px; height: 45px; background: var(--master-neon); border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        #blocked-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
     </style>
 </head>
-<body>
-
-    <div id="gate-overlay">
-        <div class="gate-card">
-            <i class="fa-solid fa-dna" style="font-size: 3rem; color: var(--master-neon); margin-bottom: 20px;"></i>
-            <h2>منصة مستر حمدي عيد</h2>
-            <p style="color: #888; margin: 15px 0 25px;">اختر نوع الحساب للمتابعة</p>
-            <button onclick="enterAs('student')" style="width:100%; padding:12px; margin-bottom:12px; background:#1a2332; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">دخول الطلاب</button>
-            <button onclick="checkMaster()" style="width:100%; padding:12px; background:var(--master-neon); color:#000; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">دخول المستر (إدارة)</button>
-        </div>
-    </div>
+<body class="not-admin">
 
     <div id="blocked-screen">
-        <i class="fas fa-user-slash" style="font-size: 5rem; color: var(--accent); margin-bottom: 20px;"></i>
-        <h2 style="color: var(--accent);">حسابك متوقف</h2>
-        <p style="margin: 15px 0; color: #94a3b8;">يرجى التواصل مع الإدارة لتفعيل الحساب.</p>
-        <a href="https://wa.me/201111276700" style="background:var(--master-neon); color:#000; padding: 10px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">واتساب الدعم</a>
+        <h2 style="color: var(--accent);">عفواً، حسابك محظور</h2>
+        <p>تواصل مع الإدارة لفك الحظر</p>
     </div>
 
     <nav>
-        <a href="index.html" class="back-btn"><i class="fas fa-chevron-right"></i> منصة الأحياء</a>
-        <div class="status-info">
-            <div style="text-align: left;">
-                <div style="font-weight: bold; font-size: 0.9rem;">مستر حمدي عيد</div>
-                <div style="font-size: 0.7rem; color: #10b981;">متصل الآن</div>
-            </div>
-            <div class="online-dot"></div>
+        <div>
+            <span id="user-display-name" style="font-weight: bold; color: var(--master-neon);">جاري التحميل...</span>
+            <div id="role-badge" style="font-size: 0.6rem; color: #888;">طالب</div>
         </div>
+        <div style="font-size: 0.8rem;"><i class="fa-solid fa-dna"></i> مستر حمدي عيد</div>
     </nav>
 
-    <div class="chat-wrapper">
-        <div id="chat-container">
-            </div>
+    <div class="chat-tabs">
+        <div class="tab active" onclick="switchTab('public', this)">القناة العامة</div>
+        <div class="tab" onclick="switchTab('private', this)">مراسلة المستر الخاص</div>
+    </div>
 
-        <div id="img-preview-container">
-            <img id="imgPreview" class="preview-img">
-            <span id="fileName" style="font-size: 0.8rem; color: #888; margin-right: 10px;"></span>
-            <i class="fas fa-times" onclick="cancelFile()" style="float: left; cursor: pointer; color: var(--accent);"></i>
+    <div class="chat-wrapper">
+        <div id="chat-container"></div>
+
+        <div id="preview-bar" class="preview-bar">
+            <div id="file-info" style="font-size: 0.8rem; color: var(--master-neon); flex: 1;"></div>
+            <i class="fas fa-times" onclick="cancelAttachment()" style="color: var(--accent); cursor: pointer;"></i>
         </div>
 
-        <div class="input-area">
+        <div class="input-area" id="input-section">
+            <label class="icon-btn">
+                <i class="fa-solid fa-paperclip"></i>
+                <input type="file" id="file-input" hidden onchange="handleFileSelect()">
+            </label>
             <div class="input-wrapper">
-                <label class="icon-btn">
-                    <i class="fa-solid fa-paperclip"></i>
-                    <input type="file" id="fileInput" hidden onchange="handleFileSelect()">
-                </label>
-                <input type="text" id="msg-input" placeholder="اكتب رسالتك هنا..." onkeypress="if(event.key === 'Enter') prepareSend()">
+                <input type="text" id="msg-input" placeholder="اكتب رسالتك..." onkeypress="if(event.key === 'Enter') sendMessage()">
             </div>
-            <button class="send-btn" onclick="prepareSend()"><i class="fas fa-paper-plane"></i></button>
+            <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane" style="color:#000"></i></button>
+        </div>
+        <div id="admin-only-note" style="display:none; text-align:center; padding:15px; color:#888; font-size:0.8rem;">
+             القناة العامة للقراءة فقط (للمستر فقط)
         </div>
     </div>
 
@@ -147,7 +127,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // إعدادات Firebase الخاصة بك
+        // --- إعدادات Firebase ---
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -160,136 +140,186 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        const studentPhone = localStorage.getItem('userLoggedIn');
-        const studentName = localStorage.getItem('userName');
-        let currentRole = sessionStorage.getItem('user_role');
+        const userPhone = localStorage.getItem('userLoggedIn');
+        let userData = null;
+        let currentTab = 'public';
+        let attachedFileData = null;
+        let attachedFileType = null;
 
-        // الحماية ونظام الدخول
-        if (!studentPhone) window.location.href = "go.html";
-        if (currentRole) document.getElementById('gate-overlay').style.display = 'none';
+        if (!userPhone) window.location.href = "login.html";
 
-        function enterAs(role) {
-            sessionStorage.setItem('user_role', 'student');
-            location.reload();
-        }
-
-        function checkMaster() {
-            if(prompt("كود دخول المستر:") === "2026") {
-                sessionStorage.setItem('user_role', 'admin');
-                location.reload();
-            } else alert("الكود خاطئ!");
-        }
-
-        // التحقق من الحظر
-        db.ref('students/' + studentPhone).on('value', snap => {
-            if (snap.val()?.status === "blocked") document.getElementById('blocked-screen').style.display = 'flex';
-        });
-
-        // معالجة الملفات (مع ضغط الصور)
-        let selectedFileData = null;
-
-        function handleFileSelect() {
-            const file = document.getElementById('fileInput').files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                if (file.type.startsWith('image/')) {
-                    selectedFileData = await compressImage(e.target.result);
-                    document.getElementById('imgPreview').src = selectedFileData;
-                    document.getElementById('imgPreview').style.display = 'block';
-                    document.getElementById('fileName').style.display = 'none';
-                } else {
-                    selectedFileData = e.target.result;
-                    document.getElementById('imgPreview').style.display = 'none';
-                    document.getElementById('fileName').innerText = file.name;
-                    document.getElementById('fileName').style.display = 'inline';
-                }
-                document.getElementById('img-preview-container').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function compressImage(base64) {
-            return new Promise(resolve => {
-                const img = new Image();
-                img.src = base64;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800;
-                    const scale = MAX_WIDTH / img.width;
-                    canvas.width = MAX_WIDTH;
-                    canvas.height = img.height * scale;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7));
-                };
-            });
-        }
-
-        function cancelFile() {
-            selectedFileData = null;
-            document.getElementById('img-preview-container').style.display = 'none';
-            document.getElementById('fileInput').value = '';
-        }
-
-        // إرسال الرسالة
-        function prepareSend() {
-            const input = document.getElementById('msg-input');
-            const text = input.value.trim();
-            if (!text && !selectedFileData) return;
-
-            const msgData = {
-                message: text,
-                media: selectedFileData,
-                sender: studentName,
-                type: currentRole === 'admin' ? 'admin' : 'student',
-                time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
-                timestamp: Date.now()
-            };
-
-            db.ref('chats/' + studentPhone).push(msgData);
+        // 1. التحقق من الرتبة والصلاحيات
+        db.ref('students/' + userPhone).on('value', snap => {
+            userData = snap.val();
+            if (!userData) return;
             
-            // تنبيه الإدارة
-            if(currentRole !== 'admin') {
-                db.ref('admin/activity_logs').push({
-                    userName: studentName,
-                    action: "أرسل رسالة جديدة",
-                    timestamp: Date.now()
-                });
+            if (userData.status === "blocked") {
+                document.getElementById('blocked-screen').style.display = 'flex';
             }
 
-            input.value = "";
-            cancelFile();
+            document.getElementById('user-display-name').innerText = userData.name;
+            document.getElementById('role-badge').innerText = userData.role === 'admin' ? 'المدير (المستر)' : 'طالب';
+            
+            if (userData.role === 'admin') {
+                document.body.classList.add('is-admin');
+            } else {
+                document.body.classList.remove('is-admin');
+            }
+            
+            updateUIForRole();
+            loadChat(); 
+        });
+
+        // 2. تحديث الواجهة
+        function updateUIForRole() {
+            const inputSection = document.getElementById('input-section');
+            const adminNote = document.getElementById('admin-only-note');
+            if (currentTab === 'public') {
+                if (userData?.role === 'admin') {
+                    inputSection.style.display = 'flex';
+                    adminNote.style.display = 'none';
+                } else {
+                    inputSection.style.display = 'none';
+                    adminNote.style.display = 'block';
+                }
+            } else {
+                inputSection.style.display = 'flex';
+                adminNote.style.display = 'none';
+            }
         }
 
-        // تحميل المحادثة
+        // 3. معالجة الملفات المرفوعة
+        async function handleFileSelect() {
+            const file = document.getElementById('file-input').files[0];
+            if (!file) return;
+
+            // كود ضغط الصور إذا كان الملف صورة
+            if (file.type.startsWith('image/')) {
+                attachedFileType = 'image';
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    attachedFileData = e.target.result; // يمكنك هنا إضافة دالة ضغط الصور لتوفير المساحة
+                    showPreview("صورة جاهزة للرفع");
+                };
+                reader.readAsDataURL(file);
+            } 
+            else if (file.type.startsWith('video/')) {
+                attachedFileType = 'video';
+                if (file.size > 20 * 1024 * 1024) { // 20MB Max
+                    alert("الفيديو كبير جداً، الحد الأقصى 20 ميجا");
+                    cancelAttachment();
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    attachedFileData = e.target.result;
+                    showPreview("فيديو جاهز للرفع");
+                };
+                reader.readAsDataURL(file);
+            }
+            else {
+                attachedFileType = 'file';
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    attachedFileData = e.target.result;
+                    showPreview(`ملف: ${file.name}`);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showPreview(text) {
+            document.getElementById('preview-bar').style.display = 'flex';
+            document.getElementById('file-info').innerText = text;
+        }
+
+        function cancelAttachment() {
+            attachedFileData = null;
+            attachedFileType = null;
+            document.getElementById('file-input').value = "";
+            document.getElementById('preview-bar').style.display = 'none';
+        }
+
+        // 4. إرسال الرسالة مع المرفقات
+        function sendMessage() {
+            const input = document.getElementById('msg-input');
+            const messageText = input.value.trim();
+            
+            if (!messageText && !attachedFileData) return;
+
+            const path = currentTab === 'public' ? 'chats/public' : `chats/private/${userPhone}`;
+            
+            const msgData = {
+                message: messageText,
+                media: attachedFileData,
+                mediaType: attachedFileType,
+                senderName: userData.name,
+                senderPhone: userPhone,
+                role: userData.role || 'student',
+                time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            db.ref(path).push(msgData);
+            
+            // تصفير المدخلات
+            input.value = "";
+            cancelAttachment();
+        }
+
+        // 5. تحميل وعرض الرسائل
         function loadChat() {
             const chatBox = document.getElementById('chat-container');
-            db.ref('chats/' + studentPhone).orderByChild('timestamp').on('value', snap => {
+            const path = currentTab === 'public' ? 'chats/public' : `chats/private/${userPhone}`;
+            
+            db.ref(path).off();
+            db.ref(path).limitToLast(40).on('value', snap => {
                 chatBox.innerHTML = "";
                 snap.forEach(child => {
                     const m = child.val();
                     const msgDiv = document.createElement('div');
-                    msgDiv.className = `msg-block ${m.type === 'student' ? 'student-msg' : 'admin-msg'}`;
+                    msgDiv.className = `msg-block ${m.role === 'admin' ? 'admin-msg' : 'student-msg'}`;
                     
-                    let content = `<div>${m.message}</div>`;
-                    if(m.media) {
-                        if(m.media.includes('image/')) {
-                            content += `<img src="${m.media}" class="msg-media" onclick="window.open(this.src)">`;
+                    let mediaHtml = "";
+                    if (m.media) {
+                        if (m.mediaType === 'image') {
+                            mediaHtml = `<img src="${m.media}" class="msg-image" onclick="window.open(this.src)">`;
+                        } else if (m.mediaType === 'video') {
+                            mediaHtml = `<video src="${m.media}" controls class="msg-video"></video>`;
                         } else {
-                            content += `<a href="${m.media}" download="attachment" style="color:var(--master-neon); display:block; margin-top:5px;"><i class="fas fa-file-download"></i> تحميل المرفق</a>`;
+                            mediaHtml = `<a href="${m.media}" download="file" class="file-link"><i class="fas fa-file-pdf"></i> تحميل الملف المرفق</a>`;
                         }
                     }
-                    
-                    msgDiv.innerHTML = `${content} <span class="msg-time">${m.time}</span>`;
+
+                    let deleteHtml = userData?.role === 'admin' ? 
+                        `<div class="delete-btn" onclick="deleteMsg('${child.key}')"><i class="fas fa-times"></i></div>` : '';
+
+                    msgDiv.innerHTML = `
+                        ${deleteHtml}
+                        <div style="font-size:0.65rem; color:var(--master-neon); font-weight:bold; margin-bottom:4px;">${m.senderName}</div>
+                        <div style="word-break: break-word;">${m.message}</div>
+                        ${mediaHtml}
+                        <span style="font-size:0.6rem; color:#888; display:block; margin-top:5px;">${m.time}</span>
+                    `;
                     chatBox.appendChild(msgDiv);
                 });
                 chatBox.scrollTop = chatBox.scrollHeight;
             });
         }
 
-        window.onload = loadChat;
+        function switchTab(tab, element) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            updateUIForRole();
+            loadChat();
+        }
+
+        function deleteMsg(msgId) {
+            if (!confirm("حذف هذه الرسالة نهائياً؟")) return;
+            const path = currentTab === 'public' ? 'chats/public' : `chats/private/${userPhone}`;
+            db.ref(`${path}/${msgId}`).remove();
+        }
     </script>
 </body>
 </html>
