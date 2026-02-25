@@ -3,158 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم خبير الأحياء | مستر حمدي عيد</title>
+    <title>لوحة التحكم | مستر حمدي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; --card: #111827; --text: #ffffff; --success: #10b981; --warning: #f59e0b; }
+        :root { --primary: #00bfa5; --accent: #ff1744; --bg: #0b111e; --card: #1e293b; --text: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); display: flex; min-height: 100vh; overflow: hidden; }
-
-        /* Sidebar */
-        aside { width: 280px; background: var(--card); border-left: 1px solid rgba(0,229,255,0.1); padding: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 100; }
-        aside h2 { color: var(--primary); font-size: 1.3rem; text-align: center; margin-bottom: 25px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
-        .nav-btn { width: 100%; padding: 12px 15px; background: transparent; border: none; color: #94a3b8; text-align: right; cursor: pointer; border-radius: 12px; font-weight: bold; display: flex; align-items: center; gap: 12px; transition: 0.3s; }
-        .nav-btn i { width: 25px; }
-        .nav-btn:hover, .nav-btn.active { background: rgba(0, 229, 255, 0.1); color: var(--primary); }
-
-        /* Main Content */
-        main { flex: 1; padding: 30px; overflow-y: auto; height: 100vh; background: radial-gradient(circle at top left, #0d1b2a, #05080f); position: relative; }
-        .section { display: none; animation: fadeIn 0.4s ease-out; }
-        .section.active { display: block; }
-
-        /* Cards & Stats */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .stat-card i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
-        .stat-card h3 { font-size: 1.8rem; margin: 10px 0; color: #fff; }
-        .stat-card p { color: #94a3b8; font-size: 0.9rem; }
-
-        /* Tables */
-        .table-container { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); margin-top: 20px; }
-        .data-table { width: 100%; border-collapse: collapse; text-align: right; }
-        .data-table th, .data-table td { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .data-table th { background: rgba(0,229,255,0.05); color: var(--primary); }
-
-        /* Chat System */
-        .chat-layout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; height: 65vh; }
-        .chat-list { background: var(--card); border-radius: 15px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05); }
-        .chat-user-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; }
-        .chat-user-item:hover { background: rgba(0,229,255,0.05); }
-        .chat-user-item.active { border-right: 4px solid var(--primary); background: rgba(0,229,255,0.1); }
-        .chat-window { background: #0b141a; border-radius: 15px; display: flex; flex-direction: column; position: relative; }
-        .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 8px 15px; border-radius: 10px; max-width: 70%; font-size: 0.9rem; }
-        .msg.student { align-self: flex-start; background: #202c33; color: white; }
-        .msg.admin { align-self: flex-end; background: #005c4b; color: white; }
-        .chat-input-area { padding: 15px; background: #202c33; display: flex; gap: 10px; }
-
-        /* Forms & Buttons */
-        .form-box { background: var(--card); padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); }
-        input, select, textarea { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; }
-        .submit-btn { background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 900; cursor: pointer; width: 100%; margin-top: 10px; }
-        .badge { padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; }
-        .bg-success { background: rgba(16,185,129,0.2); color: var(--success); }
-        .bg-danger { background: rgba(239,68,68,0.2); color: var(--accent); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; }
+        #login-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--primary); text-align: center; }
+        header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 30px; }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
+        .box { background: var(--card); padding: 25px; border-radius: 20px; }
+        .msg-item { background: #0f172a; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-right: 4px solid var(--accent); }
+        input, textarea { width: 100%; padding: 10px; margin-top: 10px; border-radius: 8px; border: 1px solid #334155; background: #0b111e; color: white; outline: none; }
+        .btn { width: 100%; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-p { background: var(--primary); color: white; }
+        .btn-a { background: var(--accent); color: white; }
     </style>
 </head>
 <body>
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2>دخول الإمبراطور</h2>
+            <input type="password" id="pass" placeholder="كلمة السر">
+            <button class="btn btn-p" onclick="login()">دخول</button>
+        </div>
+    </div>
 
-    <aside>
-        <h2>لوحة الخبير 🧬</h2>
-        <button class="nav-btn active" onclick="showSection('dashboard')"><i class="fas fa-chart-pie"></i> الإحصائيات</button>
-        <button class="nav-btn" onclick="showSection('students')"><i class="fas fa-user-grad"></i> إدارة الطلاب</button>
-        <button class="nav-btn" onclick="showSection('balance-section')"><i class="fas fa-wallet"></i> شحن وسحب رصيد</button>
-        <button class="nav-btn" onclick="showSection('activity')"><i class="fas fa-fingerprint"></i> سجل النشاط</button>
-        <button class="nav-btn" onclick="showSection('content')"><i class="fas fa-photo-video"></i> المحتوى</button>
-        <button class="nav-btn" onclick="showSection('alerts')"><i class="fas fa-bullhorn"></i> التنبيهات</button>
-        <button class="nav-btn" onclick="showSection('chat-admin')"><i class="fas fa-comments"></i> مركز الرسائل</button>
-        <button class="nav-btn" onclick="window.location.href='index.html'" style="margin-top: auto; color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-home"></i> العودة للرئيسية</button>
-        <button class="nav-btn" onclick="localStorage.clear(); location.reload();" style="color: var(--accent);"><i class="fas fa-power-off"></i> خروج</button>
-    </aside>
+    <main id="admin-content" style="display:none;">
+        <header>
+            <h1>لوحة التحكم 🧬</h1>
+            <div>المتصلين: <span id="online-count">0</span></div>
+        </header>
 
-    <main>
-        <div id="dashboard" class="section active">
-            <h1>ملخص المنصة</h1>
-            <div class="stats-grid">
-                <div class="stat-card" style="border: 1px solid var(--success)">
-                    <i class="fas fa-money-bill-wave" style="color: var(--success)"></i>
-                    <h3 id="total-profits">0</h3><p>إجمالي الأرباح (ج.م)</p>
-                </div>
-                <div class="stat-card"><i class="fas fa-users"></i><h3 id="total-students">0</h3><p>طالب مسجل</p></div>
-                <div class="stat-card"><i class="fas fa-bolt"></i><h3 id="online-now">0</h3><p>متصل الآن</p></div>
+        <div class="admin-grid">
+            <div class="box">
+                <h2><i class="fas fa-envelope"></i> رسائل الطلاب والرد عليها</h2>
+                <div id="msg-display" style="max-height: 500px; overflow-y: auto; margin-top: 15px;"></div>
+            </div>
+
+            <div class="box">
+                <h2><i class="fas fa-bullhorn"></i> التنبيهات والبوستر</h2>
+                <textarea id="notif-input" placeholder="اكتب تنبيه عام..."></textarea>
+                <button class="btn btn-a" onclick="sendNotif()">بث تنبيه</button>
+                <hr style="margin:20px 0; opacity:0.1;">
+                <input type="text" id="p-url" placeholder="رابط البوستر الجديد">
+                <button class="btn btn-p" onclick="updatePoster()">تحديث الصورة</button>
             </div>
         </div>
-
-        <div id="students" class="section">
-            <h2>التحكم في الطلاب</h2>
-            <input type="text" id="searchStudent" placeholder="ابحث بالاسم أو الرقم..." oninput="filterStudents()">
-            <div class="table-container">
-                <table class="data-table">
-                    <thead><tr><th>الاسم</th><th>الرقم</th><th>الرصيد</th><th>الحالة</th><th>الإجراء</th></tr></thead>
-                    <tbody id="students-list"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="balance-section" class="section">
-            <h2>إدارة المحفظة المالية</h2>
-            <div class="form-box">
-                <h3>تعديل رصيد طالب يدوياً</h3>
-                <input type="text" id="target-phone" placeholder="رقم موبايل الطالب">
-                <input type="number" id="balance-amount" placeholder="المبلغ (مثال: 50 أو -50 للسحب)">
-                <button class="submit-btn" onclick="updateBalance()">تحديث الرصيد الآن</button>
-            </div>
-        </div>
-
-        <div id="activity" class="section">
-            <h2>آخر التحركات</h2>
-            <div class="table-container">
-                <table class="data-table">
-                    <thead><tr><th>الوقت</th><th>الطالب</th><th>الفعل</th></tr></thead>
-                    <tbody id="activity-log"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="chat-admin" class="section">
-            <h2>مركز الرسائل المباشرة</h2>
-            <div class="chat-layout">
-                <div class="chat-list" id="chat-users-list">
-                    </div>
-                <div class="chat-window">
-                    <div id="active-chat-name" style="padding: 10px; background: #202c33; border-bottom: 1px solid #334155;">اختر طالب لبدء المحادثة</div>
-                    <div class="messages-area" id="admin-messages-display"></div>
-                    <div class="chat-input-area">
-                        <input type="text" id="admin-reply-input" placeholder="اكتب ردك هنا...">
-                        <button class="send-btn" onclick="sendAdminReply()" style="background:var(--primary); border:none; padding:10px 20px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="alerts" class="section">
-            <h2>بث تنبيه عام</h2>
-            <textarea id="global-msg" rows="4" placeholder="نص التنبيه..."></textarea>
-            <button class="submit-btn" onclick="sendAlert()">إرسال للكل</button>
-        </div>
-
-        <div id="content" class="section">
-             <div class="form-box">
-                <h3>إضافة فيديو</h3>
-                <input type="text" id="v-title" placeholder="العنوان">
-                <input type="text" id="v-url" placeholder="الرابط">
-                <button class="submit-btn" onclick="db.ref('videos').push({title:document.getElementById('v-title').value, url:document.getElementById('v-url').value}); alert('تم!')">نشر</button>
-             </div>
-        </div>
-
     </main>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
@@ -168,111 +69,61 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let currentChatUser = null;
-
-        function showSection(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
+        function login() {
+            if(document.getElementById('pass').value === 'hamdyhamdy012345') {
+                document.getElementById('login-overlay').style.display='none';
+                document.getElementById('admin-content').style.display='block';
+                loadAdmin();
+            } else alert("خطأ!");
         }
 
-        // --- إدارة الطلاب والرصيد والأرباح ---
-        db.ref('students').on('value', snap => {
-            const list = document.getElementById('students-list');
-            let profit = 0; let count = 0;
-            list.innerHTML = "";
-            snap.forEach(child => {
-                const u = child.val();
-                count++;
-                profit += (u.totalRecharge || 0);
-                const isBanned = u.status === "blocked";
-                list.innerHTML += `
-                    <tr>
-                        <td>${u.name}</td>
-                        <td>${u.phone}</td>
-                        <td>${u.balance || 0} ج.م</td>
-                        <td><span class="badge ${isBanned?'bg-danger':'bg-success'}">${isBanned?'محظور':'نشط'}</span></td>
-                        <td>
-                            <button onclick="toggleBan('${u.phone}', '${isBanned?'active':'blocked'}')" style="font-size:10px; padding:5px; cursor:pointer;">${isBanned?'فك':'حظر'}</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            document.getElementById('total-students').innerText = count;
-            document.getElementById('total-profits').innerText = profit;
-        });
-
-        function updateBalance() {
-            const phone = document.getElementById('target-phone').value;
-            const amount = parseFloat(document.getElementById('balance-amount').value);
-            if(!phone || !amount) return alert("أكمل البيانات");
+        function loadAdmin() {
+            db.ref('admin/online_users').on('value', s => document.getElementById('online-count').innerText = s.numChildren() || 0);
             
-            db.ref('students/' + phone).once('value', snap => {
-                if(snap.exists()) {
-                    let newBalance = (snap.val().balance || 0) + amount;
-                    let newRecharge = (snap.val().totalRecharge || 0) + (amount > 0 ? amount : 0);
-                    db.ref('students/' + phone).update({ balance: newBalance, totalRecharge: newRecharge });
-                    alert("تم تحديث الرصيد بنجاح");
-                } else { alert("الطالب غير موجود"); }
-            });
-        }
-
-        function toggleBan(p, s) { db.ref('students/'+p).update({status:s}); }
-
-        // --- نظام الدردشة المطور ---
-        db.ref('chats').on('value', snap => {
-            const list = document.getElementById('chat-users-list');
-            list.innerHTML = "";
-            snap.forEach(child => {
-                const phone = child.key;
-                list.innerHTML += `<div class="chat-user-item" onclick="openChat('${phone}')"><i class="fas fa-user"></i> طالب: ${phone}</div>`;
-            });
-        });
-
-        function openChat(phone) {
-            currentChatUser = phone;
-            document.getElementById('active-chat-name').innerText = "محادثة الطالب: " + phone;
-            db.ref('chats/' + phone).on('value', snap => {
-                const display = document.getElementById('admin-messages-display');
+            db.ref('admin/messages').on('value', s => {
+                const display = document.getElementById('msg-display');
                 display.innerHTML = "";
-                snap.forEach(child => {
-                    const m = child.val();
-                    display.innerHTML += `<div class="msg ${m.type}">${m.message}</div>`;
-                });
-                display.scrollTop = display.scrollHeight;
+                const data = s.val();
+                if(data) {
+                    Object.keys(data).reverse().forEach(key => {
+                        const m = data[key];
+                        display.innerHTML += `
+                            <div class="msg-item">
+                                <strong>${m.sender}</strong> <small style="opacity:0.5">${m.time}</small>
+                                <p style="margin:10px 0;">${m.message}</p>
+                                <input type="text" id="rep-${key}" placeholder="اكتب ردك هنا...">
+                                <button class="btn btn-p" onclick="reply('${key}')">إرسال الرد</button>
+                                <button onclick="del('${key}')" style="background:none; border:none; color:var(--accent); cursor:pointer; margin-top:10px; font-size:0.8rem;">حذف المحادثة</button>
+                            </div>`;
+                    });
+                }
             });
         }
 
-        function sendAdminReply() {
-            const input = document.getElementById('admin-reply-input');
-            if(!currentChatUser || !input.value) return;
-            db.ref('chats/' + currentChatUser).push({
-                message: input.value,
-                type: 'admin',
-                timestamp: Date.now(),
-                time: new Date().toLocaleTimeString('ar-EG')
-            });
-            input.value = "";
+        function reply(id) {
+            const txt = document.getElementById('rep-'+id).value;
+            if(txt) {
+                db.ref('admin/replies/'+id).set({ text: txt, time: new Date().toLocaleString('ar-EG') })
+                .then(() => alert("تم الرد!"));
+            }
         }
 
-        // سجل النشاط
-        db.ref('admin/activity_logs').limitToLast(10).on('value', snap => {
-            const logBody = document.getElementById('activity-log');
-            logBody.innerHTML = "";
-            snap.forEach(child => {
-                const l = child.val();
-                logBody.innerHTML = `<tr><td>${new Date(l.timestamp).toLocaleTimeString()}</td><td>${l.userName}</td><td>${l.action}</td></tr>` + logBody.innerHTML;
-            });
-        });
-
-        function sendAlert() {
-            const txt = document.getElementById('global-msg').value;
-            db.ref('admin/global_alert').set({ text: txt, timestamp: Date.now() });
-            alert("تم النشر");
+        function del(id) {
+            if(confirm("حذف؟")) {
+                db.ref('admin/messages/'+id).remove();
+                db.ref('admin/replies/'+id).remove();
+            }
         }
 
-        db.ref('admin/online_users').on('value', snap => { document.getElementById('online-now').innerText = snap.numChildren(); });
+        function sendNotif() {
+            const t = document.getElementById('notif-input').value;
+            if(t) db.ref('admin/notification').set({ text: t, time: Date.now() }).then(()=>alert("تم!"));
+        }
+
+        function updatePoster() {
+            const u = document.getElementById('p-url').value;
+            if(u) db.ref('admin/poster_url').set(u).then(()=>alert("تم!"));
+        }
     </script>
 </body>
 </html>
