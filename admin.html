@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; --card: #111827; --text: #ffffff; --success: #10b981; }
+        :root { --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; --card: #111827; --text: #ffffff; --success: #10b981; --warning: #f59e0b; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         body { background-color: var(--bg); color: var(--text); display: flex; min-height: 100vh; overflow: hidden; }
 
@@ -19,7 +19,7 @@
         .nav-btn:hover, .nav-btn.active { background: rgba(0, 229, 255, 0.1); color: var(--primary); }
 
         /* Main Content */
-        main { flex: 1; padding: 30px; overflow-y: auto; height: 100vh; background: radial-gradient(circle at top left, #0d1b2a, #05080f); }
+        main { flex: 1; padding: 30px; overflow-y: auto; height: 100vh; background: radial-gradient(circle at top left, #0d1b2a, #05080f); position: relative; }
         .section { display: none; animation: fadeIn 0.4s ease-out; }
         .section.active { display: block; }
 
@@ -29,133 +29,125 @@
         .stat-card i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
         .stat-card h3 { font-size: 1.8rem; margin: 10px 0; color: #fff; }
         .stat-card p { color: #94a3b8; font-size: 0.9rem; }
-        .profit-card { border: 1px solid var(--success); }
-        .profit-card h3 { color: var(--success); }
 
         /* Tables */
         .table-container { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); margin-top: 20px; }
         .data-table { width: 100%; border-collapse: collapse; text-align: right; }
         .data-table th, .data-table td { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .data-table th { background: rgba(0,229,255,0.05); color: var(--primary); font-weight: 900; }
-        .data-table tr:hover { background: rgba(255,255,255,0.02); }
+        .data-table th { background: rgba(0,229,255,0.05); color: var(--primary); }
 
-        /* Status Badges */
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
-        .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .badge-blocked { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        /* Chat System */
+        .chat-layout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; height: 65vh; }
+        .chat-list { background: var(--card); border-radius: 15px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05); }
+        .chat-user-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; }
+        .chat-user-item:hover { background: rgba(0,229,255,0.05); }
+        .chat-user-item.active { border-right: 4px solid var(--primary); background: rgba(0,229,255,0.1); }
+        .chat-window { background: #0b141a; border-radius: 15px; display: flex; flex-direction: column; position: relative; }
+        .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 8px 15px; border-radius: 10px; max-width: 70%; font-size: 0.9rem; }
+        .msg.student { align-self: flex-start; background: #202c33; color: white; }
+        .msg.admin { align-self: flex-end; background: #005c4b; color: white; }
+        .chat-input-area { padding: 15px; background: #202c33; display: flex; gap: 10px; }
 
-        /* Forms */
+        /* Forms & Buttons */
         .form-box { background: var(--card); padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); }
-        input, textarea, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; }
-        input:focus { border-color: var(--primary); }
-        .submit-btn { background: var(--primary); color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: 900; cursor: pointer; width: 100%; margin-top: 15px; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; }
+        .submit-btn { background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 900; cursor: pointer; width: 100%; margin-top: 10px; }
+        .badge { padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; }
+        .bg-success { background: rgba(16,185,129,0.2); color: var(--success); }
+        .bg-danger { background: rgba(239,68,68,0.2); color: var(--accent); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <aside>
         <h2>لوحة الخبير 🧬</h2>
-        <button class="nav-btn active" onclick="showSection('dashboard')"><i class="fas fa-chart-pie"></i> الإحصائيات والأرباح</button>
-        <button class="nav-btn" onclick="showSection('students')"><i class="fas fa-user-grad"></i> إدارة الطلاب والحظر</button>
-        <button class="nav-btn" onclick="showSection('activity')"><i class="fas fa-fingerprint"></i> سجل النشاط الحي</button>
-        <button class="nav-btn" onclick="showSection('content')"><i class="fas fa-photo-video"></i> الفيديوهات والامتحانات</button>
-        <button class="nav-btn" onclick="showSection('alerts')"><i class="fas fa-bullhorn"></i> التنبيهات العامة</button>
-        <button class="nav-btn" onclick="showSection('chat')"><i class="fas fa-comments"></i> شات الطلاب</button>
-        <button class="nav-btn" onclick="window.location.href='index.html'" style="margin-top: auto; color: var(--accent);"><i class="fas fa-power-off"></i> خروج</button>
+        <button class="nav-btn active" onclick="showSection('dashboard')"><i class="fas fa-chart-pie"></i> الإحصائيات</button>
+        <button class="nav-btn" onclick="showSection('students')"><i class="fas fa-user-grad"></i> إدارة الطلاب</button>
+        <button class="nav-btn" onclick="showSection('balance-section')"><i class="fas fa-wallet"></i> شحن وسحب رصيد</button>
+        <button class="nav-btn" onclick="showSection('activity')"><i class="fas fa-fingerprint"></i> سجل النشاط</button>
+        <button class="nav-btn" onclick="showSection('content')"><i class="fas fa-photo-video"></i> المحتوى</button>
+        <button class="nav-btn" onclick="showSection('alerts')"><i class="fas fa-bullhorn"></i> التنبيهات</button>
+        <button class="nav-btn" onclick="showSection('chat-admin')"><i class="fas fa-comments"></i> مركز الرسائل</button>
+        <button class="nav-btn" onclick="window.location.href='index.html'" style="margin-top: auto; color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-home"></i> العودة للرئيسية</button>
+        <button class="nav-btn" onclick="localStorage.clear(); location.reload();" style="color: var(--accent);"><i class="fas fa-power-off"></i> خروج</button>
     </aside>
 
     <main>
         <div id="dashboard" class="section active">
-            <h1 style="margin-bottom: 25px;">ملخص المنصة اليوم</h1>
+            <h1>ملخص المنصة</h1>
             <div class="stats-grid">
-                <div class="stat-card profit-card">
-                    <i class="fas fa-hand-holding-usd"></i>
-                    <h3 id="total-profits">0</h3>
-                    <p>إجمالي الأرباح (ج.م)</p>
+                <div class="stat-card" style="border: 1px solid var(--success)">
+                    <i class="fas fa-money-bill-wave" style="color: var(--success)"></i>
+                    <h3 id="total-profits">0</h3><p>إجمالي الأرباح (ج.م)</p>
                 </div>
-                <div class="stat-card">
-                    <i class="fas fa-users"></i>
-                    <h3 id="total-students">0</h3>
-                    <p>طالب مسجل</p>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-bolt"></i>
-                    <h3 id="online-now">0</h3>
-                    <p>متصل الآن</p>
-                </div>
+                <div class="stat-card"><i class="fas fa-users"></i><h3 id="total-students">0</h3><p>طالب مسجل</p></div>
+                <div class="stat-card"><i class="fas fa-bolt"></i><h3 id="online-now">0</h3><p>متصل الآن</p></div>
             </div>
         </div>
 
         <div id="students" class="section">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>قائمة الطلاب والتحكم</h2>
-                <input type="text" id="searchStudent" placeholder="ابحث بالاسم أو الرقم..." style="width: 300px; margin: 0;" oninput="filterStudents()">
-            </div>
+            <h2>التحكم في الطلاب</h2>
+            <input type="text" id="searchStudent" placeholder="ابحث بالاسم أو الرقم..." oninput="filterStudents()">
             <div class="table-container">
                 <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>الطالب</th>
-                            <th>الرقم</th>
-                            <th>الصف</th>
-                            <th>الرصيد</th>
-                            <th>الحالة</th>
-                            <th>الإجراء</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>الاسم</th><th>الرقم</th><th>الرصيد</th><th>الحالة</th><th>الإجراء</th></tr></thead>
                     <tbody id="students-list"></tbody>
                 </table>
             </div>
         </div>
 
+        <div id="balance-section" class="section">
+            <h2>إدارة المحفظة المالية</h2>
+            <div class="form-box">
+                <h3>تعديل رصيد طالب يدوياً</h3>
+                <input type="text" id="target-phone" placeholder="رقم موبايل الطالب">
+                <input type="number" id="balance-amount" placeholder="المبلغ (مثال: 50 أو -50 للسحب)">
+                <button class="submit-btn" onclick="updateBalance()">تحديث الرصيد الآن</button>
+            </div>
+        </div>
+
         <div id="activity" class="section">
-            <h2>سجل نشاط الطلاب (Live)</h2>
+            <h2>آخر التحركات</h2>
             <div class="table-container">
                 <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>الوقت</th>
-                            <th>الاسم</th>
-                            <th>الرقم</th>
-                            <th>ماذا فعل؟</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>الوقت</th><th>الطالب</th><th>الفعل</th></tr></thead>
                     <tbody id="activity-log"></tbody>
                 </table>
             </div>
         </div>
 
-        <div id="content" class="section">
-            <div class="stats-grid">
-                <div class="form-box">
-                    <h3><i class="fas fa-video"></i> رفع فيديو جديد</h3>
-                    <input type="text" id="vid-title" placeholder="عنوان الفيديو">
-                    <input type="text" id="vid-url" placeholder="رابط الفيديو (YouTube/Drive)">
-                    <button class="submit-btn" onclick="uploadVideo()">نشر الفيديو</button>
-                </div>
-                <div class="form-box">
-                    <h3><i class="fas fa-file-signature"></i> إضافة امتحان</h3>
-                    <input type="text" id="exam-title" placeholder="اسم الامتحان">
-                    <input type="number" id="exam-price" placeholder="سعر الدخول (0 للمجاني)">
-                    <button class="submit-btn" onclick="alert('انتقل لقسم بناء الامتحانات المطور')">بدء بناء الأسئلة</button>
+        <div id="chat-admin" class="section">
+            <h2>مركز الرسائل المباشرة</h2>
+            <div class="chat-layout">
+                <div class="chat-list" id="chat-users-list">
+                    </div>
+                <div class="chat-window">
+                    <div id="active-chat-name" style="padding: 10px; background: #202c33; border-bottom: 1px solid #334155;">اختر طالب لبدء المحادثة</div>
+                    <div class="messages-area" id="admin-messages-display"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="admin-reply-input" placeholder="اكتب ردك هنا...">
+                        <button class="send-btn" onclick="sendAdminReply()" style="background:var(--primary); border:none; padding:10px 20px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="alerts" class="section">
-            <h2>بث تنبيه لجميع الطلاب</h2>
-            <div class="form-box">
-                <textarea id="global-msg" rows="5" placeholder="اكتب التنبيه هنا... سيظهر فوراً في الصفحة الرئيسية لكل الطلاب"></textarea>
-                <button class="submit-btn" style="background: var(--accent); color: white;" onclick="sendAlert()">إرسال التنبيه الآن</button>
-            </div>
+            <h2>بث تنبيه عام</h2>
+            <textarea id="global-msg" rows="4" placeholder="نص التنبيه..."></textarea>
+            <button class="submit-btn" onclick="sendAlert()">إرسال للكل</button>
         </div>
 
-        <div id="chat" class="section">
-            <h2>رسائل الدعم الفني والطلاب</h2>
-            <div id="chat-messages" class="table-container" style="padding: 20px; height: 400px; overflow-y: auto;">
-                </div>
+        <div id="content" class="section">
+             <div class="form-box">
+                <h3>إضافة فيديو</h3>
+                <input type="text" id="v-title" placeholder="العنوان">
+                <input type="text" id="v-url" placeholder="الرابط">
+                <button class="submit-btn" onclick="db.ref('videos').push({title:document.getElementById('v-title').value, url:document.getElementById('v-url').value}); alert('تم!')">نشر</button>
+             </div>
         </div>
 
     </main>
@@ -176,6 +168,8 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        let currentChatUser = null;
+
         function showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -183,100 +177,102 @@
             event.currentTarget.classList.add('active');
         }
 
-        // --- حساب الأرباح والطلاب ---
+        // --- إدارة الطلاب والرصيد والأرباح ---
         db.ref('students').on('value', snap => {
-            let totalProfit = 0;
-            let studentCount = 0;
             const list = document.getElementById('students-list');
+            let profit = 0; let count = 0;
             list.innerHTML = "";
-
             snap.forEach(child => {
-                const user = child.val();
-                studentCount++;
-                // نفترض وجود سجل شحن أو نجمع الرصيد المستهلك (حسب نظامك)
-                // هنا سنجمع إجمالي الشحنات إذا كانت مسجلة في حقل اسمه totalRecharge
-                totalProfit += (user.totalRecharge || 0);
-
-                const isBlocked = user.status === "blocked";
+                const u = child.val();
+                count++;
+                profit += (u.totalRecharge || 0);
+                const isBanned = u.status === "blocked";
                 list.innerHTML += `
                     <tr>
-                        <td><b>${user.name}</b></td>
-                        <td>${user.phone}</td>
-                        <td>${user.grade} ثانوي</td>
-                        <td style="color:var(--primary)">${user.balance || 0} ج.م</td>
-                        <td><span class="badge ${isBlocked ? 'badge-blocked' : 'badge-active'}">${isBlocked ? 'محظور' : 'نشط'}</span></td>
+                        <td>${u.name}</td>
+                        <td>${u.phone}</td>
+                        <td>${u.balance || 0} ج.م</td>
+                        <td><span class="badge ${isBanned?'bg-danger':'bg-success'}">${isBanned?'محظور':'نشط'}</span></td>
                         <td>
-                            <button onclick="toggleUserStatus('${user.phone}', '${isBlocked ? 'active' : 'blocked'}')" 
-                                    style="padding: 5px 10px; cursor:pointer; background:${isBlocked ? 'var(--success)' : 'var(--accent)'}; border:none; border-radius:5px; color:white; font-size:11px;">
-                                ${isBlocked ? 'فك الحظر' : 'حظر الطالب'}
-                            </button>
+                            <button onclick="toggleBan('${u.phone}', '${isBanned?'active':'blocked'}')" style="font-size:10px; padding:5px; cursor:pointer;">${isBanned?'فك':'حظر'}</button>
                         </td>
                     </tr>
                 `;
             });
-            document.getElementById('total-profits').innerText = totalProfit.toLocaleString();
-            document.getElementById('total-students').innerText = studentCount;
+            document.getElementById('total-students').innerText = count;
+            document.getElementById('total-profits').innerText = profit;
         });
 
-        // --- سجل النشاط الحي ---
-        db.ref('admin/activity_logs').limitToLast(30).on('value', snap => {
+        function updateBalance() {
+            const phone = document.getElementById('target-phone').value;
+            const amount = parseFloat(document.getElementById('balance-amount').value);
+            if(!phone || !amount) return alert("أكمل البيانات");
+            
+            db.ref('students/' + phone).once('value', snap => {
+                if(snap.exists()) {
+                    let newBalance = (snap.val().balance || 0) + amount;
+                    let newRecharge = (snap.val().totalRecharge || 0) + (amount > 0 ? amount : 0);
+                    db.ref('students/' + phone).update({ balance: newBalance, totalRecharge: newRecharge });
+                    alert("تم تحديث الرصيد بنجاح");
+                } else { alert("الطالب غير موجود"); }
+            });
+        }
+
+        function toggleBan(p, s) { db.ref('students/'+p).update({status:s}); }
+
+        // --- نظام الدردشة المطور ---
+        db.ref('chats').on('value', snap => {
+            const list = document.getElementById('chat-users-list');
+            list.innerHTML = "";
+            snap.forEach(child => {
+                const phone = child.key;
+                list.innerHTML += `<div class="chat-user-item" onclick="openChat('${phone}')"><i class="fas fa-user"></i> طالب: ${phone}</div>`;
+            });
+        });
+
+        function openChat(phone) {
+            currentChatUser = phone;
+            document.getElementById('active-chat-name').innerText = "محادثة الطالب: " + phone;
+            db.ref('chats/' + phone).on('value', snap => {
+                const display = document.getElementById('admin-messages-display');
+                display.innerHTML = "";
+                snap.forEach(child => {
+                    const m = child.val();
+                    display.innerHTML += `<div class="msg ${m.type}">${m.message}</div>`;
+                });
+                display.scrollTop = display.scrollHeight;
+            });
+        }
+
+        function sendAdminReply() {
+            const input = document.getElementById('admin-reply-input');
+            if(!currentChatUser || !input.value) return;
+            db.ref('chats/' + currentChatUser).push({
+                message: input.value,
+                type: 'admin',
+                timestamp: Date.now(),
+                time: new Date().toLocaleTimeString('ar-EG')
+            });
+            input.value = "";
+        }
+
+        // سجل النشاط
+        db.ref('admin/activity_logs').limitToLast(10).on('value', snap => {
             const logBody = document.getElementById('activity-log');
             logBody.innerHTML = "";
             snap.forEach(child => {
-                const log = child.val();
-                const time = new Date(log.timestamp).toLocaleTimeString('ar-EG');
-                logBody.innerHTML = `
-                    <tr>
-                        <td style="color:#94a3b8">${time}</td>
-                        <td>${log.userName}</td>
-                        <td>${log.userPhone}</td>
-                        <td style="color:var(--primary)">${log.action}</td>
-                    </tr>
-                ` + logBody.innerHTML;
+                const l = child.val();
+                logBody.innerHTML = `<tr><td>${new Date(l.timestamp).toLocaleTimeString()}</td><td>${l.userName}</td><td>${l.action}</td></tr>` + logBody.innerHTML;
             });
         });
 
-        // --- وظيفة الحظر والفك ---
-        function toggleUserStatus(phone, newStatus) {
-            if(confirm(`هل أنت متأكد من تغيير حالة الطالب؟`)) {
-                db.ref('students/' + phone).update({ status: newStatus });
-                // تسجيل الفعل في السجلات
-                db.ref('admin/activity_logs').push({
-                    userName: "المستر",
-                    userPhone: "ADMIN",
-                    action: `${newStatus === 'blocked' ? 'حظر' : 'فك حظر'} الطالب ذو الرقم ${phone}`,
-                    timestamp: Date.now()
-                });
-            }
-        }
-
-        // --- التنبيهات العامة ---
         function sendAlert() {
-            const msg = document.getElementById('global-msg').value;
-            if(!msg) return alert("اكتب رسالة أولاً");
-            db.ref('admin/global_alert').set({
-                text: msg,
-                sender: "مستر حمدي عيد",
-                timestamp: Date.now()
-            }).then(() => {
-                alert("تم البث بنجاح");
-                document.getElementById('global-msg').value = "";
-            });
+            const txt = document.getElementById('global-msg').value;
+            db.ref('admin/global_alert').set({ text: txt, timestamp: Date.now() });
+            alert("تم النشر");
         }
 
-        // --- عداد المتصلين ---
-        db.ref('admin/online_users').on('value', snap => {
-            document.getElementById('online-now').innerText = snap.numChildren() || 0;
-        });
-
-        // --- فحص البحث ---
-        function filterStudents() {
-            let input = document.getElementById('searchStudent').value.toLowerCase();
-            let rows = document.querySelectorAll('#students-list tr');
-            rows.forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(input) ? '' : 'none';
-            });
-        }
+        db.ref('admin/online_users').on('value', snap => { document.getElementById('online-now').innerText = snap.numChildren(); });
     </script>
 </body>
 </html>
