@@ -19,189 +19,140 @@
             --text: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body { 
             background: var(--bg);
             color: var(--text); 
             height: 100vh; 
-            height: -webkit-fill-available;
             display: flex; 
             flex-direction: column; 
             overflow: hidden; 
+            position: fixed; /* لمنع السحب العشوائي للصفحة بالكامل في iOS */
+            width: 100%;
         }
 
-        /* Blocked Screen UI */
+        /* شاشة اختيار القناة */
+        #selection-overlay {
+            position: fixed; inset: 0; background: var(--bg); z-index: 2000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+        }
+        .select-card {
+            width: 80%; max-width: 350px; background: #111b27; padding: 30px;
+            border-radius: 20px; border: 1px solid var(--master-neon); text-align: center;
+            cursor: pointer; transition: 0.3s;
+        }
+        .select-card:active { transform: scale(0.95); }
+        .select-card i { font-size: 3rem; color: var(--master-neon); margin-bottom: 15px; }
+
+        /* Blocked Screen */
         #blocked-screen { 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(5, 8, 15, 0.98); 
-            z-index: 9999; 
-            display: none; 
-            align-items: center; 
-            justify-content: center; 
-            flex-direction: column; 
-            text-align: center;
-            padding: 20px;
-        }
-        .blocked-card {
-            background: #111;
-            padding: 30px;
-            border-radius: 20px;
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 20px rgba(255, 23, 68, 0.2);
+            position: fixed; inset: 0; background: rgba(5, 8, 15, 0.98); z-index: 9999; 
+            display: none; align-items: center; justify-content: center; flex-direction: column; padding: 20px;
         }
 
-        /* Navigation */
         nav { 
-            padding: 15px 5%; 
-            background: #0d141d; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid #222;
-        }
-        .back-btn {
-            background: rgba(255,255,255,0.05);
-            padding: 8px 15px;
-            border-radius: 8px;
-            color: var(--text);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: 0.3s;
+            padding: 10px 15px; background: #0d141d; display: flex; 
+            justify-content: space-between; align-items: center; border-bottom: 1px solid #222;
+            flex-shrink: 0;
         }
 
-        /* Tabs System */
-        .chat-tabs { display: flex; background: #0d141d; }
+        .chat-tabs { display: flex; background: #0d141d; flex-shrink: 0; }
         .tab {
-            flex: 1; padding: 15px; text-align: center; cursor: pointer; color: #888; transition: 0.3s;
-            font-weight: bold; border-bottom: 3px solid transparent;
+            flex: 1; padding: 12px; text-align: center; cursor: pointer; color: #888; 
+            font-weight: bold; border-bottom: 3px solid transparent; transition: 0.2s;
         }
         .tab.active { color: var(--master-neon); border-bottom-color: var(--master-neon); background: rgba(0, 229, 255, 0.05); }
 
-        /* Chat Layout */
+        /* Chat Layout & Scrolling */
         .chat-wrapper { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            position: relative;
-            background: #05080f; /* تم إزالة صورة الواتساب */
+            flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;
         }
         
         #chat-container { 
-            flex: 1; 
-            padding: 20px; 
-            overflow-y: auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            padding-bottom: 100px; /* مساحة لضمان عدم اختفاء الرسائل خلف صندوق الإرسال */
+            flex: 1; overflow-y: scroll; display: flex; flex-direction: column; gap: 12px;
+            padding: 15px; padding-bottom: 110px; /* مساحة للبوكس المثبت */
+            -webkit-overflow-scrolling: touch; /* سكرول ناعم جداً للأيفون */
+            scroll-behavior: smooth;
         }
 
-        /* Message Styling */
-        .msg-block { max-width: 85%; padding: 12px; border-radius: 12px; position: relative; animation: fadeIn 0.3s; }
-        .student-msg { align-self: flex-start; background: var(--user-msg); border-top-right-radius: 2px; }
-        .admin-msg { align-self: flex-end; background: var(--admin-msg); border-top-left-radius: 2px; border: 1px solid var(--master-neon); }
+        .msg-block { max-width: 85%; padding: 12px; border-radius: 15px; position: relative; animation: fadeIn 0.2s ease-out; line-height: 1.5; }
+        .student-msg { align-self: flex-start; background: var(--user-msg); border-bottom-right-radius: 2px; }
+        .admin-msg { align-self: flex-end; background: var(--admin-msg); border-bottom-left-radius: 2px; border-right: 3px solid var(--master-neon); }
         
-        /* Media Elements */
-        .msg-image { max-width: 100%; border-radius: 8px; margin-top: 8px; cursor: pointer; }
-        .msg-video { max-width: 100%; border-radius: 8px; margin-top: 8px; }
+        .msg-image { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
+        .msg-video { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
         .file-link { 
-            display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); 
-            padding: 10px; border-radius: 8px; text-decoration: none; color: var(--master-neon); margin-top: 8px;
-            border: 1px solid var(--master-neon); font-size: 0.8rem;
+            display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); 
+            padding: 12px; border-radius: 10px; text-decoration: none; color: var(--master-neon); 
+            margin-top: 8px; border: 1px dashed var(--master-neon); font-size: 0.85rem;
         }
 
-        .delete-btn {
-            position: absolute; top: -8px; left: -8px; background: var(--accent); color: white;
-            width: 22px; height: 22px; border-radius: 50%; font-size: 10px; display: none;
-            align-items: center; justify-content: center; cursor: pointer; border: 2px solid #05080f;
-        }
-        .is-admin .delete-btn { display: flex; }
-
-        /* Input System (Fixed at Bottom) */
+        /* Bottom Controls */
         .bottom-controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #0d141d;
-            border-top: 1px solid #222;
-            z-index: 100;
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: #0d141d; border-top: 1px solid #222; padding-bottom: env(safe-area-inset-bottom);
         }
-
         .preview-bar { 
             background: #111b21; padding: 10px; display: none; align-items: center; gap: 10px; 
             border-top: 2px solid var(--master-neon); 
         }
-
         .input-area { 
-            padding: 10px 5%; 
-            display: flex; 
-            gap: 10px; 
-            align-items: center; 
-            max-width: 900px; 
-            margin: 0 auto;
+            padding: 10px; display: flex; gap: 8px; align-items: center;
         }
-
         .input-wrapper { 
-            flex: 1; 
-            background: #1a2a3a; 
-            border-radius: 25px; 
-            display: flex; 
-            padding: 2px 15px; 
-            align-items: center; 
+            flex: 1; background: #1a2a3a; border-radius: 25px; display: flex; 
+            padding: 0 15px; align-items: center; 
         }
-
         #msg-input { 
-            flex: 1; 
-            background: transparent; 
-            border: none; 
-            color: white; 
-            padding: 12px; 
-            outline: none; 
-            font-size: 0.95rem;
+            flex: 1; background: transparent; border: none; color: white; padding: 10px 0;
+            outline: none; font-size: 1rem;
         }
-        
-        .icon-btn { color: var(--master-neon); font-size: 1.2rem; cursor: pointer; }
         .send-btn { 
-            width: 45px; height: 45px; 
-            background: var(--master-neon); 
-            border-radius: 50%; border: none; 
-            cursor: pointer; display: flex; 
-            align-items: center; justify-content: center; 
-            transition: 0.3s;
+            width: 45px; height: 45px; background: var(--master-neon); 
+            border-radius: 50%; border: none; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        .send-btn:active { transform: scale(0.9); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="not-admin">
+<body>
+
+    <div id="selection-overlay">
+        <h2 style="color: var(--master-neon); margin-bottom: 20px;">بماذا تريد البدء؟</h2>
+        <div class="select-card" onclick="startApp('public')">
+            <i class="fas fa-bullhorn"></i>
+            <h3>القناة العامة</h3>
+            <p style="color: #888; font-size: 0.8rem; margin-top: 5px;">أحدث تنبيهات وشروحات المستر</p>
+        </div>
+        <div class="select-card" onclick="startApp('private')">
+            <i class="fas fa-comment-medical"></i>
+            <h3>المراسلة الخاصة</h3>
+            <p style="color: #888; font-size: 0.8rem; margin-top: 5px;">تواصل مباشر وسري مع المستر</p>
+        </div>
+    </div>
 
     <div id="blocked-screen">
-        <div class="blocked-card">
+        <div style="background:#111; padding:30px; border-radius:20px; border:2px solid var(--accent); text-align:center;">
             <i class="fas fa-user-slash" style="font-size: 3rem; color: var(--accent); margin-bottom: 20px;"></i>
-            <h2 style="color: var(--accent); margin-bottom: 10px;">عفواً، تم حظر حسابك!</h2>
-            <p style="color: #ccc; margin-bottom: 20px;">لقد تم تقييد وصولك للمنصة من قبل الإدارة.<br>يرجى تقديم اعتذار أو التواصل مع المستر لفك الحظر.</p>
-            <a href="https://wa.me/201234567890" style="display: inline-block; padding: 12px 25px; background: #25d366; color: white; text-decoration: none; border-radius: 10px; font-weight: bold;">
-                <i class="fab fa-whatsapp"></i> تواصل مع المستر الآن
-            </a>
+            <h2 style="color:var(--accent)">تم حظر حسابك!</h2>
+            <a href="https://wa.me/201234567890" style="display:block; margin-top:20px; padding:12px; background:#25d366; color:white; text-decoration:none; border-radius:10px;">تواصل مع المستر</a>
         </div>
     </div>
 
     <nav>
-        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
-        <div style="text-align: left;">
-            <span id="user-display-name" style="font-weight: bold; color: var(--master-neon); font-size: 0.9rem;">جاري التحميل...</span>
-            <div id="role-badge" style="font-size: 0.6rem; color: #888;">طالب</div>
+        <a href="index.html" style="color:white; text-decoration:none;"><i class="fas fa-arrow-right"></i></a>
+        <div style="text-align: center;">
+            <div id="user-display-name" style="font-weight:900; color:var(--master-neon); font-size:1rem;">جاري التحميل...</div>
+            <div id="role-badge" style="font-size:0.7rem; color:#888;">طالب</div>
         </div>
+        <div style="width: 25px;"></div>
     </nav>
 
     <div class="chat-tabs">
-        <div class="tab active" onclick="switchTab('public', this)">القناة العامة</div>
-        <div class="tab" onclick="switchTab('private', this)">المراسلة الخاصة</div>
+        <div id="tab-public" class="tab active" onclick="switchTab('public')">القناة العامة</div>
+        <div id="tab-private" class="tab" onclick="switchTab('private')">المراسلة الخاصة</div>
     </div>
 
     <div class="chat-wrapper">
@@ -209,24 +160,21 @@
 
         <div class="bottom-controls">
             <div id="preview-bar" class="preview-bar">
-                <div id="file-info" style="font-size: 0.8rem; color: var(--master-neon); flex: 1;"></div>
-                <i class="fas fa-times" onclick="cancelAttachment()" style="color: var(--accent); cursor: pointer;"></i>
+                <div id="file-info" style="font-size:0.8rem; color:var(--master-neon); flex:1; overflow:hidden; text-overflow:ellipsis;"></div>
+                <i class="fas fa-times" onclick="cancelAttachment()" style="color:var(--accent)"></i>
             </div>
 
             <div class="input-area" id="input-section">
                 <label class="icon-btn">
-                    <i class="fa-solid fa-paperclip"></i>
+                    <i class="fa-solid fa-paperclip" style="color:var(--master-neon); font-size:1.3rem;"></i>
                     <input type="file" id="file-input" hidden onchange="handleFileSelect()">
                 </label>
                 <div class="input-wrapper">
-                    <input type="text" id="msg-input" placeholder="اكتب رسالتك..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <input type="text" id="msg-input" placeholder="اكتب رسالتك..." autocomplete="off">
                 </div>
-                <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane" style="color:#000"></i></button>
+                <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
             </div>
-            
-            <div id="admin-only-note" style="display:none; text-align:center; padding:15px; color:#888; font-size:0.8rem; background: #0d141d;">
-                 المستر فقط يمكنه النشر في القناة العامة
-            </div>
+            <div id="admin-only-note" style="display:none; text-align:center; padding:12px; color:#888; font-size:0.8rem;">المستر فقط يمكنه النشر هنا</div>
         </div>
     </div>
 
@@ -234,7 +182,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // --- إعدادات Firebase ---
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -255,91 +202,73 @@
 
         if (!userPhone) window.location.href = "login.html";
 
-        // 1. مراقبة بيانات المستخدم والحظر
+        // وظيفة البدء
+        function startApp(mode) {
+            document.getElementById('selection-overlay').style.fadeOut = "0.3s";
+            setTimeout(() => {
+                document.getElementById('selection-overlay').style.display = 'none';
+                switchTab(mode);
+            }, 300);
+        }
+
+        // مراقبة بيانات المستخدم
         db.ref('students/' + userPhone).on('value', snap => {
             userData = snap.val();
             if (!userData) return;
-            
-            if (userData.status === "blocked") {
-                document.getElementById('blocked-screen').style.display = 'flex';
-            } else {
-                document.getElementById('blocked-screen').style.display = 'none';
-            }
-
+            if (userData.status === "blocked") document.getElementById('blocked-screen').style.display = 'flex';
             document.getElementById('user-display-name').innerText = userData.name;
             document.getElementById('role-badge').innerText = userData.role === 'admin' ? 'المدير (المستر)' : 'طالب';
-            
-            if (userData.role === 'admin') {
-                document.body.classList.add('is-admin');
-            } else {
-                document.body.classList.remove('is-admin');
-            }
-            
             updateUIForRole();
-            loadChat(); 
         });
 
-        // 2. إدارة صلاحيات الإرسال
         function updateUIForRole() {
-            const inputSection = document.getElementById('input-section');
-            const adminNote = document.getElementById('admin-only-note');
-            
-            if (currentTab === 'public') {
-                // في القناة العامة: الإرسال للمستر فقط
-                if (userData?.role === 'admin') {
-                    inputSection.style.display = 'flex';
-                    adminNote.style.display = 'none';
-                } else {
-                    inputSection.style.display = 'none';
-                    adminNote.style.display = 'block';
-                }
-            } else {
-                // في الخاص: الجميع يرسل
-                inputSection.style.display = 'flex';
-                adminNote.style.display = 'none';
-            }
+            const isPublic = currentTab === 'public';
+            const isAdmin = userData?.role === 'admin';
+            document.getElementById('input-section').style.display = (!isPublic || isAdmin) ? 'flex' : 'none';
+            document.getElementById('admin-only-note').style.display = (isPublic && !isAdmin) ? 'block' : 'none';
         }
 
-        // 3. معالجة الملفات
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.innerHTML = '<div style="text-align:center; padding:20px; color:var(--master-neon);">جاري فتح القناة...</div>';
+            
+            updateUIForRole();
+            loadChat();
+        }
+
         function handleFileSelect() {
             const file = document.getElementById('file-input').files[0];
             if (!file) return;
+            if (file.size > 10 * 1024 * 1024) return alert("الملف كبير جداً (الأقصى 10 ميجا)");
 
             const reader = new FileReader();
             reader.onload = (e) => {
                 attachedFileData = e.target.result;
-                if (file.type.startsWith('image/')) attachedFileType = 'image';
-                else if (file.type.startsWith('video/')) attachedFileType = 'video';
-                else attachedFileType = 'file';
-                
-                showPreview(file.name);
+                attachedFileType = file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : 'file';
+                document.getElementById('preview-bar').style.display = 'flex';
+                document.getElementById('file-info').innerText = "تم إرفاق: " + file.name;
             };
             reader.readAsDataURL(file);
         }
 
-        function showPreview(text) {
-            document.getElementById('preview-bar').style.display = 'flex';
-            document.getElementById('file-info').innerText = text;
-        }
-
         function cancelAttachment() {
-            attachedFileData = null;
-            attachedFileType = null;
+            attachedFileData = null; attachedFileType = null;
             document.getElementById('file-input').value = "";
             document.getElementById('preview-bar').style.display = 'none';
         }
 
-        // 4. إرسال الرسالة
         function sendMessage() {
             const input = document.getElementById('msg-input');
-            const messageText = input.value.trim();
-            if (!messageText && !attachedFileData) return;
+            const txt = input.value.trim();
+            if (!txt && !attachedFileData) return;
 
-            // إذا كان المستخدم طالب، الخاص يذهب لمجلد هاتفه، وإذا كان مستر، يرسل في نفس المحادثة
             const path = currentTab === 'public' ? 'chats/public' : `chats/private/${userPhone}`;
-            
             const msgData = {
-                message: messageText,
+                message: txt,
                 media: attachedFileData,
                 mediaType: attachedFileType,
                 senderName: userData.name,
@@ -354,59 +283,42 @@
             cancelAttachment();
         }
 
-        // 5. تحميل الرسائل
         function loadChat() {
             const chatBox = document.getElementById('chat-container');
             const path = currentTab === 'public' ? 'chats/public' : `chats/private/${userPhone}`;
             
             db.ref(path).off();
-            db.ref(path).limitToLast(50).on('value', snap => {
+            db.ref(path).limitToLast(40).on('value', snap => {
                 chatBox.innerHTML = "";
                 snap.forEach(child => {
                     const m = child.val();
-                    const msgDiv = document.createElement('div');
-                    
-                    // تحديد التموضع: المستر دائماً يمين في كل الحالات؟ 
-                    // لا، الأفضل: رسائلي أنا يمين، والآخر يسار
                     const isMyMsg = m.senderPhone === userPhone;
-                    msgDiv.className = `msg-block ${isMyMsg ? 'admin-msg' : 'student-msg'}`;
+                    const div = document.createElement('div');
+                    div.className = `msg-block ${isMyMsg ? 'admin-msg' : 'student-msg'}`;
                     
-                    let mediaHtml = "";
+                    let media = "";
                     if (m.media) {
-                        if (m.mediaType === 'image') mediaHtml = `<img src="${m.media}" class="msg-image" onclick="window.open(this.src)">`;
-                        else if (m.mediaType === 'video') mediaHtml = `<video src="${m.media}" controls class="msg-video"></video>`;
-                        else mediaHtml = `<a href="${m.media}" download="file" class="file-link"><i class="fas fa-file-pdf"></i> ملف مرفق</a>`;
+                        if (m.mediaType === 'image') media = `<img src="${m.media}" class="msg-image" onclick="window.open(this.src)">`;
+                        else if (m.mediaType === 'video') media = `<video src="${m.media}" controls class="msg-video"></video>`;
+                        else media = `<a href="${m.media}" download="file" class="file-link"><i class="fas fa-file-pdf"></i> تحميل الملف المرفق</a>`;
                     }
 
-                    let deleteHtml = userData?.role === 'admin' ? 
-                        `<div class="delete-btn" onclick="deleteMsg('${child.key}')"><i class="fas fa-times"></i></div>` : '';
-
-                    msgDiv.innerHTML = `
-                        ${deleteHtml}
+                    div.innerHTML = `
                         <div style="font-size:0.65rem; color:var(--master-neon); font-weight:bold; margin-bottom:4px;">${m.senderName}</div>
-                        <div style="word-break: break-word;">${m.message}</div>
-                        ${mediaHtml}
-                        <span style="font-size:0.6rem; color:#888; display:block; margin-top:5px; text-align:left;">${m.time}</span>
+                        <div style="word-break: break-word; font-size:0.95rem;">${m.message}</div>
+                        ${media}
+                        <span style="font-size:0.6rem; color:#aaa; display:block; margin-top:5px; text-align:left;">${m.time}</span>
                     `;
-                    chatBox.appendChild(msgDiv);
+                    chatBox.appendChild(div);
                 });
                 chatBox.scrollTop = chatBox.scrollHeight;
             });
         }
 
-        function switchTab(tab, element) {
-            currentTab = tab;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            element.classList.add('active');
-            updateUIForRole();
-            loadChat();
-        }
-
-        function deleteMsg(msgId) {
-            if (!confirm("حذف الرسالة؟")) return;
-            const path = currentTab === 'public' ? 'chats/public' : `chats/private/${userPhone}`;
-            db.ref(`${path}/${msgId}`).remove();
-        }
+        // إرسال عبر زر Enter في الموبايل
+        document.getElementById('msg-input').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') sendMessage();
+        });
     </script>
 </body>
 </html>
