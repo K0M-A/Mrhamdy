@@ -3,142 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تواصل مع الخبير | حمدي عيد</title>
-    
+    <title>دعم خبير الأحياء | مستر حمدي عيد</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <style>
-        :root {
-            --primary: #22c55e;
-            --bg: #0f172a;
-            --glass: rgba(255, 255, 255, 0.05);
-            --student-msg: #1e293b;
-            --admin-msg: #065f46;
-        }
+        :root { --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; --chat-bg: #0d1418; --user-msg: #005c4b; --admin-msg: #202c33; --text: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        
+        body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: var(--bg);
-            color: white;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+        /* الهيدر */
+        nav { padding: 15px 5%; background: #202c33; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .back-btn { color: var(--primary); text-decoration: none; font-weight: bold; cursor: pointer; }
+        .status-info { display: flex; align-items: center; gap: 10px; }
+        .online-dot { width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; }
 
-        header {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            padding: 15px 5%;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
+        /* منطقة الرسائل */
+        #chat-container { flex: 1; padding: 20px 5%; overflow-y: auto; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; background-color: #0b141a; display: flex; flex-direction: column; gap: 15px; }
+        
+        .msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 0.95rem; line-height: 1.6; position: relative; word-wrap: break-word; }
+        .student-msg { align-self: flex-start; background: var(--user-msg); border-top-right-radius: 2px; }
+        .admin-msg { align-self: flex-end; background: var(--admin-msg); border-top-left-radius: 2px; border: 1px solid rgba(255,255,255,0.05); }
+        
+        .msg-time { display: block; font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 5px; text-align: left; }
 
-        .chat-container {
-            flex: 1;
-            padding: 20px 5%;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-        }
+        /* التنبيهات الإدارية */
+        .admin-notice { background: rgba(255, 23, 68, 0.2); border: 1px solid var(--accent); padding: 10px; border-radius: 10px; text-align: center; font-size: 0.85rem; margin-bottom: 10px; }
 
-        .message {
-            max-width: 80%;
-            padding: 12px 18px;
-            border-radius: 15px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            position: relative;
-        }
+        /* منطقة الإدخال */
+        .input-area { padding: 15px 5%; background: #202c33; display: flex; gap: 10px; align-items: center; }
+        input { flex: 1; padding: 12px 20px; border-radius: 25px; border: none; background: #2a3942; color: white; outline: none; }
+        .send-btn { width: 45px; height: 45px; background: var(--primary); border: none; border-radius: 50%; color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s; }
+        .send-btn:hover { transform: scale(1.1); background: #fff; }
 
-        .message.student {
-            align-self: flex-start;
-            background: var(--student-msg);
-            border-bottom-right-radius: 2px;
-        }
-
-        .message.admin {
-            align-self: flex-end;
-            background: var(--admin-msg);
-            border-bottom-left-radius: 2px;
-            border: 1px solid var(--primary);
-        }
-
-        .status-badge {
-            display: none;
-            background: #ef4444;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            font-weight: bold;
-        }
-
-        .input-area {
-            background: #1e293b;
-            padding: 20px 5%;
-            display: flex;
-            gap: 10px;
-        }
-
-        input {
-            flex: 1;
-            background: #0f172a;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px;
-            border-radius: 10px;
-            color: white;
-            outline: none;
-        }
-
-        .send-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .send-btn:hover { transform: scale(1.05); }
-
-        .back-btn { color: white; text-decoration: none; font-size: 1.2rem; }
+        #blocked-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="status-badge" id="blockNotice">
-        ⚠️ أنت محظور حالياً من دخول المنصة. يمكنك إرسال اعتذار للمستر هنا لطلب فك الحظر.
+    <div id="blocked-screen">
+        <i class="fas fa-user-slash" style="font-size: 5rem; color: var(--accent); margin-bottom: 20px;"></i>
+        <h2 style="color: var(--accent);">عذراً، حسابك متوقف حالياً</h2>
+        <p style="margin: 15px 0; color: #94a3b8;">تم تقييد وصولك للمنصة. يرجى التواصل مع مستر حمدي عيد لتسوية الحالة وتفعيل الحساب مرة أخرى.</p>
+        <a href="https://wa.me/201111276700" class="send-btn" style="width: auto; padding: 10px 30px; border-radius: 10px; text-decoration: none; font-weight: bold;">تواصل واتساب</a>
     </div>
 
-    <header>
-        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i></a>
-        <img src="H.png" width="45" alt="Master">
-        <div>
-            <div style="font-weight: 900;">الدعم الفني: مستر حمدي عيد</div>
-            <small style="color: var(--primary);">متصل الآن (خبير أحياء)</small>
+    <nav>
+        <a href="index.html" class="back-btn"><i class="fas fa-chevron-right"></i> رجوع للمنصة</a>
+        <div class="status-info">
+            <div style="text-align: left;">
+                <div style="font-weight: bold; font-size: 0.9rem;">مستر حمدي عيد</div>
+                <div style="font-size: 0.7rem; color: #10b981;">متصل الآن</div>
+            </div>
+            <div class="online-dot"></div>
         </div>
-    </header>
+    </nav>
 
-    <div class="chat-container" id="chatBox">
-        <div class="message admin">
-            أهلاً بك يا بطل! كيف يمكن للخبير حمدي عيد مساعدتك اليوم؟
+    <div id="chat-container">
+        <div id="global-alert-box" class="admin-notice" style="display: none;"></div>
         </div>
-    </div>
 
     <div class="input-area">
-        <input type="text" id="msgInput" placeholder="اكتب رسالتك هنا...">
-        <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        <input type="text" id="msg-input" placeholder="اكتب رسالتك هنا للمستر..." onkeypress="if(event.key === 'Enter') sendMsg()">
+        <button class="send-btn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
         const firebaseConfig = {
@@ -148,69 +79,81 @@
             projectId: "mrhamdy-1c406",
             storageBucket: "mrhamdy-1c406.firebasestorage.app",
             messagingSenderId: "806268398144",
-            appId: "1:806268398144:web:c40aef6b378377f72b4da5"
+            appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
         };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        const db = firebase.database();
 
-        let currentUser = null;
+        const studentPhone = localStorage.getItem('userLoggedIn');
+        const studentName = localStorage.getItem('userName');
 
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user;
-                checkUserStatus(user);
-                loadMessages(user);
-            } else {
-                window.location.href = "go.html";
+        if (!studentPhone) window.location.href = "go.html";
+
+        // 1. التحقق من حالة الحظر
+        db.ref('students/' + studentPhone).on('value', snap => {
+            const user = snap.val();
+            if (user && user.status === "blocked") {
+                document.getElementById('blocked-screen').style.display = 'flex';
             }
         });
 
-        // فحص هل الطالب محظور أم لا
-        async function checkUserStatus(user) {
-            const doc = await db.collection("users").doc(user.uid).get();
-            if (doc.exists && doc.data().status === "blocked") {
-                document.getElementById('blockNotice').style.display = 'block';
-                // منع الرجوع للرئيسية للمحظور
-                document.querySelector('.back-btn').style.display = 'none';
+        // 2. جلب التنبيهات العامة في الشات
+        db.ref('admin/global_alert').on('value', snap => {
+            const box = document.getElementById('global-alert-box');
+            if (snap.exists()) {
+                box.innerText = `📢 تنبيه: ${snap.val().text}`;
+                box.style.display = 'block';
             }
-        }
+        });
 
-        // إرسال رسالة
-        async function sendMessage() {
-            const text = document.getElementById('msgInput').value;
-            if (!text || !currentUser) return;
+        // 3. إرسال رسالة
+        function sendMsg() {
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if (!text) return;
 
-            await db.collection("messages").add({
-                text: text,
-                senderId: currentUser.uid,
-                senderName: auth.currentUser.displayName || "طالب",
-                timestamp: Date.now(),
-                type: 'student'
+            const time = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            
+            const msgData = {
+                message: text,
+                time: time,
+                type: 'student',
+                timestamp: Date.now()
+            };
+
+            db.ref('chats/' + studentPhone).push(msgData);
+            
+            // سجل في لوحة الإدارة أن الطالب أرسل رسالة
+            db.ref('admin/activity_logs').push({
+                userName: studentName,
+                userPhone: studentPhone,
+                action: "أرسل رسالة جديدة للمستر",
+                timestamp: Date.now()
             });
 
-            document.getElementById('msgInput').value = "";
+            input.value = "";
         }
 
-        // تحميل الرسائل لحظياً
-        function loadMessages(user) {
-            db.collection("messages")
-              .where("senderId", "==", user.uid)
-              .orderBy("timestamp", "asc")
-              .onSnapshot(snapshot => {
-                  const chatBox = document.getElementById('chatBox');
-                  chatBox.innerHTML = '<div class="message admin">أهلاً بك يا بطل! كيف يمكن للخبير حمدي عيد مساعدتك اليوم؟</div>';
-                  
-                  snapshot.forEach(doc => {
-                      const msg = doc.data();
-                      const div = document.createElement('div');
-                      div.className = `message ${msg.type === 'admin' ? 'admin' : 'student'}`;
-                      div.innerText = msg.text;
-                      chatBox.appendChild(div);
-                  });
-                  chatBox.scrollTop = chatBox.scrollHeight;
-              });
+        // 4. تحميل وعرض المحادثة
+        function loadChat() {
+            const chatBox = document.getElementById('chat-container');
+            db.ref('chats/' + studentPhone).orderByChild('timestamp').on('value', snapshot => {
+                // نحتفظ بالتنبيه لو كان موجوداً
+                const alertHtml = document.getElementById('global-alert-box').outerHTML;
+                chatBox.innerHTML = alertHtml;
+                
+                snapshot.forEach(child => {
+                    const m = child.val();
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `msg ${m.type === 'student' ? 'student-msg' : 'admin-msg'}`;
+                    msgDiv.innerHTML = `${m.message} <span class="msg-time">${m.time}</span>`;
+                    chatBox.appendChild(msgDiv);
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
         }
+
+        window.onload = loadChat;
     </script>
 </body>
 </html>
