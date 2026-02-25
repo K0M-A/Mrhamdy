@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إمبراطورية الأحياء | مستر حمدي عيد</title>
+    <title>منصة مستر حمدي عيد | خبير الأحياء</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -14,20 +14,25 @@
         .auth-container { 
             background: rgba(30, 41, 59, 0.7); 
             backdrop-filter: blur(15px); 
-            padding: 30px; 
-            border-radius: 25px; 
+            padding: 30px; border-radius: 25px; 
             border: 1px solid rgba(0, 229, 255, 0.2); 
-            width: 100%; 
-            max-width: 450px; 
+            width: 100%; max-width: 450px; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            position: relative;
+            text-align: center;
         }
 
-        .logo { text-align: center; margin-bottom: 20px; }
-        .logo i { font-size: 4rem; color: var(--primary); text-shadow: 0 0 20px var(--primary); }
-        
-        h2 { text-align: center; margin-bottom: 25px; font-weight: 900; }
-        h3 { margin-bottom: 20px; color: var(--primary); text-align: center; }
+        .main-poster {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        h2 { margin-bottom: 25px; font-weight: 900; line-height: 1.4; }
+        h3 { margin-bottom: 20px; color: var(--primary); }
 
         .btn-group-main { display: flex; flex-direction: column; gap: 15px; }
         
@@ -43,7 +48,7 @@
         .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
         .btn-outline:hover { background: var(--primary); color: #000; }
 
-        .auth-form { display: none; animation: fadeIn 0.5s; }
+        .auth-form { display: none; text-align: right; }
         .form-group { margin-bottom: 15px; }
         
         input, select { 
@@ -51,10 +56,10 @@
             border: 1px solid rgba(255,255,255,0.1); 
             background: rgba(11, 17, 30, 0.8); 
             color: white; outline: none; font-size: 0.9rem;
+            text-align: right;
         }
         input:focus { border-color: var(--primary); }
 
-        /* ترحيب المستر */
         #mr-welcome { 
             display: none; background: rgba(0, 229, 255, 0.1); 
             padding: 10px; border-radius: 10px; color: var(--primary); 
@@ -62,32 +67,29 @@
             border: 1px dashed var(--primary);
         }
 
-        /* نافذة الكود الوهمي */
         #otp-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center;
         }
         .otp-box { background: var(--card); padding: 40px; border-radius: 20px; text-align: center; border: 2px solid var(--primary); max-width: 90%; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .loader { display: none; border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .back-btn { cursor: pointer; color: var(--primary); display: inline-block; margin-bottom: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="auth-container">
-        <div class="logo"><i class="fas fa-dna"></i></div>
+        <img src="H.png" alt="مستر حمدي عيد" class="main-poster">
         
         <div id="main-view" class="btn-group-main">
-            <h2>مرحباً بك في <br><span style="color: var(--primary);">إمبراطورية الأحياء</span></h2>
+            <h2>مرحباً بك في منصة <br><span style="color: var(--primary);">خبير الأحياء حمدي عيد</span></h2>
             <button class="btn btn-primary" onclick="showForm('signup')"><i class="fas fa-user-plus"></i> إنشاء حساب جديد</button>
             <button class="btn btn-outline" onclick="showForm('login')"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</button>
         </div>
 
         <div id="signup-view" class="auth-form">
-            <span style="cursor:pointer; color:var(--primary)" onclick="showMain()"><i class="fas fa-arrow-right"></i> رجوع</span>
-            <h3>بيانات طالب جديد</h3>
+            <span class="back-btn" onclick="showMain()"><i class="fas fa-arrow-right"></i> رجوع</span>
+            <h3 style="text-align:center;">بيانات طالب جديد</h3>
             <div class="form-group"><input type="text" id="reg-name" placeholder="الاسم بالكامل"></div>
             <div class="form-group"><input type="tel" id="reg-phone" placeholder="رقم الموبايل"></div>
             <div class="form-group">
@@ -102,8 +104,8 @@
         </div>
 
         <div id="login-view" class="auth-form">
-            <span style="cursor:pointer; color:var(--primary)" onclick="showMain()"><i class="fas fa-arrow-right"></i> رجوع</span>
-            <h3>تسجيل الدخول</h3>
+            <span class="back-btn" onclick="showMain()"><i class="fas fa-arrow-right"></i> رجوع</span>
+            <h3 style="text-align:center;">تسجيل الدخول</h3>
             <div id="mr-welcome">✨ مرحباً بك يا مستر حمدي ✨</div>
             <div class="form-group"><input type="tel" id="login-phone" placeholder="رقم الموبايل" oninput="checkMrHamdy(this.value)"></div>
             <div class="form-group"><input type="password" id="login-pass" placeholder="كلمة السر"></div>
@@ -115,7 +117,7 @@
         <div class="otp-box">
             <i class="fas fa-shield-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
             <h3>نظام التحقق الذكي</h3>
-            <p>تم إرسال كود التحقق لهاتفك</p>
+            <p>كود التحقق الخاص بك هو:</p>
             <h2 id="fake-code" style="letter-spacing: 10px; color: var(--primary); margin: 20px 0;"></h2>
             <input type="text" id="otp-input" placeholder="ادخل الكود هنا" style="text-align: center; font-size: 1.5rem;">
             <button class="btn btn-primary" style="margin-top: 20px;" onclick="verifyOTP()">تفعيل الحساب</button>
@@ -126,7 +128,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // تكوين الفايربيس (تأكد من صحتها في مشروعك)
+        // تكوين الفايربيس
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -138,6 +140,25 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+
+        // فحص الدخول التلقائي والحظر عند التحميل
+        window.onload = function() {
+            const savedPhone = localStorage.getItem('userLoggedIn');
+            if (savedPhone) {
+                db.ref('students/' + savedPhone).once('value', snap => {
+                    const user = snap.val();
+                    if (user) {
+                        if (user.status === "blocked") {
+                            window.location.href = "contact.html";
+                        } else {
+                            window.location.href = "index.html";
+                        }
+                    } else {
+                        localStorage.clear();
+                    }
+                });
+            }
+        };
 
         let tempUser = {};
         let generatedOTP;
@@ -152,20 +173,15 @@
             document.getElementById('main-view').style.display = 'flex';
         }
 
-        // التحقق من رقم المستر
         function checkMrHamdy(val) {
             const welcome = document.getElementById('mr-welcome');
-            if(val === "01111276700") {
-                welcome.style.display = 'block';
-            } else {
-                welcome.style.display = 'none';
-            }
+            welcome.style.display = (val === "01111276700") ? 'block' : 'none';
         }
 
         function startRegistration() {
-            const phone = document.getElementById('reg-phone').value;
-            const name = document.getElementById('reg-name').value;
-            const pass = document.getElementById('reg-pass').value;
+            const phone = document.getElementById('reg-phone').value.trim();
+            const name = document.getElementById('reg-name').value.trim();
+            const pass = document.getElementById('reg-pass').value.trim();
             const grade = document.getElementById('reg-grade').value;
 
             if(!phone || !name || !pass) return alert("يرجى ملء كافة البيانات");
@@ -178,6 +194,7 @@
                         name, phone, pass, grade, 
                         role: "student", 
                         status: "active",
+                        balance: 0,
                         joinedAt: new Date().toISOString()
                     };
                     generatedOTP = Math.floor(100000 + Math.random() * 900000);
@@ -201,13 +218,18 @@
         }
 
         function attemptLogin() {
-            const p = document.getElementById('login-phone').value;
-            const s = document.getElementById('login-pass').value;
+            const p = document.getElementById('login-phone').value.trim();
+            const s = document.getElementById('login-pass').value.trim();
+
+            if(!p || !s) return alert("يرجى إدخال البيانات");
 
             db.ref('students/' + p).once('value', snap => {
                 const user = snap.val();
                 if(user && user.pass === s) {
-                    if(user.status === "blocked") return alert("تم حظرك من المنصة، تواصل مع المستر");
+                    if(user.status === "blocked") {
+                        window.location.href = "contact.html";
+                        return;
+                    }
                     localStorage.setItem('userLoggedIn', p);
                     localStorage.setItem('userName', user.name);
                     window.location.href = "index.html";
