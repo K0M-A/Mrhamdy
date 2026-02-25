@@ -2,90 +2,91 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مكتبة خبير الأحياء | مستر حمدي عيد</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منصة مستر حمدي التعليمية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
     <style>
-        :root { --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; --card: #111827; --text: #e2e8f0; --gold: #ffd700; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: var(--bg); color: var(--text); padding-bottom: 50px; overflow-x: hidden; }
-
-        header { background: var(--card); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,229,255,0.1); sticky; top: 0; z-index: 100; }
-        .logo { font-size: 1.5rem; font-weight: 900; color: var(--primary); text-shadow: 0 0 10px var(--primary); }
-
-        /* قسم التنبيهات */
-        #global-alert { background: rgba(255, 23, 68, 0.1); border: 1px dashed var(--accent); padding: 15px; margin: 20px 5%; border-radius: 12px; display: none; align-items: center; gap: 15px; animation: pulse 2s infinite; }
-
-        .container { padding: 20px 5%; }
-        .section-title { margin-bottom: 30px; border-right: 5px solid var(--primary); padding-right: 15px; }
-
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-        .video-card { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; position: relative; }
-        .video-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,229,255,0.1); }
+        :root { --main: #00e5ff; --bg: #05080f; --card: #111b27; --danger: #ff1744; }
+        * { box-sizing: border-box; -webkit-user-select: none; user-select: none; }
+        body { background: var(--bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 50px; }
         
-        .thumbnail { width: 100%; height: 180px; background: #000; display: flex; align-items: center; justify-content: center; position: relative; }
-        .thumbnail i { font-size: 4rem; color: rgba(255,255,255,0.2); }
-        .play-btn { position: absolute; font-size: 3rem; color: var(--primary); cursor: pointer; opacity: 0.8; transition: 0.3s; }
-        .play-btn:hover { opacity: 1; transform: scale(1.1); }
+        .header { background: var(--card); padding: 15px; text-align: center; border-bottom: 2px solid var(--main); box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .container { padding: 15px; max-width: 900px; margin: auto; }
 
-        .video-info { padding: 20px; }
-        .video-info h3 { font-size: 1.1rem; margin-bottom: 10px; color: #fff; }
-        .video-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: #94a3b8; }
+        /* لوحة التحكم للمستر */
+        .admin-panel { background: var(--card); border: 2px dashed var(--main); padding: 20px; border-radius: 15px; margin-bottom: 20px; display: none; }
+        .admin-panel h3 { margin-top: 0; color: var(--main); }
+        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #333; background: #0a121e; color: white; font-family: 'Cairo'; }
 
-        /* مشغل الفيديو */
-        #player-modal { display: none; position: fixed; inset: 0; background: #000; z-index: 1000; padding: 20px; }
-        .close-player { position: absolute; top: 20px; right: 20px; font-size: 2rem; color: #fff; cursor: pointer; z-index: 1100; }
-        iframe { width: 100%; height: 100%; border-radius: 15px; }
+        /* مشغل الفيديو والعلامة المائية */
+        .video-box { position: relative; width: 100%; background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #222; aspect-ratio: 16/9; }
+        video { width: 100%; height: 100%; display: block; z-index: 1; }
+        
+        .secure-wm {
+            position: absolute; z-index: 9999; color: rgba(255, 255, 255, 0.5);
+            font-size: 16px; font-weight: 900; pointer-events: none;
+            background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 5px;
+            text-shadow: 2px 2px 4px #000; white-space: nowrap; transition: 0.5s;
+        }
 
-        /* العلامة المائية */
-        #watermark { position: absolute; color: rgba(255,255,255,0.2); font-size: 1.2rem; font-weight: bold; pointer-events: none; z-index: 1050; }
+        /* طبقة حماية تمنع اللمس المباشر للفيديو */
+        .guard-overlay { position: absolute; inset: 0; z-index: 1000; background: rgba(0,0,0,0); }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        .btn { background: var(--main); color: #000; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Cairo'; transition: 0.3s; }
+        .btn:active { transform: scale(0.95); }
+        
+        .course-card { background: var(--card); padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-right: 4px solid var(--main); }
+        .active-info { background: var(--card); padding: 15px; border-radius: 0 0 15px 15px; margin-bottom: 20px; border: 1px solid #222; border-top: none; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <header>
-        <div class="logo"><i class="fas fa-dna"></i> خبير الأحياء</div>
-        <div id="user-display" style="font-weight: bold; font-size: 0.9rem;"></div>
-    </header>
-
-    <div id="global-alert">
-        <i class="fas fa-bullhorn" style="color: var(--accent); font-size: 1.5rem;"></i>
-        <div>
-            <strong style="color: var(--accent);">تنبيه هام:</strong>
-            <span id="alert-text"></span>
-        </div>
+    <div class="header">
+        <h2 style="margin:0; color:var(--main)">💎 منصة مستر حمدي</h2>
     </div>
 
     <div class="container">
-        <div class="section-title">
-            <h2>مكتبة المحاضرات المرئية</h2>
-            <p style="color: #94a3b8;">شاهد محاضراتك بأعلى جودة وبنظام حماية متطور</p>
+        <div id="admin-area" class="admin-panel">
+            <h3><i class="fas fa-shield-alt"></i> إضافة محاضرة جديدة (GitHub)</h3>
+            <input type="text" id="c-title" placeholder="عنوان المحاضرة">
+            <input type="text" id="c-user" placeholder="اسم المستخدم في GitHub">
+            <input type="text" id="c-repo" placeholder="اسم المستودع (Repository)">
+            <input type="text" id="c-tag" placeholder="اسم الإصدار (Tag) - مثال: v1.0">
+            <input type="text" id="c-desc" placeholder="وصف المحاضرة">
+            <button class="btn" onclick="addNewCourse()">رفع المحاضرة الآن</button>
         </div>
 
-        <div class="video-grid" id="videos-container">
+        <div id="active-video-area" style="display:none;">
+            <div class="video-box">
+                <div class="guard-overlay"></div>
+                <div id="wm-text" class="secure-wm">IDENTIFYING...</div>
+                <video id="main-player" controls controlsList="nodownload" oncontextmenu="return false;"></video>
             </div>
-    </div>
+            <div class="active-info">
+                <h3 id="display-title" style="margin:0; color:var(--main)"></h3>
+                <p id="display-desc" style="color:#aaa; font-size:0.9rem; margin: 10px 0 0 0;"></p>
+            </div>
+        </div>
 
-    <div id="player-modal">
-        <span class="close-player" onclick="closeVideo()">&times; إغلاق</span>
-        <div id="watermark"></div>
-        <iframe id="main-player" src="" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+        <div id="courses-list-container">
+            <h4 style="margin-bottom: 15px;"><i class="fas fa-book-open"></i> محاضراتك المتاحة:</h4>
+            <div id="courses-list"></div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
+        // 1. إعدادات Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
+            apiKey: "ضع_هنا_API_KEY",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
             databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
             projectId: "mrhamdy-1c406",
-            storageBucket: "mrhamdy-1c406.firebasestorage.app",
+            storageBucket: "mrhamdy-1c406.appspot.com",
             messagingSenderId: "806268398144",
             appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
         };
@@ -93,106 +94,128 @@
         const db = firebase.database();
 
         const userPhone = localStorage.getItem('userLoggedIn');
-        const userName = localStorage.getItem('userName');
+        let userData = null;
 
-        if(!userPhone) window.location.href = "go.html";
-        document.getElementById('user-display').innerText = `مرحباً، ${userName}`;
+        // 2. التحقق من الهوية ونظام الحظر
+        if (!userPhone) {
+            window.location.href = "index.html";
+        }
 
-        // 1. جلب التنبيهات العامة
-        db.ref('admin/global_alert').on('value', snap => {
-            const alertBox = document.getElementById('global-alert');
-            const alertText = document.getElementById('alert-text');
-            if(snap.exists()) {
-                alertText.innerText = snap.val().text;
-                alertBox.style.display = 'flex';
-            } else {
-                alertBox.style.display = 'none';
+        db.ref('students/' + userPhone).on('value', snap => {
+            userData = snap.val();
+            if (!userData) { window.location.href = "index.html"; return; }
+            
+            // إذا كان الطالب محظوراً
+            if (userData.status === 'blocked') {
+                window.location.href = "contact.html";
+                return;
             }
+
+            // إظهار لوحة المستر
+            if (userData.role === 'admin') {
+                document.getElementById('admin-area').style.display = 'block';
+            }
+
+            // تحديث العلامة المائية
+            document.getElementById('wm-text').innerText = `${userData.name} | ${userPhone}`;
         });
 
-        // 2. جلب الفيديوهات من قاعدة البيانات
-        db.ref('videos').on('value', snap => {
-            const container = document.getElementById('videos-container');
-            container.innerHTML = "";
+        // 3. إضافة كورس جديد (للمستر)
+        function addNewCourse() {
+            const title = document.getElementById('c-title').value;
+            const user = document.getElementById('c-user').value;
+            const repo = document.getElementById('c-repo').value;
+            const tag = document.getElementById('c-tag').value;
+            const desc = document.getElementById('c-desc').value;
+
+            if (!title || !user || !repo || !tag) return alert("برجاء ملء كافة البيانات!");
+
+            // رابط جيت هاب المباشر للملف attachment.mp4
+            const finalUrl = `https://github.com/${user}/${repo}/releases/download/${tag}/attachment.mp4`;
+
+            db.ref('all_courses').push({
+                title: title,
+                url: finalUrl,
+                desc: desc,
+                time: Date.now()
+            }).then(() => {
+                alert("تم رفع المحاضرة بنجاح!");
+                location.reload();
+            });
+        }
+
+        // 4. تحميل وعرض الكورسات
+        db.ref('all_courses').on('value', snap => {
+            const list = document.getElementById('courses-list');
+            list.innerHTML = '';
             snap.forEach(child => {
-                const vid = child.val();
-                container.innerHTML += `
-                    <div class="video-card animate__animated animate__fadeIn">
-                        <div class="thumbnail">
-                            <i class="fas fa-film"></i>
-                            <i class="fas fa-play-circle play-btn" onclick="openVideo('${vid.url}', '${vid.title}')"></i>
+                const c = child.val();
+                list.innerHTML += `
+                    <div class="course-card">
+                        <div>
+                            <div style="font-weight:bold">${c.title}</div>
+                            <div style="font-size:0.8rem; color:#888">${c.desc || ''}</div>
                         </div>
-                        <div class="video-info">
-                            <h3>${vid.title}</h3>
-                            <div class="video-meta">
-                                <span><i class="fas fa-clock"></i> محاضرة مسجلة</span>
-                                <span style="color: var(--primary)">مجاني</span>
-                            </div>
-                        </div>
+                        <button class="btn" style="width:auto; padding:8px 15px" onclick="playVideo('${c.url}', '${c.title}', '${c.desc}')">
+                            <i class="fas fa-play"></i> فتح
+                        </button>
                     </div>
                 `;
             });
         });
 
-        // 3. التحكم في المشغل والعلامة المائية
-        let watermarkInterval;
-        function openVideo(url, title) {
-            const modal = document.getElementById('player-modal');
+        function playVideo(url, title, desc) {
+            document.getElementById('active-video-area').style.display = 'block';
             const player = document.getElementById('main-player');
-            const watermark = document.getElementById('watermark');
-            
             player.src = url;
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+            document.getElementById('display-title').innerText = title;
+            document.getElementById('display-desc').innerText = desc;
+            player.play().catch(() => alert("خطأ: تأكد من أن المستودع Public واسم الملف attachment.mp4"));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-            // تحريك العلامة المائية (رقم موبايل الطالب)
-            watermark.innerText = userPhone;
-            watermarkInterval = setInterval(() => {
-                watermark.style.top = Math.random() * 80 + "%";
-                watermark.style.left = Math.random() * 80 + "%";
-            }, 5000);
+        // 5. نظام الفخ (الحظر التلقائي)
+        function triggerBlock(reason) {
+            // حماية للمستر: لا تحظر الأدمن أبداً أثناء التجربة
+            if (userData && userData.role === 'admin') {
+                console.warn("نظام الحماية كشف محاولة: " + reason);
+                return;
+            }
 
-            // سجل النشاط
-            db.ref('admin/activity_logs').push({
-                userName, userPhone, 
-                action: `شاهد فيديو: ${title}`,
-                timestamp: Date.now()
+            db.ref('students/' + userPhone).update({
+                status: 'blocked',
+                blockReason: reason,
+                blockDate: new Date().toLocaleString()
+            }).then(() => {
+                window.location.href = "contact.html";
             });
         }
 
-        function closeVideo() {
-            document.getElementById('player-modal').style.display = 'none';
-            document.getElementById('main-player').src = "";
-            document.body.style.overflow = 'auto';
-            clearInterval(watermarkInterval);
-        }
-
-        // 4. نظام الحماية الصارم
-        function banUser(reason) {
-            db.ref('students/' + userPhone).update({ status: 'blocked' });
-            db.ref('admin/activity_logs').push({
-                userName, userPhone, action: `🚫 حظر آلي: ${reason}`, timestamp: Date.now()
-            });
-            alert("تم حظرك لمحاولة اختراق سياسة الحماية!");
-            window.location.href = "contact.html";
-        }
-
-        // كشف محاولات الغش
-        document.addEventListener('keydown', e => {
-            if (e.key === "PrintScreen") banUser("تصوير شاشة");
-            if (e.ctrlKey && (e.key === "p" || e.key === "u" || e.key === "s")) {
-                e.preventDefault();
-                banUser("محاولة استخدام اختصارات المتصفح");
-            }
+        // كشف تصوير الشاشة
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen' || e.keyCode === 44) triggerBlock("تصوير الشاشة");
         });
 
-        // منع التسجيل في حال إخفاء النافذة
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden && document.getElementById('player-modal').style.display === 'block') {
-                closeVideo();
-            }
-        });
+        // كشف فتح أدوات المطور (DevTools)
+        setInterval(() => {
+            const isDev = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
+            if (isDev) triggerBlock("محاولة فحص الأكواد");
+        }, 2000);
 
+        // تحريك العلامة المائية
+        setInterval(() => {
+            const wm = document.getElementById('wm-text');
+            wm.style.top = Math.random() * 75 + 5 + "%";
+            wm.style.left = Math.random() * 60 + 5 + "%";
+        }, 3000);
+
+        // منع الاختصارات المحظورة
+        document.onkeydown = function(e) {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) {
+                triggerBlock("استخدام اختصارات محظورة");
+                return false;
+            }
+        };
     </script>
 </body>
 </html>
