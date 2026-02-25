@@ -30,7 +30,7 @@
         .stat-card h3 { font-size: 1.8rem; margin: 10px 0; color: #fff; }
         .stat-card p { color: #94a3b8; font-size: 0.9rem; }
 
-        /* Tables */
+        /* Tables & Lists */
         .table-container { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); margin-top: 20px; }
         .data-table { width: 100%; border-collapse: collapse; text-align: right; }
         .data-table th, .data-table td { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -48,8 +48,6 @@
         .msg.student { align-self: flex-start; background: #202c33; color: white; border-top-right-radius: 2px; }
         .msg.admin { align-self: flex-end; background: #005c4b; color: white; border-top-left-radius: 2px; }
         .chat-input-area { padding: 15px; background: #202c33; display: flex; gap: 10px; }
-        
-        /* Media in Admin Chat */
         .admin-chat-media { max-width: 200px; border-radius: 8px; margin-top: 5px; cursor: pointer; }
 
         /* Forms & Buttons */
@@ -62,6 +60,10 @@
         .bg-success { background: rgba(16,185,129,0.2); color: var(--success); }
         .bg-danger { background: rgba(239,68,68,0.2); color: var(--accent); }
 
+        /* Content List Styles */
+        .content-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 10px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .delete-btn { background: var(--accent); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -73,7 +75,7 @@
         <button class="nav-btn" onclick="showSection('students', this)"><i class="fas fa-user-grad"></i> إدارة الطلاب</button>
         <button class="nav-btn" onclick="showSection('balance-section', this)"><i class="fas fa-wallet"></i> شحن وسحب رصيد</button>
         <button class="nav-btn" onclick="showSection('activity', this)"><i class="fas fa-fingerprint"></i> سجل النشاط</button>
-        <button class="nav-btn" onclick="showSection('content', this)"><i class="fas fa-photo-video"></i> المحتوى</button>
+        <button class="nav-btn" onclick="showSection('content', this)"><i class="fas fa-folder-plus"></i> إدارة المحتوى</button>
         <button class="nav-btn" onclick="showSection('alerts', this)"><i class="fas fa-bullhorn"></i> التنبيهات</button>
         <button class="nav-btn" onclick="showSection('chat-admin', this)"><i class="fas fa-comments"></i> مركز الرسائل الخاصة</button>
         <button class="nav-btn" onclick="window.location.href='index.html'" style="margin-top: auto; color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-home"></i> العودة للرئيسية</button>
@@ -127,6 +129,33 @@
             </div>
         </div>
 
+        <div id="content" class="section">
+            <h2>إدارة المحتوى الدراسي</h2>
+            <div class="form-box">
+                <h3>رفع ملف جديد (فيديو / صورة / ملخص)</h3>
+                <input type="text" id="file-title" placeholder="عنوان الملف (مثال: شرح الـ DNA)">
+                <input type="text" id="file-url" placeholder="رابط الملف أو الفيديو (URL)">
+                <select id="file-type">
+                    <option value="video">فيديو شرح</option>
+                    <option value="image">صورة توضيحية</option>
+                    <option value="pdf">ملخص PDF / ملف</option>
+                </select>
+                <button class="submit-btn" onclick="uploadContent()">نشر المحتوى الآن</button>
+            </div>
+
+            <div class="form-box">
+                <h3>المحتوى المنشور حالياً</h3>
+                <div id="current-content-list">
+                    </div>
+            </div>
+        </div>
+
+        <div id="alerts" class="section">
+            <h2>بث تنبيه عام</h2>
+            <textarea id="global-msg" rows="4" placeholder="نص التنبيه..."></textarea>
+            <button class="submit-btn" onclick="sendAlert()">إرسال للكل</button>
+        </div>
+
         <div id="chat-admin" class="section">
             <h2>مركز الرسائل المباشرة (الخاص)</h2>
             <div class="chat-layout">
@@ -141,22 +170,6 @@
                 </div>
             </div>
         </div>
-
-        <div id="alerts" class="section">
-            <h2>بث تنبيه عام</h2>
-            <textarea id="global-msg" rows="4" placeholder="نص التنبيه..."></textarea>
-            <button class="submit-btn" onclick="sendAlert()">إرسال للكل</button>
-        </div>
-
-        <div id="content" class="section">
-             <div class="form-box">
-                <h3>إضافة فيديو</h3>
-                <input type="text" id="v-title" placeholder="العنوان">
-                <input type="text" id="v-url" placeholder="الرابط">
-                <button class="submit-btn" onclick="db.ref('videos').push({title:document.getElementById('v-title').value, url:document.getElementById('v-url').value}); alert('تم!')">نشر</button>
-             </div>
-        </div>
-
     </main>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -184,7 +197,7 @@
             btn.classList.add('active');
         }
 
-        // --- إدارة الطلاب والرصيد والأرباح ---
+        // --- إدارة الطلاب والرصيد ---
         db.ref('students').on('value', snap => {
             const list = document.getElementById('students-list');
             let profit = 0; let count = 0;
@@ -210,45 +223,76 @@
             document.getElementById('total-profits').innerText = profit;
         });
 
-        // دالة معالجة الرصيد الجديدة (إضافة وسحب)
         function processBalance(type) {
             const phone = document.getElementById('target-phone').value;
             let amount = parseFloat(document.getElementById('balance-amount').value);
             if(!phone || !amount) return alert("يرجى إدخال الرقم والمبلغ");
-            
-            if(type === 'withdraw') amount = -amount; // تحويل المبلغ ليكون سالباً في حالة السحب
-
+            if(type === 'withdraw') amount = -amount;
             db.ref('students/' + phone).once('value', snap => {
                 if(snap.exists()) {
-                    let oldBalance = snap.val().balance || 0;
-                    let newBalance = oldBalance + amount;
-                    
-                    if (newBalance < 0 && type === 'withdraw') {
-                        return alert("لا يمكن سحب هذا المبلغ، رصيد الطالب غير كافٍ!");
-                    }
-
-                    let updateData = { balance: newBalance };
-                    
-                    // إذا كان شحن رصيد، نقوم بزيادة إجمالي الأرباح
-                    if (amount > 0) {
-                        updateData.totalRecharge = (snap.val().totalRecharge || 0) + amount;
-                    }
-
+                    let oldBal = snap.val().balance || 0;
+                    let newBal = oldBal + amount;
+                    if (newBal < 0 && type === 'withdraw') return alert("الرصيد غير كافٍ!");
+                    let updateData = { balance: newBal };
+                    if (amount > 0) updateData.totalRecharge = (snap.val().totalRecharge || 0) + amount;
                     db.ref('students/' + phone).update(updateData);
-                    alert("تمت العملية بنجاح. الرصيد الجديد: " + newBalance);
-                } else { alert("عفواً، رقم الطالب غير مسجل"); }
+                    alert("تم بنجاح!");
+                } else alert("الطالب غير مسجل");
             });
         }
 
         function toggleBan(p, s) { db.ref('students/'+p).update({status:s}); }
 
-        // --- نظام الدردشة المطور لاستقبال الخاص ---
+        // --- إدارة المحتوى (رفع ومسح) ---
+        function uploadContent() {
+            const title = document.getElementById('file-title').value;
+            const url = document.getElementById('file-url').value;
+            const type = document.getElementById('file-type').value;
+
+            if(!title || !url) return alert("يرجى ملء كافة البيانات");
+
+            const contentData = {
+                title: title,
+                url: url,
+                type: type,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            db.ref('course_content').push(contentData).then(() => {
+                alert("تم رفع المحتوى بنجاح");
+                document.getElementById('file-title').value = "";
+                document.getElementById('file-url').value = "";
+            });
+        }
+
+        // عرض المحتوى مع زر الحذف
+        db.ref('course_content').on('value', snap => {
+            const container = document.getElementById('current-content-list');
+            container.innerHTML = "";
+            snap.forEach(child => {
+                const item = child.val();
+                let icon = item.type === 'video' ? 'fa-video' : (item.type === 'image' ? 'fa-image' : 'fa-file-pdf');
+                container.innerHTML += `
+                    <div class="content-item">
+                        <span><i class="fas ${icon}" style="color:var(--primary); margin-left:10px;"></i> ${item.title} (${item.type})</span>
+                        <button class="delete-btn" onclick="deleteContent('${child.key}')"><i class="fas fa-trash"></i> مسح</button>
+                    </div>
+                `;
+            });
+        });
+
+        function deleteContent(id) {
+            if(confirm("هل أنت متأكد من حذف هذا المحتوى نهائياً؟")) {
+                db.ref('course_content/' + id).remove().then(() => alert("تم الحذف"));
+            }
+        }
+
+        // --- نظام الدردشة الخاصة ---
         db.ref('chats/private').on('value', snap => {
             const list = document.getElementById('chat-users-list');
             list.innerHTML = "";
             snap.forEach(child => {
                 const phone = child.key;
-                // جلب آخر رسالة لعرضها بشكل بسيط إذا أردت (اختياري)
                 list.innerHTML += `<div class="chat-user-item" onclick="openChat('${phone}')"><i class="fas fa-user-circle"></i> طالب: ${phone}</div>`;
             });
         });
@@ -256,30 +300,20 @@
         function openChat(phone) {
             currentChatUser = phone;
             document.getElementById('active-chat-name').innerText = "مراسلة الطالب: " + phone;
-            
-            // إلغاء الاستماع القديم لتوفير الأداء
             db.ref('chats/private/' + phone).off();
-            
             db.ref('chats/private/' + phone).on('value', snap => {
                 const display = document.getElementById('admin-messages-display');
                 display.innerHTML = "";
                 snap.forEach(child => {
                     const m = child.val();
                     const isFromAdmin = m.role === 'admin' || m.type === 'admin';
-                    
-                    let mediaHtml = "";
-                    if (m.media) {
-                        if (m.mediaType === 'image') mediaHtml = `<img src="${m.media}" class="admin-chat-media" onclick="window.open(this.src)">`;
-                        else if (m.mediaType === 'video') mediaHtml = `<video src="${m.media}" controls class="admin-chat-media"></video>`;
-                        else mediaHtml = `<a href="${m.media}" download class="badge bg-success">ملف مرفق</a>`;
-                    }
-
+                    let mediaHtml = m.media ? (m.mediaType === 'image' ? `<img src="${m.media}" class="admin-chat-media">` : `<a href="${m.media}" download class="badge bg-success">ملف مرفق</a>`) : "";
                     display.innerHTML += `
                         <div class="msg ${isFromAdmin ? 'admin' : 'student'}">
-                            <div style="font-size:0.7rem; opacity:0.7; margin-bottom:3px;">${m.senderName || (isFromAdmin ? 'المستر' : 'الطالب')}</div>
+                            <div style="font-size:0.7rem; opacity:0.7;">${m.senderName || (isFromAdmin ? 'المستر' : 'الطالب')}</div>
                             <div>${m.message || ''}</div>
                             ${mediaHtml}
-                            <div style="font-size:0.6rem; text-align:left; margin-top:4px;">${m.time || ''}</div>
+                            <div style="font-size:0.6rem; text-align:left;">${m.time || ''}</div>
                         </div>`;
                 });
                 display.scrollTop = display.scrollHeight;
@@ -289,7 +323,6 @@
         function sendAdminReply() {
             const input = document.getElementById('admin-reply-input');
             if(!currentChatUser || !input.value.trim()) return;
-            
             const msgData = {
                 message: input.value,
                 senderName: "مستر حمدي عيد",
@@ -298,20 +331,9 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP,
                 time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
             };
-
             db.ref('chats/private/' + currentChatUser).push(msgData);
             input.value = "";
         }
-
-        // سجل النشاط
-        db.ref('admin/activity_logs').limitToLast(10).on('value', snap => {
-            const logBody = document.getElementById('activity-log');
-            logBody.innerHTML = "";
-            snap.forEach(child => {
-                const l = child.val();
-                logBody.innerHTML = `<tr><td>${new Date(l.timestamp).toLocaleTimeString()}</td><td>${l.userName}</td><td>${l.action}</td></tr>` + logBody.innerHTML;
-            });
-        });
 
         function sendAlert() {
             const txt = document.getElementById('global-msg').value;
@@ -323,8 +345,7 @@
         
         function filterStudents() {
             const q = document.getElementById('searchStudent').value.toLowerCase();
-            const rows = document.querySelectorAll('#students-list tr');
-            rows.forEach(r => {
+            document.querySelectorAll('#students-list tr').forEach(r => {
                 r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
             });
         }
