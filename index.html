@@ -27,7 +27,6 @@
 
         #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
 
-        /* الهيدر المتطور */
         header {
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
             width: 95%; max-width: 1250px; background: var(--nav-bg); backdrop-filter: blur(20px);
@@ -37,7 +36,6 @@
         }
 
         .logo { font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 8px; font-size: 1.1rem; }
-
         nav ul { display: flex; list-style: none; gap: 18px; }
         nav ul li a { color: var(--text); text-decoration: none; font-size: 0.85rem; font-weight: 700; opacity: 0.8; display: flex; align-items: center; gap: 5px; }
         nav ul li a:hover { color: var(--primary); opacity: 1; transform: translateY(-2px); }
@@ -48,11 +46,11 @@
             font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 0.9rem;
         }
 
-        /* نافذة التنبيه (Alert Overlay) */
+        /* نافذة التنبيهات المتعددة */
         #alert-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-            display: none; justify-content: center; align-items: center; z-index: 9999;
+            display: none; justify-content: center; align-items: center; z-index: 10001;
         }
         .alert-modal {
             background: #111827; border: 2px solid var(--primary);
@@ -61,13 +59,13 @@
         }
         .alert-modal h2 { color: var(--primary); margin-bottom: 15px; font-weight: 900; }
         .alert-modal p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 25px; color: #cbd5e1; }
-        .close-alert {
+        .close-alert-btn {
             background: var(--primary); color: #000; border: none;
-            padding: 10px 30px; border-radius: 12px; font-weight: 900;
-            cursor: pointer; width: 100%; font-size: 1rem;
+            padding: 12px 30px; border-radius: 12px; font-weight: 900;
+            cursor: pointer; width: 100%; font-size: 1rem; transition: 0.2s;
         }
+        .close-alert-btn:hover { background: #fff; transform: scale(1.02); }
 
-        /* باقي التنسيقات */
         .hero { min-height: 100vh; display: flex; align-items: center; padding: 120px 8% 60px; gap: 50px; }
         .hero-text { flex: 1.3; }
         .hero-text h1 { font-size: clamp(2.2rem, 4.5vw, 4rem); font-weight: 900; line-height: 1.3; margin-bottom: 20px; }
@@ -109,10 +107,10 @@
 
     <div id="alert-overlay">
         <div class="alert-modal animate__animated animate__zoomIn">
-            <i class="fas fa-bullhorn" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+            <i class="fas fa-bullhorn" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px; display: block;"></i>
             <h2>تنبيه هام 📢</h2>
-            <p id="alert-text">لا توجد تنبيهات جديدة حالياً.</p>
-            <button class="close-alert" onclick="closeAlertBox()">فهمت ذلك</button>
+            <p id="alert-text">جاري تحميل التنبيهات...</p>
+            <button class="close-alert-btn" onclick="closeAlertBox()">فهمت ذلك</button>
         </div>
     </div>
 
@@ -154,7 +152,7 @@
         <div class="hero-text animate__animated animate__fadeInRight">
             <h1>خبير الأحياء <br><span style="color: var(--primary);">مستر حمدي عيد</span></h1>
             <div class="hero-description">
-                أهلاً بك في منصة التعلم الذكي المتخصصة في علم الأحياء. نحن هنا لنأخذك في رحلة معرفية فريدة، حيث نركز على تبسيط المفاهيم المعقدة وتحويلها إلى أفكار واضحة وسهلة الاستيعاب. نعتمد في منهجنا التعليمي على أحدث الوسائل التكنولوجية والربط الفكري بين أجزاء المنهج، لنضمن لك الوصول إلى أقصى درجات الإتقان والتفوق الدراسي. 
+                أهلاً بك في منصة التعلم الذكي المتخصصة في علم الأحياء. نحن هنا لنأخذك في رحلة معرفية فريدة، حيث نركز على تبسيط المفاهيم المعقدة وتحويلها إلى أفكار واضحة وسهلة الاستيعاب.
             </div>
             <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: start;">
                 <a href="videos.html" class="btn" style="background: var(--accent); color: white; padding: 16px 40px; border-radius: 15px; text-decoration: none; font-weight: bold; box-shadow: 0 5px 20px rgba(255, 23, 68, 0.4);"><i class="fas fa-rocket"></i> ابدأ التعلم الآن</a>
@@ -206,34 +204,57 @@
                 }
             });
 
-            // تحديث حالة التواجد
             const myPresenceRef = db.ref('admin/online_list/' + userPhone);
             myPresenceRef.set({ name: userName, phone: userPhone, lastSeen: firebase.database.ServerValue.TIMESTAMP });
             myPresenceRef.onDisconnect().remove();
         }
 
-        // 🔔 نظام التنبيهات الجديد
-        let lastAlertTime = localStorage.getItem('lastAlertTime') || 0;
+        // --- نظام التنبيهات المتعددة المتطور ---
+        let alertQueue = []; // طابور التنبيهات
 
-        db.ref('admin/global_alert').on('value', (snap) => {
-            const alertData = snap.val();
-            if (alertData && alertData.text) {
-                // إذا كان وقت التنبيه في الداتا بيز أكبر من آخر تنبيه شافه الطالب
-                if (alertData.timestamp > lastAlertTime) {
-                    document.getElementById('alert-text').innerText = alertData.text;
-                    document.getElementById('alert-overlay').style.display = 'flex';
-                    // نحفظ الوقت الجديد عشان ما يظهرش تانى لما يعمل ريفريش إلا لو المستر غير التنبيه
-                    localStorage.setItem('tempAlertTime', alertData.timestamp);
+        db.ref('admin/alerts').on('value', (snap) => {
+            const allAlerts = snap.val();
+            if (!allAlerts) return;
+
+            // جلب قائمة المعرفات التي شاهدها الطالب سابقاً من الـ LocalStorage
+            let seenAlerts = JSON.parse(localStorage.getItem('seenAlertsIds')) || [];
+            alertQueue = [];
+
+            // فلترة التنبيهات: نأخذ فقط التي لم يشاهدها الطالب
+            Object.keys(allAlerts).forEach(id => {
+                if (!seenAlerts.includes(id)) {
+                    alertQueue.push({ id: id, text: allAlerts[id].text });
                 }
-            }
+            });
+
+            showNextAlert();
         });
 
-        function closeAlertBox() {
-            document.getElementById('alert-overlay').style.display = 'none';
-            const newTime = localStorage.getItem('tempAlertTime');
-            if(newTime) localStorage.setItem('lastAlertTime', newTime);
+        function showNextAlert() {
+            if (alertQueue.length > 0) {
+                const currentAlert = alertQueue[0];
+                document.getElementById('alert-text').innerText = currentAlert.text;
+                document.getElementById('alert-overlay').style.display = 'flex';
+            } else {
+                document.getElementById('alert-overlay').style.display = 'none';
+            }
         }
 
+        function closeAlertBox() {
+            if (alertQueue.length > 0) {
+                const closedAlert = alertQueue.shift(); // إزالة التنبيه الحالي من الطابور
+                
+                // حفظ معرف التنبيه كـ "تمت رؤيته"
+                let seenAlerts = JSON.parse(localStorage.getItem('seenAlertsIds')) || [];
+                seenAlerts.push(closedAlert.id);
+                localStorage.setItem('seenAlertsIds', JSON.stringify(seenAlerts));
+
+                // إظهار التنبيه التالي إذا وجد
+                showNextAlert();
+            }
+        }
+
+        // --- باقي الوظائف ---
         db.ref('admin/online_list').on('value', (snap) => {
             document.getElementById('real-count').innerText = snap.numChildren() || 0;
         });
@@ -252,47 +273,7 @@
 
         particlesJS('particles-js', {
             particles: { number: { value: 65 }, color: { value: '#00e5ff' }, shape: { type: 'circle' }, opacity: { value: 0.3 }, size: { value: 3 }, line_linked: { enable: true, distance: 150, color: '#00e5ff', opacity: 0.2, width: 1 }, move: { enable: true, speed: 1.5 } }
-        });// --- داخل منطقة الـ Script ---
-
-// 1. جلب آخر وقت تنبيه شاهده الطالب من ذاكرة المتصفح
-// نستخدم 0 كقيمة افتراضية إذا كانت أول مرة يفتح فيها الموقع
-let lastAlertTimeSeen = localStorage.getItem('lastAlertTimeSeen') || 0;
-
-// 2. الاستماع للتنبيهات من الفايربيز
-db.ref('admin/global_alert').on('value', (snap) => {
-    const alertData = snap.val();
-    
-    if (alertData && alertData.text && alertData.timestamp) {
-        // التحقق: هل وقت التنبيه الموجود في السيرفر أحدث من الذي شاهده الطالب؟
-        if (alertData.timestamp > lastAlertTimeSeen) {
-            
-            // تحديث نص التنبيه وإظهار النافذة
-            document.getElementById('alert-text').innerText = alertData.text;
-            document.getElementById('alert-overlay').style.display = 'flex';
-            
-            // تخزين الوقت الجديد في "مخزن مؤقت" لحين الضغط على الزر
-            sessionStorage.setItem('currentPendingAlertTime', alertData.timestamp);
-        }
-    }
-});
-
-// 3. وظيفة إغلاق التنبيه وحفظ الحالة لمنع التكرار
-function closeAlertBox() {
-    // إخفاء النافذة
-    document.getElementById('alert-overlay').style.display = 'none';
-    
-    // جلب الوقت الخاص بالتنبيه الحالي الذي تم إغلاقه
-    const currentAlertTime = sessionStorage.getItem('currentPendingAlertTime');
-    
-    if (currentAlertTime) {
-        // حفظ الوقت في LocalStorage بشكل دائم
-        // هكذا يعرف الموقع أن الطالب شاهد هذا التنبيه (أو أي تنبيه أقدم منه)
-        localStorage.setItem('lastAlertTimeSeen', currentAlertTime);
-        
-        // تحديث المتغير المحلي لمنع الظهور مرة أخرى في نفس الجلسة بدون ريفريش
-        lastAlertTimeSeen = currentAlertTime;
-    }
-}
+        });
     </script>
 </body>
 </html>
