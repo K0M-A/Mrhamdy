@@ -323,13 +323,15 @@
             input.value = "";
         }
 
-        function sendAlert() {
-            const txt = document.getElementById('global-msg').value;
-            if(!txt) return;
-            db.ref('admin/global_alert').set({ text: txt, timestamp: Date.now() });
-            alert("تم إرسال التنبيه للجميع");
-            document.getElementById('global-msg').value = "";
-        }
+        function sendNewAlert() {
+    const text = document.getElementById('alertInput').value;
+    // استخدام push يعطي كل تنبيه "ID" فريد (زي: -NXjS...) 
+    // وبناءً عليه المتصفح بيعرف الطالب شاف ده ولا لاء
+    firebase.database().ref('admin/global_alerts').push({
+        text: text,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+}
 
         db.ref('admin/online_users').on('value', snap => { 
             document.getElementById('online-now').innerText = snap.numChildren(); 
