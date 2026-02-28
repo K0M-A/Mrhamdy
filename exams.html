@@ -1,1 +1,394 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منصة مستر حمدي عيد | نظام الاختبارات الذكي</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+    <style>
+        :root {
+            --primary: #00e5ff; /* أزرق نيون */
+            --bg: #05080f; /* كحلي غامق جداً */
+            --card-bg: rgba(22, 30, 45, 0.7);
+            --text: #ffffff;
+            --accent: #ff1744; /* أحمر للتنبيهات */
+            --success: #10b981;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { background: radial-gradient(circle at top, #0d1b2a 0%, #05080f 100%); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; background: rgba(5, 8, 15, 0.8);
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2); backdrop-filter: blur(15px);
+        }
+
+        .container { max-width: 1000px; margin: 100px auto 40px; padding: 0 20px; }
+
+        /* لوحة التحكم للأدمن */
+        #admin-editor { display: none; background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--primary); margin-bottom: 40px; box-shadow: 0 0 30px rgba(0, 229, 255, 0.1); }
+        input, select, textarea { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #2a3942; background: #0f172a; color: #fff; outline: none; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
+        .q-card { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 18px; margin-top: 15px; border-right: 4px solid var(--primary); position: relative; }
+        
+        /* الأزرار */
+        .btn { padding: 12px 25px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+        .btn-primary { background: var(--primary); color: #000; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.4); }
+        .btn-success { background: var(--success); color: #fff; width: 100%; justify-content: center; margin-top: 25px; font-size: 1.1rem; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-danger { background: var(--accent); color: #fff; padding: 6px 15px; font-size: 0.8rem; }
+
+        /* عرض الامتحانات */
+        .exam-card {
+            background: var(--card-bg); border: 1px solid var(--glass);
+            padding: 25px; border-radius: 22px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .exam-card:hover { border-color: var(--primary); background: rgba(0, 229, 255, 0.05); }
+
+        /* واجهة الاختبار */
+        #quiz-container { display: none; background: #0b141a; padding: 35px; border-radius: 30px; border: 1px solid var(--primary); box-shadow: 0 0 50px rgba(0, 229, 255, 0.1); position: relative; }
+        #timer { font-size: 2.2rem; color: var(--accent); font-weight: 900; text-align: center; margin-bottom: 25px; text-shadow: 0 0 10px rgba(255, 23, 68, 0.3); }
+        .question-text { font-size: 1.4rem; margin-bottom: 30px; line-height: 1.7; color: #fff; font-weight: 700; }
+        .options-grid { display: grid; gap: 15px; }
+        .option-btn {
+            background: #1c2635; border: 1px solid #2d3b4f; color: #fff;
+            padding: 20px; border-radius: 15px; text-align: right; cursor: pointer; font-size: 1.1rem;
+        }
+        .option-btn:hover { border-color: var(--primary); background: rgba(0, 229, 255, 0.1); transform: translateX(-10px); }
+
+        /* النتائج */
+        #admin-results { display: none; margin-top: 50px; }
+        .table-container { background: #111b21; border-radius: 20px; overflow: hidden; border: 1px solid var(--glass); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 18px; text-align: center; border-bottom: 1px solid #1c2635; }
+        th { background: var(--primary); color: #000; font-weight: 900; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; background: rgba(0, 229, 255, 0.1); color: var(--primary); }
+
+        @media (max-width: 768px) {
+            .exam-card { flex-direction: column; text-align: center; gap: 20px; }
+            .question-text { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="font-weight: 900; color: var(--primary); font-size: 1.3rem;">🧬 منصة مستر حمدي عيد</div>
+        <div id="user-info" style="font-weight: bold; background: var(--glass); padding: 8px 15px; border-radius: 12px;">جاري التحميل...</div>
+    </header>
+
+    <div class="container">
+        
+        <section id="admin-editor" class="animate__animated animate__fadeIn">
+            <h2 style="color: var(--primary); margin-bottom: 25px;"><i class="fas fa-magic"></i> معمل إنشاء الاختبارات</h2>
+            <input type="text" id="ex-title" placeholder="عنوان الاختبار (مثلاً: الفصل الأول - كيمياء)">
+            <div style="display: flex; gap: 15px;">
+                <input type="number" id="ex-duration" placeholder="وقت الامتحان (بالدقائق)">
+                <input type="number" id="ex-attempts" placeholder="محاولات الطالب المسموحة">
+            </div>
+            
+            <div id="questions-list"></div>
+            
+            <button class="btn btn-outline" onclick="addNewQuestionField()" style="margin-top: 20px; width: 100%; justify-content: center;">
+                <i class="fas fa-plus-circle"></i> أضف سؤالاً جديداً للمنهج
+            </button>
+            <button class="btn btn-success" onclick="saveExamToDB()">
+                <i class="fas fa-cloud-upload-alt"></i> اعتماد ونشر الاختبار للطلاب
+            </button>
+        </section>
+
+        <section id="exams-view">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 style="color: #fff; font-weight: 900;">⚡ الاختبارات النشطة</h2>
+                <button id="admin-toggle-btn" class="btn btn-primary" style="display: none;" onclick="toggleEditor()">
+                    <i class="fas fa-user-shield"></i> لوحة مستر حمدي
+                </button>
+            </div>
+            <div id="exams-list-container"></div>
+        </section>
+
+        <section id="quiz-container" class="animate__animated animate__fadeIn">
+            <div id="timer">00:00</div>
+            <div id="q-box">
+                <p class="question-text" id="display-q-text"></p>
+                <div class="options-grid" id="display-options"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 35px; border-top: 1px solid #1c2635; padding-top: 20px;">
+                <span class="badge">مستر حمدي عيد</span>
+                <p style="opacity: 0.7; font-weight: bold;">السؤال <span id="q-curr" color="var(--primary)">1</span> من <span id="q-total">0</span></p>
+            </div>
+        </section>
+
+        <section id="admin-results" class="animate__animated animate__fadeInUp">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                <h3 style="color: var(--primary);"><i class="fas fa-chart-bar"></i> تقرير أداء الطلاب</h3>
+                <button class="btn btn-danger" onclick="clearAllResults()" style="padding: 5px 10px; opacity: 0.6;">مسح السجل</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الطالب</th>
+                            <th>رقم الهاتف</th>
+                            <th>الاختبار</th>
+                            <th>النتيجة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-table-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <script>
+        // --- تهيئة Firebase مستر حمدي ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
+            authDomain: "mrhamdy-1c406.firebaseapp.com",
+            databaseURL: "https://mrhamdy-1c406-default-rtdb.firebaseio.com",
+            projectId: "mrhamdy-1c406",
+            storageBucket: "mrhamdy-1c406.firebasestorage.app",
+            messagingSenderId: "806268398144",
+            appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const userPhone = localStorage.getItem('userLoggedIn');
+        const sessionID = Math.random().toString(36).substring(7);
+        let userData = null;
+        let activeExam = null;
+        let timerInterval;
+        let qIndex = 0;
+        let score = 0;
+
+        // --- الأمان والتحقق ---
+        if (!userPhone) {
+            window.location.href = "index.html";
+        } else {
+            db.ref('students/' + userPhone).on('value', (snap) => {
+                userData = snap.val();
+                if (!userData) { logout(); return; }
+                if (userData.status === "blocked") { alert("عذراً، حسابك محظور."); logout(); return; }
+                
+                document.getElementById('user-info').innerHTML = `<i class="fas fa-user"></i> ${userData.name.split(' ')[0]}`;
+
+                // صلاحيات المستر
+                if (userPhone === "admin_master" || userData.role === "admin") {
+                    document.getElementById('admin-toggle-btn').style.display = 'flex';
+                    document.getElementById('admin-results').style.display = 'block';
+                    loadResultsForAdmin();
+                }
+                loadExamsList();
+            });
+            db.ref('students/' + userPhone + '/currentSession').set(sessionID);
+        }
+
+        // --- وظائف مستر حمدي (الأدمن) ---
+        function toggleEditor() {
+            const editor = document.getElementById('admin-editor');
+            editor.style.display = (editor.style.display === 'block') ? 'none' : 'block';
+            editor.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        let qCounter = 0;
+        function addNewQuestionField() {
+            qCounter++;
+            const html = `
+                <div class="q-card animate__animated animate__fadeInLeft" id="q-field-${qCounter}">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <span class="badge">سؤال رقم ${qCounter}</span>
+                        <button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">حذف</button>
+                    </div>
+                    <input type="text" class="q-text" placeholder="اكتب نص السؤال هنا...">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <input type="text" class="opt-1" placeholder="الاختيار الأول">
+                        <input type="text" class="opt-2" placeholder="الاختيار الثاني">
+                        <input type="text" class="opt-3" placeholder="الاختيار الثالث">
+                        <input type="text" class="opt-4" placeholder="الاختيار الرابع">
+                    </div>
+                    <input type="text" class="q-correct" placeholder="اكتب الإجابة الصحيحة (يجب أن تطابق أحد الاختيارات)" style="border-color:var(--success)">
+                </div>
+            `;
+            document.getElementById('questions-list').insertAdjacentHTML('beforeend', html);
+        }
+
+        function saveExamToDB() {
+            const title = document.getElementById('ex-title').value;
+            const duration = document.getElementById('ex-duration').value;
+            const attempts = document.getElementById('ex-attempts').value;
+            const cards = document.querySelectorAll('.q-card');
+            
+            let questions = [];
+            cards.forEach(c => {
+                const correct = c.querySelector('.q-correct').value.trim();
+                questions.push({
+                    text: c.querySelector('.q-text').value,
+                    options: [
+                        c.querySelector('.opt-1').value.trim(),
+                        c.querySelector('.opt-2').value.trim(),
+                        c.querySelector('.opt-3').value.trim(),
+                        c.querySelector('.opt-4').value.trim()
+                    ],
+                    correctAnswer: correct
+                });
+            });
+
+            if (!title || questions.length === 0) return alert("يا مستر حمدي، من فضلك أكمل بيانات الاختبار.");
+
+            db.ref('exams').push({
+                title, 
+                duration: parseInt(duration) || 30, 
+                maxAttempts: parseInt(attempts) || 1, 
+                questions,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                alert("تم رفع الاختبار بنجاح يا مستر!");
+                location.reload();
+            });
+        }
+
+        function loadResultsForAdmin() {
+            db.ref('examResults').on('value', (snap) => {
+                const tbody = document.getElementById('results-table-body');
+                tbody.innerHTML = '';
+                snap.forEach(child => {
+                    const r = child.val();
+                    tbody.innerHTML = `<tr>
+                        <td>${r.studentName}</td>
+                        <td>${r.studentPhone}</td>
+                        <td>${r.examTitle}</td>
+                        <td style="color:var(--primary); font-weight:bold;">${r.score}</td>
+                    </tr>` + tbody.innerHTML;
+                });
+            });
+        }
+
+        // --- وظائف الطالب ---
+        function loadExamsList() {
+            db.ref('exams').on('value', (snap) => {
+                const list = document.getElementById('exams-list-container');
+                list.innerHTML = '';
+                
+                snap.forEach(child => {
+                    const ex = child.val();
+                    const key = child.key;
+                    const done = (userData.examAttempts && userData.examAttempts[key]) || 0;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'exam-card animate__animated animate__fadeInUp';
+                    card.innerHTML = `
+                        <div>
+                            <h3 style="color:var(--primary); margin-bottom:5px;">${ex.title}</h3>
+                            <p style="font-size:0.9rem; opacity:0.8">
+                                <i class="far fa-clock"></i> ${ex.duration} دقيقة | 
+                                <i class="fas fa-redo"></i> محاولاتك: ${done} / ${ex.maxAttempts}
+                            </p>
+                        </div>
+                        <button class="btn btn-primary" onclick="startExam('${key}')" 
+                            ${(done >= ex.maxAttempts) ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''}>
+                            ${done >= ex.maxAttempts ? 'انتهت المحاولات' : 'بدء الاختبار الآن'}
+                        </button>
+                    `;
+                    list.appendChild(card);
+                });
+            });
+        }
+
+        function startExam(id) {
+            if(!confirm("هل أنت مستعد لبدء الاختبار؟ سيتم احتساب محاولة.")) return;
+            
+            db.ref('exams/' + id).once('value', (snap) => {
+                activeExam = snap.val();
+                activeExam.id = id;
+                activeExam.questions = shuffle(activeExam.questions); 
+
+                document.getElementById('exams-view').style.display = 'none';
+                document.getElementById('admin-editor').style.display = 'none';
+                document.getElementById('quiz-container').style.display = 'block';
+                
+                qIndex = 0; score = 0;
+                renderQuestion();
+                startTimer(activeExam.duration * 60);
+            });
+        }
+
+        function renderQuestion() {
+            if (qIndex >= activeExam.questions.length) return finishQuiz();
+
+            const q = activeExam.questions[qIndex];
+            document.getElementById('display-q-text').innerText = q.text;
+            document.getElementById('q-curr').innerText = qIndex + 1;
+            document.getElementById('q-total').innerText = activeExam.questions.length;
+
+            const optsDiv = document.getElementById('display-options');
+            optsDiv.innerHTML = '';
+            
+            const shuffledOpts = shuffle([...q.options]); 
+            shuffledOpts.forEach(o => {
+                if(!o) return;
+                const b = document.createElement('button');
+                b.className = 'option-btn animate__animated animate__fadeInRight';
+                b.innerText = o;
+                b.onclick = () => {
+                    if (o === q.correctAnswer) score++;
+                    qIndex++;
+                    renderQuestion();
+                };
+                optsDiv.appendChild(b);
+            });
+        }
+
+        function startTimer(sec) {
+            timerInterval = setInterval(() => {
+                let m = Math.floor(sec / 60);
+                let s = sec % 60;
+                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                if (sec <= 0) finishQuiz();
+                sec--;
+            }, 1000);
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            const grade = ((score / activeExam.questions.length) * 100).toFixed(1);
+            
+            // تسجيل البيانات
+            db.ref('students/' + userPhone + '/examAttempts/' + activeExam.id).transaction(c => (c || 0) + 1);
+            db.ref('examResults').push({
+                studentName: userData.name,
+                studentPhone: userPhone,
+                examTitle: activeExam.title,
+                score: grade + "%",
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+
+            alert("تم إرسال إجاباتك لمستر حمدي. درجتك: " + grade + "%");
+            location.reload();
+        }
+
+        function clearAllResults() {
+            if(confirm("هل تريد مسح جميع نتائج الطلاب فعلاً؟")) db.ref('examResults').remove();
+        }
+
+        function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
+
+    </script>
+</body>
+</html>
