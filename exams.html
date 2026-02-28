@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة مستر حمدي عيد | نظام الاختبارات الذكي</title>
+    <title>منصة مستر حمدي عيد | نظام الاختبارات الذكي V2</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -11,11 +11,11 @@
 
     <style>
         :root {
-            --primary: #00e5ff; /* أزرق نيون */
-            --bg: #05080f; /* كحلي غامق جداً */
+            --primary: #00e5ff;
+            --bg: #05080f;
             --card-bg: rgba(22, 30, 45, 0.7);
             --text: #ffffff;
-            --accent: #ff1744; /* أحمر للتنبيهات */
+            --accent: #ff1744;
             --success: #10b981;
             --glass: rgba(255, 255, 255, 0.03);
         }
@@ -32,52 +32,58 @@
         .container { max-width: 1000px; margin: 100px auto 40px; padding: 0 20px; }
 
         /* لوحة التحكم للأدمن */
-        #admin-editor { display: none; background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--primary); margin-bottom: 40px; box-shadow: 0 0 30px rgba(0, 229, 255, 0.1); }
-        input, select, textarea { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #2a3942; background: #0f172a; color: #fff; outline: none; }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
-        .q-card { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 18px; margin-top: 15px; border-right: 4px solid var(--primary); position: relative; }
+        #admin-editor { display: none; background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--primary); margin-bottom: 40px; }
+        input, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #2a3942; background: #0f172a; color: #fff; outline: none; }
+        .q-card { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 18px; margin-top: 15px; border-right: 4px solid var(--primary); }
         
         /* الأزرار */
-        .btn { padding: 12px 25px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+        .btn { padding: 12px 25px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
         .btn-primary { background: var(--primary); color: #000; }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.4); }
-        .btn-success { background: var(--success); color: #fff; width: 100%; justify-content: center; margin-top: 25px; font-size: 1.1rem; }
+        .btn-success { background: var(--success); color: #fff; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        .btn-danger { background: var(--accent); color: #fff; padding: 6px 15px; font-size: 0.8rem; }
-
-        /* عرض الامتحانات */
-        .exam-card {
-            background: var(--card-bg); border: 1px solid var(--glass);
-            padding: 25px; border-radius: 22px; margin-bottom: 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            backdrop-filter: blur(5px);
-        }
-        .exam-card:hover { border-color: var(--primary); background: rgba(0, 229, 255, 0.05); }
+        .btn-danger { background: var(--accent); color: #fff; }
 
         /* واجهة الاختبار */
-        #quiz-container { display: none; background: #0b141a; padding: 35px; border-radius: 30px; border: 1px solid var(--primary); box-shadow: 0 0 50px rgba(0, 229, 255, 0.1); position: relative; }
-        #timer { font-size: 2.2rem; color: var(--accent); font-weight: 900; text-align: center; margin-bottom: 25px; text-shadow: 0 0 10px rgba(255, 23, 68, 0.3); }
-        .question-text { font-size: 1.4rem; margin-bottom: 30px; line-height: 1.7; color: #fff; font-weight: 700; }
-        .options-grid { display: grid; gap: 15px; }
+        #quiz-container { display: none; background: #0b141a; padding: 35px; border-radius: 30px; border: 1px solid var(--primary); box-shadow: 0 0 50px rgba(0, 229, 255, 0.1); }
+        #timer { font-size: 2.2rem; color: var(--accent); font-weight: 900; text-align: center; margin-bottom: 20px; }
+        .question-text { font-size: 1.4rem; margin-bottom: 25px; color: #fff; font-weight: 700; }
         .option-btn {
-            background: #1c2635; border: 1px solid #2d3b4f; color: #fff;
-            padding: 20px; border-radius: 15px; text-align: right; cursor: pointer; font-size: 1.1rem;
+            width: 100%; background: #1c2635; border: 1px solid #2d3b4f; color: #fff;
+            padding: 18px; border-radius: 15px; text-align: right; cursor: pointer; margin-bottom: 10px;
         }
-        .option-btn:hover { border-color: var(--primary); background: rgba(0, 229, 255, 0.1); transform: translateX(-10px); }
+        .option-btn.selected { border-color: var(--primary); background: rgba(0, 229, 255, 0.2); box-shadow: 0 0 15px rgba(0,229,255,0.2); }
 
-        /* النتائج */
-        #admin-results { display: none; margin-top: 50px; }
-        .table-container { background: #111b21; border-radius: 20px; overflow: hidden; border: 1px solid var(--glass); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 18px; text-align: center; border-bottom: 1px solid #1c2635; }
-        th { background: var(--primary); color: #000; font-weight: 900; }
-        tr:hover { background: rgba(255,255,255,0.02); }
+        /* التحكم في التنقل */
+        .quiz-controls { display: flex; justify-content: space-between; margin-top: 30px; gap: 10px; }
+        
+        /* تنبيهات مخصصة */
+        .custom-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal-content { background: #161e2d; padding: 30px; border-radius: 25px; border: 1px solid var(--primary); text-align: center; max-width: 500px; width: 100%; }
 
-        .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; background: rgba(0, 229, 255, 0.1); color: var(--primary); }
+        /* تحليل النتائج */
+        .result-analysis { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .stat-box { padding: 20px; border-radius: 15px; text-align: center; font-weight: bold; }
+        .stat-correct { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid var(--success); }
+        .stat-wrong { background: rgba(255, 23, 68, 0.1); color: var(--accent); border: 1px solid var(--accent); }
+
+        .review-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-top: 10px; border-right: 4px solid #ccc; }
+        .review-item.correct { border-right-color: var(--success); }
+        .review-item.wrong { border-right-color: var(--accent); }
+
+        /* النتائج للأدمن */
+        .table-container { background: #111b21; border-radius: 20px; overflow-x: auto; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid #1c2635; }
+        th { background: var(--primary); color: #000; }
+        
+        .exam-card { background: var(--card-bg); padding: 20px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--glass); }
 
         @media (max-width: 768px) {
-            .exam-card { flex-direction: column; text-align: center; gap: 20px; }
-            .question-text { font-size: 1.2rem; }
+            .quiz-controls { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -89,31 +95,22 @@
     </header>
 
     <div class="container">
-        
         <section id="admin-editor" class="animate__animated animate__fadeIn">
-            <h2 style="color: var(--primary); margin-bottom: 25px;"><i class="fas fa-magic"></i> معمل إنشاء الاختبارات</h2>
-            <input type="text" id="ex-title" placeholder="عنوان الاختبار (مثلاً: الفصل الأول - كيمياء)">
+            <h2 style="color: var(--primary); margin-bottom: 25px;"><i class="fas fa-magic"></i> إضافة اختبار جديد</h2>
+            <input type="text" id="ex-title" placeholder="عنوان الاختبار">
             <div style="display: flex; gap: 15px;">
-                <input type="number" id="ex-duration" placeholder="وقت الامتحان (بالدقائق)">
-                <input type="number" id="ex-attempts" placeholder="محاولات الطالب المسموحة">
+                <input type="number" id="ex-duration" placeholder="الوقت بالدقائق">
+                <input type="number" id="ex-attempts" placeholder="عدد المحاولات">
             </div>
-            
             <div id="questions-list"></div>
-            
-            <button class="btn btn-outline" onclick="addNewQuestionField()" style="margin-top: 20px; width: 100%; justify-content: center;">
-                <i class="fas fa-plus-circle"></i> أضف سؤالاً جديداً للمنهج
-            </button>
-            <button class="btn btn-success" onclick="saveExamToDB()">
-                <i class="fas fa-cloud-upload-alt"></i> اعتماد ونشر الاختبار للطلاب
-            </button>
+            <button class="btn btn-outline" onclick="addNewQuestionField()" style="margin-top: 20px; width: 100%; justify-content: center;"><i class="fas fa-plus"></i> أضف سؤال</button>
+            <button class="btn btn-success" onclick="saveExamToDB()" style="margin-top: 15px; width: 100%; justify-content: center;"><i class="fas fa-save"></i> نشر الاختبار</button>
         </section>
 
         <section id="exams-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h2 style="color: #fff; font-weight: 900;">⚡ الاختبارات النشطة</h2>
-                <button id="admin-toggle-btn" class="btn btn-primary" style="display: none;" onclick="toggleEditor()">
-                    <i class="fas fa-user-shield"></i> لوحة مستر حمدي
-                </button>
+                <h2 style="color: #fff; font-weight: 900;">⚡ الاختبارات المتاحة</h2>
+                <button id="admin-toggle-btn" class="btn btn-primary" style="display: none;" onclick="toggleEditor()">لوحة الإدارة</button>
             </div>
             <div id="exams-list-container"></div>
         </section>
@@ -122,41 +119,66 @@
             <div id="timer">00:00</div>
             <div id="q-box">
                 <p class="question-text" id="display-q-text"></p>
-                <div class="options-grid" id="display-options"></div>
+                <div id="display-options"></div>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 35px; border-top: 1px solid #1c2635; padding-top: 20px;">
-                <span class="badge">مستر حمدي عيد</span>
-                <p style="opacity: 0.7; font-weight: bold;">السؤال <span id="q-curr" color="var(--primary)">1</span> من <span id="q-total">0</span></p>
+            
+            <div class="quiz-controls">
+                <button class="btn btn-outline" id="prev-btn" onclick="prevQuestion()"><i class="fas fa-arrow-right"></i> السابق</button>
+                <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">التالي <i class="fas fa-arrow-left"></i></button>
+                <button class="btn btn-success" id="submit-btn" onclick="confirmSubmit()" style="display:none;">إنهاء وتسليم <i class="fas fa-check-double"></i></button>
             </div>
+
+            <p style="text-align:center; margin-top:20px; opacity:0.6;">سؤال <span id="q-curr">1</span> من <span id="q-total">0</span></p>
         </section>
 
         <section id="admin-results" class="animate__animated animate__fadeInUp">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                <h3 style="color: var(--primary);"><i class="fas fa-chart-bar"></i> تقرير أداء الطلاب</h3>
-                <button class="btn btn-danger" onclick="clearAllResults()" style="padding: 5px 10px; opacity: 0.6;">مسح السجل</button>
-            </div>
+            <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-users"></i> سجل النتائج التفصيلي</h3>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>الطالب</th>
-                            <th>رقم الهاتف</th>
                             <th>الاختبار</th>
                             <th>النتيجة</th>
+                            <th>صح/خطأ</th>
+                            <th>التفاصيل</th>
                         </tr>
                     </thead>
                     <tbody id="results-table-body"></tbody>
                 </table>
             </div>
         </section>
+    </div>
 
+    <div id="confirmModal" class="custom-modal">
+        <div class="modal-content animate__animated animate__zoomIn">
+            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--accent); margin-bottom: 15px;"></i>
+            <h3>هل أنت متأكد من إنهاء الاختبار؟</h3>
+            <p style="margin: 15px 0; opacity: 0.8;">بمجرد التسليم لن تتمكن من تعديل إجاباتك.</p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-success" onclick="finishQuiz()">نعم، سلم الآن</button>
+                <button class="btn btn-danger" onclick="closeModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultModal" class="custom-modal">
+        <div class="modal-content animate__animated animate__zoomIn" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
+            <h2 id="final-grade-text" style="color: var(--primary);"></h2>
+            <div class="result-analysis">
+                <div class="stat-box stat-correct"><i class="fas fa-check"></i> صح: <span id="count-correct">0</span></div>
+                <div class="stat-box stat-wrong"><i class="fas fa-times"></i> خطأ: <span id="count-wrong">0</span></div>
+            </div>
+            <div id="review-area" style="text-align: right; margin-top: 20px;"></div>
+            <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 20px; width: 100%;">العودة للرئيسية</button>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
-        // --- تهيئة Firebase مستر حمدي ---
+        // --- تهيئة Firebase ---
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -170,61 +192,50 @@
         const db = firebase.database();
 
         const userPhone = localStorage.getItem('userLoggedIn');
-        const sessionID = Math.random().toString(36).substring(7);
         let userData = null;
         let activeExam = null;
         let timerInterval;
         let qIndex = 0;
-        let score = 0;
+        let userAnswers = []; // لتخزين إجابات الطالب
 
-        // --- الأمان والتحقق ---
+        // --- التحقق من الهوية ---
         if (!userPhone) {
             window.location.href = "index.html";
         } else {
             db.ref('students/' + userPhone).on('value', (snap) => {
                 userData = snap.val();
-                if (!userData) { logout(); return; }
-                if (userData.status === "blocked") { alert("عذراً، حسابك محظور."); logout(); return; }
-                
-                document.getElementById('user-info').innerHTML = `<i class="fas fa-user"></i> ${userData.name.split(' ')[0]}`;
-
-                // صلاحيات المستر
+                if (!userData) return;
+                document.getElementById('user-info').innerText = userData.name;
                 if (userPhone === "admin_master" || userData.role === "admin") {
-                    document.getElementById('admin-toggle-btn').style.display = 'flex';
+                    document.getElementById('admin-toggle-btn').style.display = 'block';
                     document.getElementById('admin-results').style.display = 'block';
                     loadResultsForAdmin();
                 }
                 loadExamsList();
             });
-            db.ref('students/' + userPhone + '/currentSession').set(sessionID);
         }
 
-        // --- وظائف مستر حمدي (الأدمن) ---
+        // --- وظائف الأدمن ---
         function toggleEditor() {
-            const editor = document.getElementById('admin-editor');
-            editor.style.display = (editor.style.display === 'block') ? 'none' : 'block';
-            editor.scrollIntoView({ behavior: 'smooth' });
+            const ed = document.getElementById('admin-editor');
+            ed.style.display = ed.style.display === 'block' ? 'none' : 'block';
         }
 
         let qCounter = 0;
         function addNewQuestionField() {
             qCounter++;
             const html = `
-                <div class="q-card animate__animated animate__fadeInLeft" id="q-field-${qCounter}">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                        <span class="badge">سؤال رقم ${qCounter}</span>
-                        <button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">حذف</button>
-                    </div>
-                    <input type="text" class="q-text" placeholder="اكتب نص السؤال هنا...">
+                <div class="q-card" id="q-field-${qCounter}">
+                    <b>سؤال ${qCounter}</b>
+                    <input type="text" class="q-text" placeholder="نص السؤال">
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                        <input type="text" class="opt-1" placeholder="الاختيار الأول">
-                        <input type="text" class="opt-2" placeholder="الاختيار الثاني">
-                        <input type="text" class="opt-3" placeholder="الاختيار الثالث">
-                        <input type="text" class="opt-4" placeholder="الاختيار الرابع">
+                        <input type="text" class="opt-1" placeholder="خيار 1">
+                        <input type="text" class="opt-2" placeholder="خيار 2">
+                        <input type="text" class="opt-3" placeholder="خيار 3">
+                        <input type="text" class="opt-4" placeholder="خيار 4">
                     </div>
-                    <input type="text" class="q-correct" placeholder="اكتب الإجابة الصحيحة (يجب أن تطابق أحد الاختيارات)" style="border-color:var(--success)">
-                </div>
-            `;
+                    <input type="text" class="q-correct" placeholder="الإجابة الصحيحة بالضبط" style="border-color:var(--success)">
+                </div>`;
             document.getElementById('questions-list').insertAdjacentHTML('beforeend', html);
         }
 
@@ -233,104 +244,51 @@
             const duration = document.getElementById('ex-duration').value;
             const attempts = document.getElementById('ex-attempts').value;
             const cards = document.querySelectorAll('.q-card');
-            
             let questions = [];
             cards.forEach(c => {
-                const correct = c.querySelector('.q-correct').value.trim();
                 questions.push({
                     text: c.querySelector('.q-text').value,
                     options: [
-                        c.querySelector('.opt-1').value.trim(),
-                        c.querySelector('.opt-2').value.trim(),
-                        c.querySelector('.opt-3').value.trim(),
-                        c.querySelector('.opt-4').value.trim()
+                        c.querySelector('.opt-1').value, c.querySelector('.opt-2').value,
+                        c.querySelector('.opt-3').value, c.querySelector('.opt-4').value
                     ],
-                    correctAnswer: correct
+                    correctAnswer: c.querySelector('.q-correct').value
                 });
             });
-
-            if (!title || questions.length === 0) return alert("يا مستر حمدي، من فضلك أكمل بيانات الاختبار.");
-
-            db.ref('exams').push({
-                title, 
-                duration: parseInt(duration) || 30, 
-                maxAttempts: parseInt(attempts) || 1, 
-                questions,
-                createdAt: firebase.database.ServerValue.TIMESTAMP
-            }).then(() => {
-                alert("تم رفع الاختبار بنجاح يا مستر!");
-                location.reload();
-            });
+            db.ref('exams').push({ title, duration, maxAttempts: attempts, questions }).then(() => location.reload());
         }
 
-        function loadResultsForAdmin() {
-            db.ref('examResults').on('value', (snap) => {
-                const tbody = document.getElementById('results-table-body');
-                tbody.innerHTML = '';
-                snap.forEach(child => {
-                    const r = child.val();
-                    tbody.innerHTML = `<tr>
-                        <td>${r.studentName}</td>
-                        <td>${r.studentPhone}</td>
-                        <td>${r.examTitle}</td>
-                        <td style="color:var(--primary); font-weight:bold;">${r.score}</td>
-                    </tr>` + tbody.innerHTML;
-                });
-            });
-        }
-
-        // --- وظائف الطالب ---
+        // --- وظائف الاختبار ---
         function loadExamsList() {
-            db.ref('exams').on('value', (snap) => {
-                const list = document.getElementById('exams-list-container');
-                list.innerHTML = '';
-                
+            db.ref('exams').on('value', snap => {
+                const container = document.getElementById('exams-list-container');
+                container.innerHTML = '';
                 snap.forEach(child => {
                     const ex = child.val();
-                    const key = child.key;
-                    const done = (userData.examAttempts && userData.examAttempts[key]) || 0;
-                    
-                    const card = document.createElement('div');
-                    card.className = 'exam-card animate__animated animate__fadeInUp';
-                    card.innerHTML = `
-                        <div>
-                            <h3 style="color:var(--primary); margin-bottom:5px;">${ex.title}</h3>
-                            <p style="font-size:0.9rem; opacity:0.8">
-                                <i class="far fa-clock"></i> ${ex.duration} دقيقة | 
-                                <i class="fas fa-redo"></i> محاولاتك: ${done} / ${ex.maxAttempts}
-                            </p>
-                        </div>
-                        <button class="btn btn-primary" onclick="startExam('${key}')" 
-                            ${(done >= ex.maxAttempts) ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''}>
-                            ${done >= ex.maxAttempts ? 'انتهت المحاولات' : 'بدء الاختبار الآن'}
-                        </button>
-                    `;
-                    list.appendChild(card);
+                    const done = (userData.examAttempts && userData.examAttempts[child.key]) || 0;
+                    container.innerHTML += `
+                        <div class="exam-card">
+                            <div><h3>${ex.title}</h3><p>${ex.duration} دقيقة | محاولات: ${done}/${ex.maxAttempts}</p></div>
+                            <button class="btn btn-primary" onclick="startExam('${child.key}')" ${done >= ex.maxAttempts ? 'disabled' : ''}>ابدأ</button>
+                        </div>`;
                 });
             });
         }
 
         function startExam(id) {
-            if(!confirm("هل أنت مستعد لبدء الاختبار؟ سيتم احتساب محاولة.")) return;
-            
-            db.ref('exams/' + id).once('value', (snap) => {
+            db.ref('exams/' + id).once('value', snap => {
                 activeExam = snap.val();
                 activeExam.id = id;
-                activeExam.questions = shuffle(activeExam.questions); 
-
+                userAnswers = new Array(activeExam.questions.length).fill(null);
                 document.getElementById('exams-view').style.display = 'none';
-                document.getElementById('admin-editor').style.display = 'none';
                 document.getElementById('quiz-container').style.display = 'block';
-                
-                qIndex = 0; score = 0;
+                qIndex = 0;
                 renderQuestion();
                 startTimer(activeExam.duration * 60);
             });
         }
 
         function renderQuestion() {
-            if (qIndex >= activeExam.questions.length) return finishQuiz();
-
             const q = activeExam.questions[qIndex];
             document.getElementById('display-q-text').innerText = q.text;
             document.getElementById('q-curr').innerText = qIndex + 1;
@@ -338,57 +296,102 @@
 
             const optsDiv = document.getElementById('display-options');
             optsDiv.innerHTML = '';
-            
-            const shuffledOpts = shuffle([...q.options]); 
-            shuffledOpts.forEach(o => {
-                if(!o) return;
-                const b = document.createElement('button');
-                b.className = 'option-btn animate__animated animate__fadeInRight';
-                b.innerText = o;
-                b.onclick = () => {
-                    if (o === q.correctAnswer) score++;
-                    qIndex++;
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn ' + (userAnswers[qIndex] === opt ? 'selected' : '');
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    userAnswers[qIndex] = opt;
                     renderQuestion();
                 };
-                optsDiv.appendChild(b);
+                optsDiv.appendChild(btn);
             });
+
+            // تحديث الأزرار
+            document.getElementById('prev-btn').style.visibility = qIndex === 0 ? 'hidden' : 'visible';
+            if (qIndex === activeExam.questions.length - 1) {
+                document.getElementById('next-btn').style.display = 'none';
+                document.getElementById('submit-btn').style.display = 'inline-flex';
+            } else {
+                document.getElementById('next-btn').style.display = 'inline-flex';
+                document.getElementById('submit-btn').style.display = 'none';
+            }
         }
 
-        function startTimer(sec) {
+        function nextQuestion() { if (qIndex < activeExam.questions.length - 1) { qIndex++; renderQuestion(); } }
+        function prevQuestion() { if (qIndex > 0) { qIndex--; renderQuestion(); } }
+
+        function startTimer(s) {
             timerInterval = setInterval(() => {
-                let m = Math.floor(sec / 60);
-                let s = sec % 60;
-                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                if (sec <= 0) finishQuiz();
-                sec--;
+                let min = Math.floor(s / 60);
+                let sec = s % 60;
+                document.getElementById('timer').innerText = `${min}:${sec < 10 ? '0' + sec : sec}`;
+                if (s <= 0) finishQuiz();
+                s--;
             }, 1000);
         }
 
+        function confirmSubmit() { document.getElementById('confirmModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('confirmModal').style.display = 'none'; }
+
         function finishQuiz() {
             clearInterval(timerInterval);
-            const grade = ((score / activeExam.questions.length) * 100).toFixed(1);
+            closeModal();
+            let correctCount = 0;
+            let reviewHtml = '<h3>مراجعة إجاباتك:</h3>';
+
+            activeExam.questions.forEach((q, i) => {
+                const isCorrect = userAnswers[i] === q.correctAnswer;
+                if (isCorrect) correctCount++;
+                reviewHtml += `
+                    <div class="review-item ${isCorrect ? 'correct' : 'wrong'}">
+                        <p><b>س${i + 1}:</b> ${q.text}</p>
+                        <p>إجابتك: ${userAnswers[i] || 'لم تجب'}</p>
+                        ${!isCorrect ? `<p style="color:var(--success)">الصحيحة: ${q.correctAnswer}</p>` : ''}
+                    </div>`;
+            });
+
+            const grade = ((correctCount / activeExam.questions.length) * 100).toFixed(1);
             
-            // تسجيل البيانات
+            // حفظ النتيجة
             db.ref('students/' + userPhone + '/examAttempts/' + activeExam.id).transaction(c => (c || 0) + 1);
             db.ref('examResults').push({
                 studentName: userData.name,
                 studentPhone: userPhone,
                 examTitle: activeExam.title,
                 score: grade + "%",
+                correct: correctCount,
+                wrong: activeExam.questions.length - correctCount,
+                details: userAnswers,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
 
-            alert("تم إرسال إجاباتك لمستر حمدي. درجتك: " + grade + "%");
-            location.reload();
+            // عرض النتيجة
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('resultModal').style.display = 'flex';
+            document.getElementById('final-grade-text').innerText = "درجتك النهائية: " + grade + "%";
+            document.getElementById('count-correct').innerText = correctCount;
+            document.getElementById('count-wrong').innerText = activeExam.questions.length - correctCount;
+            document.getElementById('review-area').innerHTML = reviewHtml;
         }
 
-        function clearAllResults() {
-            if(confirm("هل تريد مسح جميع نتائج الطلاب فعلاً؟")) db.ref('examResults').remove();
+        function loadResultsForAdmin() {
+            db.ref('examResults').on('value', snap => {
+                const tbody = document.getElementById('results-table-body');
+                tbody.innerHTML = '';
+                snap.forEach(child => {
+                    const r = child.val();
+                    tbody.innerHTML = `
+                        <tr>
+                            <td>${r.studentName}</td>
+                            <td>${r.examTitle}</td>
+                            <td style="color:var(--primary)"><b>${r.score}</b></td>
+                            <td><span style="color:var(--success)">${r.correct}</span> / <span style="color:var(--accent)">${r.wrong}</span></td>
+                            <td><button class="btn btn-outline" style="padding:5px 10px;" onclick="alert('تفاصيل الإجابات: \\n' + '${r.details.join(' | ')}')">عرض</button></td>
+                        </tr>` + tbody.innerHTML;
+                });
+            });
         }
-
-        function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
-        function logout() { localStorage.clear(); window.location.href = "index.html"; }
-
     </script>
 </body>
 </html>
