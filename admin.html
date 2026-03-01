@@ -49,21 +49,23 @@
         .chat-list { background: #111b21; overflow-y: auto; border-left: 1px solid #222; }
         .chat-user-item { padding: 18px; border-bottom: 1px solid #202c33; cursor: pointer; display: flex; align-items: center; gap: 15px; position: relative; }
         .chat-user-item.active { background: #2a3942; }
-        .unread-dot { width: 12px; height: 12px; background: var(--primary); border-radius: 50%; position: absolute; left: 20px; box-shadow: 0 0 12px var(--primary); }
+        .unread-dot { width: 12px; height: 12px; background: #00e5ff; border-radius: 50%; position: absolute; left: 20px; box-shadow: 0 0 10px #00e5ff; }
         
-        .chat-window { display: flex; flex-direction: column; background: #0b141a; background-image: url('https://w0.peakpx.com/wallpaper/508/606/HD-wallpaper-whatsapp-dark-background-whatsapp-dark-pattern-thumbnail.jpg'); background-blend-mode: overlay; position: relative; }
-        .messages-area { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
+        .chat-window { display: flex; flex-direction: column; background: #0b141a; background-image: url('https://w0.peakpx.com/wallpaper/508/606/HD-wallpaper-whatsapp-dark-background-whatsapp-dark-pattern-thumbnail.jpg'); background-blend-mode: overlay; position: relative; height: 100%; }
+        .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
         
         /* Message Bubbles Styling */
         .msg { padding: 10px 15px; border-radius: 12px; max-width: 75%; font-size: 1rem; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.2); word-wrap: break-word; display: flex; flex-direction: column; }
-        .msg .sender-name { font-size: 0.75rem; font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 2px; }
+        .msg .sender-name { font-size: 0.75rem; font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; }
         .msg .time { font-size: 0.65rem; align-self: flex-end; margin-top: 5px; opacity: 0.7; }
+        .delete-msg { position: absolute; top: 5px; left: -25px; color: var(--accent); cursor: pointer; opacity: 0; transition: 0.2s; }
+        .msg:hover .delete-msg { opacity: 1; }
         
-        /* Student Messages */
-        .msg.student { align-self: flex-start; background: #202c33; border-top-right-radius: 4px; color: white; }
-        .msg.student .sender-name { color: var(--primary); }
+        /* Student Messages (Gray) */
+        .msg.student { align-self: flex-start; background: #343f46; border-top-right-radius: 4px; color: white; }
+        .msg.student .sender-name { color: #00e5ff; }
         
-        /* Admin Messages (Cyan & Black Text) */
+        /* Admin Messages (Cyan) */
         .msg.admin { align-self: flex-end; background: #00e5ff; border-top-left-radius: 4px; color: #000; font-weight: 500; }
         .msg.admin .sender-name { color: #000; border-bottom-color: rgba(0,0,0,0.2); }
         .msg.admin .time { color: #333; }
@@ -71,7 +73,7 @@
         .msg img { max-width: 100%; border-radius: 10px; margin-top: 5px; display: block; cursor: zoom-in; }
 
         /* Fixed Input Bar */
-        .chat-input-bar { padding: 15px 25px; display: flex; align-items: center; gap: 15px; background: #202c33; flex-shrink: 0; }
+        .chat-input-bar { padding: 15px 20px; display: flex; align-items: center; gap: 12px; background: #202c33; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.05); }
         .media-btn { background: none; border: none; color: #8696a0; font-size: 1.4rem; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
         #admin-reply-input { flex: 1; background: #2a3942; border: none; padding: 12px 20px; border-radius: 25px; color: white; outline: none; }
         .send-btn-circle { background: var(--primary); color: #000; border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
@@ -201,13 +203,11 @@
             btn.classList.add('active');
         }
 
-        // Presence Logic
         const presenceRef = db.ref('admin/online_list/' + myPhone);
         presenceRef.set({ name: "Mr. Hamdy", status: "online" });
         presenceRef.onDisconnect().remove();
         db.ref('admin/online_list').on('value', s => document.getElementById('online-now').innerText = s.numChildren() || 0);
 
-        // Sync Students and Totals
         db.ref('students').on('value', snap => {
             const list = document.getElementById('students-list');
             let profit = 0, count = 0;
@@ -241,7 +241,6 @@
             renderChatList();
         });
 
-        // Chat List Logic
         function renderChatList() {
             db.ref('chats/private').on('value', snap => {
                 const list = document.getElementById('chat-users-list');
@@ -278,7 +277,8 @@
                 area.innerHTML = "";
                 snap.forEach(child => {
                     const m = child.val();
-                    if(m.role === 'student' && !m.readByAdmin) db.ref(`chats/private/${phone}/${child.key}`).update({readByAdmin:true});
+                    const msgID = child.key;
+                    if(m.role === 'student' && !m.readByAdmin) db.ref(`chats/private/${phone}/${msgID}`).update({readByAdmin:true});
                     
                     const senderDisplay = m.role === 'admin' ? "مستر حمدي (أنت)" : sName;
                     const time = m.timestamp ? new Date(m.timestamp).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : '';
@@ -286,6 +286,7 @@
                     
                     area.innerHTML += `
                         <div class="msg ${m.role === 'admin' ? 'admin' : 'student'}">
+                            <i class="fas fa-trash delete-msg" onclick="deleteMessage('${phone}', '${msgID}')"></i>
                             <span class="sender-name">${senderDisplay}</span>
                             ${content}
                             <span class="time">${time}</span>
@@ -293,6 +294,12 @@
                 });
                 area.scrollTop = area.scrollHeight;
             });
+        }
+
+        function deleteMessage(phone, msgID) {
+            if(confirm("هل تريد حذف هذه الرسالة نهائياً؟")) {
+                db.ref(`chats/private/${phone}/${msgID}`).remove();
+            }
         }
 
         function quickMessage(phone) {
