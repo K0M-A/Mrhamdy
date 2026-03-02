@@ -7,12 +7,10 @@
     
     <meta name="theme-color" content="#05080f">
     <link rel="apple-touch-icon" href="H.png">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" id="pwa-manifest">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -21,7 +19,7 @@
         :root {
             --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; 
             --card-bg: rgba(255, 255, 255, 0.03); --text: #e2e8f0;
-            --nav-bg: rgba(10, 15, 28, 0.7); --glass: rgba(255, 255, 255, 0.08); --gold: #ffd700;
+            --nav-bg: rgba(10, 15, 28, 0.8); --glass: rgba(255, 255, 255, 0.08); --gold: #ffd700;
         }
 
         [data-theme="light"] {
@@ -30,433 +28,129 @@
         }
 
         [data-theme="yellow"] {
-            --bg: #fdf6e3; /* Solarized light background */
-            --text: #657b83; /* Solarized text */
-            --nav-bg: rgba(253, 246, 227, 0.85);
-            --primary: #268bd2; /* Solarized blue */
-            --accent: #dc322f; /* Solarized red */
-            --card-bg: rgba(0, 0, 0, 0.02);
-            --glass: rgba(88, 110, 117, 0.1);
-            --gold: #b58900; /* Solarized yellow */
+            --bg: #fdf6e3; --text: #657b83; --nav-bg: rgba(253, 246, 227, 0.85);
+            --primary: #268bd2; --accent: #dc322f; --card-bg: rgba(0, 0, 0, 0.02);
+            --glass: rgba(88, 110, 117, 0.1); --gold: #b58900;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
-        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; padding-bottom: 80px; }
-
-        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; padding-bottom: 80px; transition: background 0.3s; }
 
         header {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            background: var(--nav-bg); 
-            backdrop-filter: blur(16px) saturate(180%);
-            padding: 15px 5%; 
-            z-index: 1000;
+            position: sticky; top: 0; width: 100%; background: var(--nav-bg); 
+            backdrop-filter: blur(16px); padding: 10px 5%; z-index: 1000;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--glass); 
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--glass);
         }
 
         .logo { font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 8px; font-size: 1.1rem; }
 
-        nav ul { display: flex; list-style: none; gap: 18px; }
-        nav ul li a { color: var(--text); text-decoration: none; font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 12px; transition: all 0.3s ease; position: relative; }
-        nav ul li a::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--primary); transition: 0.3s; transform: translateX(-50%); }
+        nav ul { display: flex; list-style: none; gap: 10px; }
+        nav ul li a { color: var(--text); text-decoration: none; font-size: 0.9rem; font-weight: 700; padding: 8px 12px; border-radius: 10px; transition: 0.3s; }
         nav ul li a:hover { color: var(--primary); background: rgba(0, 229, 255, 0.05); }
-        nav ul li a:hover::after { width: 80%; }
 
-        .partner-links { display: flex; gap: 10px; margin-right: 15px; border-right: 1px solid var(--glass); padding-right: 15px; }
-        .partner-btn { 
-            width: 38px; height: 38px; border-radius: 50%; text-decoration: none; font-weight: 900;
-            transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
-            border: 1px solid var(--glass); background: var(--card-bg); color: var(--text);
-        }
-        .p-kareem:hover { border-color: #ff9800; color: #ff9800; box-shadow: 0 0 15px rgba(255, 152, 0, 0.4); transform: rotate(360deg); }
-        .p-abq:hover { border-color: #673ab7; color: #673ab7; box-shadow: 0 0 15px rgba(103, 58, 183, 0.4); transform: rotate(360deg); }
-
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        
         .wallet-box {
-            background: rgba(255, 215, 0, 0.05); border: 1px solid var(--gold);
-            padding: 8px 20px; border-radius: 50px; color: var(--gold); font-weight: 900; 
-            display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease;
-        }
-        .wallet-box:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); transform: scale(1.05); }
-
-        /* Modal Base Style */
-        .custom-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-            display: none; justify-content: center; align-items: center; z-index: 9999;
-        }
-        .modal-content {
-            background: #111827; border: 2px solid var(--primary);
-            padding: 30px; border-radius: 25px; width: 90%; max-width: 500px;
-            text-align: center; position: relative; box-shadow: 0 0 50px rgba(0, 229, 255, 0.2);
+            background: rgba(255, 215, 0, 0.1); border: 1px solid var(--gold);
+            padding: 5px 15px; border-radius: 50px; color: var(--gold); font-weight: 900; 
+            display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .user-controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding-left: 20px;
-            border-left: 1px solid var(--glass);
-        }
+        .user-controls { display: flex; gap: 8px; }
         .user-controls i, .user-controls a {
-            width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; background: transparent;
-            border: 1px solid var(--glass);
-            color: var(--text); transition: 0.3s; cursor: pointer; text-decoration: none; font-size: 1.1rem;
-        }
-        .user-controls i:hover, .user-controls a:hover { 
-            border-color: var(--primary); color: var(--primary); 
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); transform: translateY(-3px); 
-        }
-        #admin-link, #logout-btn { color: var(--accent) !important; }
-        #admin-link:hover, #logout-btn:hover { border-color: var(--accent); color: var(--accent) !important; box-shadow: 0 0 15px rgba(255, 23, 68, 0.4); }
-        #theme-toggle { color: var(--primary) !important; }
-        #theme-toggle:hover { border-color: var(--primary); color: var(--primary) !important; }
-
-        .user-controls a i { color: inherit; }
-
-        #menu-toggle {
-            font-size: 1.5rem;
-            width: 24px;
-            height: 18px;
-            position: relative;
-            cursor: pointer;
-            color: var(--text);
-            transition: 0.3s;
-            transition: .5s ease-in-out;
-            margin-left: 15px;
-        }
-        #menu-toggle:hover { color: var(--primary); }
-
-        #menu-toggle span {
-            display: block; position: absolute; height: 3px; width: 100%;
-            background: var(--text); border-radius: 9px; opacity: 1;
-            left: 0; transform: rotate(0deg); transition: .25s ease-in-out;
-        }
-        #menu-toggle span:nth-child(1) { top: 0px; }
-        #menu-toggle span:nth-child(2) { top: 7.5px; }
-        #menu-toggle span:nth-child(3) { top: 15px; }
-
-        #menu-toggle.open span:nth-child(1) {
-            top: 7.5px;
-            transform: rotate(135deg);
-            background: var(--primary);
-        }
-        #menu-toggle.open span:nth-child(2) {
-            opacity: 0;
-            left: -60px;
-        }
-        #menu-toggle.open span:nth-child(3) {
-            top: 7.5px;
-            transform: rotate(-135deg);
-            background: var(--primary);
+            width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; border: 1px solid var(--glass); color: var(--text); cursor: pointer; font-size: 0.9rem; text-decoration: none;
         }
 
-        /* Sidebar Menu */
-        .sidebar {
-            height: auto; /* تعديل: ارتفاع تلقائي */
-            width: 260px; 
-            position: fixed;
-            z-index: 10001;
-            top: 85px; /* تعديل: تحديد الموضع أسفل الهيدر */
-            right: -300px;
-            left: auto;
-            background-color: var(--nav-bg); /* استخدام لون الهيدر */
-            backdrop-filter: blur(16px) saturate(180%);
-            overflow-x: hidden;
-            transition: right 0.3s ease-out, opacity 0.3s ease-out; /* تسريع حركة الفتح */
-            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3);
-            border-radius: 15px; /* تعديل: إضافة حواف دائرية */
-            border: 1px solid #ff0f39;
-        }
-        .sidebar-header { display: none; } /* تعديل: إخفاء الهيدر الداخلي للقائمة */
-        .sidebar a:first-of-type { padding-top: 15px; }
-        .sidebar a:last-of-type { padding-bottom: 15px; }
-        .sidebar-header .logo { font-size: 1.2rem; }
-        .sidebar a { padding: 12px 20px; text-decoration: none; font-size: 0.95rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 15px; transition: 0.3s; }
-        .sidebar a:hover { color: var(--primary); background: rgba(0, 229, 255, 0.05); border-right: 3px solid var(--primary); }
-        .sidebar a i { width: 20px; text-align: center; }
-        .sidebar .close-btn { font-size: 2rem; color: var(--text); padding: 0; }
-        .sidebar .close-btn:hover { color: var(--accent); background: none; border-right: none; }
+        /* Hero Section */
+        .hero { min-height: 80vh; display: flex; align-items: center; padding: 40px 8%; gap: 30px; }
+        .hero-text { flex: 1.2; }
+        .hero-text h1 { font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.2; margin-bottom: 20px; }
+        .hero-text h1 span { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-description { font-size: 1.1rem; opacity: 0.8; margin-bottom: 30px; text-align: justify; }
 
-        #sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 10000;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        #sidebar-overlay.visible { display: block; opacity: 1; }
-
-        nav { flex-grow: 1; }
-        nav ul { justify-content: center; }
-
-        .hero { min-height: 90vh; display: flex; align-items: center; padding: 60px 8% 20px; gap: 40px; }
-        .hero-text { flex: 1.3; }
-        .hero-text h1 { font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 900; line-height: 1.15; margin-bottom: 25px; letter-spacing: -0.5px; color: var(--text); }
-        [data-theme="dark"] .hero-text h1 { text-shadow: 0 0 40px rgba(0, 229, 255, 0.15); }
-        
-        .hero-text h1 span {
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-        }
-        
-        .hero-description { font-size: 1.25rem; line-height: 1.7; opacity: 0.85; margin-bottom: 35px; text-align: justify; color: var(--text); font-weight: 500; }
-        
-        [data-theme="yellow"] .teacher-img { box-shadow: 0 0 40px #cb4b16; border-color: rgba(203, 75, 22, 0.3); }
-        
-        .teacher-img-container {
-            flex: 1;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
         .img-glow-wrapper {
-            position: relative;
-            display: inline-block;
-            border-radius: 40px;
+            position: relative; width: 300px; height: 300px;
             animation: floating 6s ease-in-out infinite;
-            z-index: 1;
         }
-
-        .img-glow-wrapper::before, .img-glow-wrapper::after {
-            content: '';
-            position: absolute;
-            inset: -2px; /* تعديل: جعل الخط أرفع */
-            background: conic-gradient(from var(--angle), #ff1744, #ffd700, #00e5ff, #ff1744);
-            border-radius: 42px;
-            animation: rotate 3s linear infinite; /* تعديل: زيادة سرعة الدوران */
-            z-index: -1;
-        }
+        .teacher-img { width: 100%; height: 100%; object-fit: cover; border-radius: 40px; position: relative; z-index: 2; }
         .img-glow-wrapper::after {
-            filter: blur(20px);
+            content: ''; position: absolute; inset: -5px; 
+            background: conic-gradient(from var(--angle), var(--primary), var(--accent), var(--gold), var(--primary));
+            border-radius: 45px; z-index: 1; animation: rotate 3s linear infinite; filter: blur(10px);
         }
 
-        .teacher-img { 
-            max-width: 100%; 
-            border-radius: 40px;
-            display: block;
-            transition: transform 0.3s ease; 
-        }
-        .img-glow-wrapper:hover .teacher-img { transform: scale(1.02); }
+        @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+        @keyframes rotate { to { --angle: 360deg; } }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        @property --angle {
-            syntax: '<angle>';
-            initial-value: 0deg;
-            inherits: false;
-        }
+        .hero-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero-btn { padding: 12px 25px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .primary-btn { background: var(--accent); color: #fff; }
+        .secondary-btn { border: 1px solid var(--primary); color: var(--primary); }
 
-        @keyframes rotate {
-            to { --angle: 360deg; }
-        }
+        /* Sidebar */
+        .sidebar { position: fixed; top: 70px; right: -280px; width: 260px; background: var(--nav-bg); backdrop-filter: blur(20px); height: auto; z-index: 2000; transition: 0.4s; border-radius: 0 0 0 20px; border: 1px solid var(--primary); padding: 10px 0; }
+        .sidebar.open { right: 0; }
+        .sidebar a { padding: 12px 20px; display: flex; align-items: center; gap: 15px; color: var(--text); text-decoration: none; font-weight: 700; }
+        .sidebar a:hover { background: rgba(0, 229, 255, 0.1); color: var(--primary); }
 
-        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        /* Mobile Adjustments */
+        .mobile-nav { position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(20px); display: none; justify-content: space-around; padding: 10px; border-top: 1px solid var(--glass); z-index: 3000; }
+        .mobile-nav a { color: var(--text); text-decoration: none; font-size: 0.7rem; text-align: center; }
+        .mobile-nav i { display: block; font-size: 1.2rem; margin-bottom: 3px; }
 
-        .hero-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .hero-btn {
-            padding: 14px 35px;
-            border-radius: 15px;
-            text-decoration: none;
-            font-weight: 800;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        .hero-btn.primary-btn {
-            background: var(--accent);
-            color: white;
-            box-shadow: 0 10px 30px rgba(255, 23, 68, 0.3);
-            border-color: var(--accent);
-        }
-        .hero-btn.primary-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(255, 23, 68, 0.4);
-        }
-        .hero-btn.secondary-btn {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        .hero-btn.secondary-btn:hover {
-            background: var(--primary);
-            color: var(--bg);
-            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.25);
-        }
+        .footer-bottom { background: var(--nav-bg); padding: 20px; text-align: center; font-size: 0.8rem; border-top: 1px solid var(--glass); }
+        .partner-footer-links { display: inline-flex; gap: 8px; margin-right: 5px; }
+        .p-link { text-decoration: none; font-weight: 900; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.7rem; border: 1px solid var(--glass); }
 
-        .mobile-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg);
-            backdrop-filter: blur(25px); display: none; justify-content: space-around;
-            padding: 12px 0; border-top: 1px solid var(--glass); z-index: 2000;
-            border-radius: 20px 20px 0 0;
-        }
-        .mobile-nav a { color: var(--text); text-decoration: none; font-size: 0.75rem; text-align: center; opacity: 0.7; padding: 8px 16px; border-radius: 15px; transition: all 0.3s ease; }
-        .mobile-nav a i { display: block; font-size: 1.4rem; color: var(--text); margin-bottom: 4px; transition: 0.3s; }
-        .mobile-nav a:hover, .mobile-nav a.active { color: var(--primary); background: rgba(0, 229, 255, 0.1); opacity: 1; }
-        .mobile-nav a:hover i, .mobile-nav a.active i { color: var(--primary); transform: translateY(-3px); }
+        #install-btn { display: none; background: var(--gold); color: #000; border: none; padding: 8px 15px; border-radius: 8px; font-weight: 900; cursor: pointer; margin: 10px auto; }
 
         @media (max-width: 1024px) {
-            header nav, .partner-links { display: none; }
+            header nav { display: none; }
             .mobile-nav { display: flex; }
-            .hero { flex-direction: column-reverse; text-align: center; padding-top: 100px; }
-            .header-right {
-                gap: 10px;
-            }
-            .user-controls {
-                padding-left: 10px;
-                gap: 15px;
-            }
-            .hero-buttons {
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .logo { display: none; }
-        }
-
-        /* Footer Styles */
-        .main-footer {
-            background: rgba(5, 10, 15, 0.95);
-            border-top: 1px solid var(--glass);
-            padding: 10px 0;
-            margin-top: 30px;
-            position: relative;
-            z-index: 10;
-        }
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            padding: 0 20px;
-        }
-        .footer-section h3 {
-            color: var(--primary); margin-bottom: 20px; font-size: 1.3rem; position: relative; display: inline-block;
-        }
-        .footer-section h3::after {
-            content: ''; position: absolute; bottom: -8px; right: 0; width: 40px; height: 3px; background: var(--accent); border-radius: 2px;
-        }
-        .footer-section p, .footer-section li { color: var(--text); opacity: 0.8; line-height: 1.8; margin-bottom: 10px; }
-        .footer-section ul { list-style: none; padding: 0; }
-        .footer-section ul li a { color: var(--text); text-decoration: none; transition: 0.3s; display: block; }
-        .footer-section ul li a:hover { color: var(--primary); transform: translateX(-5px); }
-        
-        .social-icons { display: flex; gap: 15px; margin-top: 20px; }
-        .social-icons a {
-            width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.05);
-            display: flex; align-items: center; justify-content: center; color: var(--text);
-            text-decoration: none; transition: 0.3s; border: 1px solid var(--glass);
-        }
-        .social-icons a:hover { background: var(--primary); color: #000; transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3); }
-
-        .footer-bottom {
-            text-align: center;
-            margin-top: 0;
-            padding-top: 0;
-            border-top: none;
-            color: var(--text);
-            opacity: 0.7;
-            font-size: 0.75rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .online-badge {
-            background: rgba(0, 255, 136, 0.1); color: #00ff88; padding: 2px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid rgba(0, 255, 136, 0.2); margin-bottom: 0; font-size: 0.7rem;
+            .hero { flex-direction: column-reverse; text-align: center; padding-top: 40px; }
+            .hero-buttons { justify-content: center; }
+            .img-glow-wrapper { width: 220px; height: 220px; }
         }
     </style>
 </head>
 <body data-theme="dark">
 
-    <audio id="background-music" src="mp3.mp3" loop preload="auto"></audio>
+    <audio id="background-music" src="mp3.mp3" loop></audio>
 
     <div id="sidebar-menu" class="sidebar">
-        <!-- القائمة الجانبية الاحترافية -->
-        <a href="index.html"><i class="fas fa-home"></i><span>الرئيسية</span></a>
-        <a href="videos.html"><i class="fas fa-play"></i><span>المحاضرات</span></a>
-        <a href="exams.html"><i class="fas fa-file-pen"></i><span>الاختبارات</span></a>
-        <a href="live.html"><i class="fas fa-broadcast-tower"></i><span>لايف</span></a>
-        <a href="library.html"><i class="fas fa-download"></i><span>المذكرات</span></a>
-        <!-- ضع رابط المختبر الخارجي هنا بدلاً من # -->
-        <a href="lab.html"><i class="fas fa-cube"></i><span>المختبر التفاعلي</span></a>
-        <a href="contact.html"><i class="fas fa-envelope"></i><span>تواصل معنا</span></a>
-    </div>
-    <div id="sidebar-overlay"></div>
-
-    <div id="alert-overlay" class="custom-overlay">
-        <div class="modal-content animate__animated animate__zoomIn">
-            <i class="fas fa-bullhorn" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
-            <h2 style="color:var(--primary); margin-bottom:10px;">تنبيه جديد 📢</h2>
-            <p id="alert-text" style="color:#cbd5e1; line-height:1.6; margin-bottom:25px;"></p>
-            <button onclick="closeCurrentAlert()" style="background:var(--primary); color:#000; border:none; padding:12px; border-radius:10px; width:100%; font-weight:bold; cursor:pointer;">فهمت ✅</button>
-        </div>
-    </div>
-
-    <div id="wallet-overlay" class="custom-overlay">
-        <div class="modal-content animate__animated animate__zoomIn">
-            <i class="fas fa-wallet" style="font-size: 3rem; color: var(--gold); margin-bottom: 15px;"></i>
-            <h2 style="color:var(--gold); margin-bottom:10px;">شحن الرصيد</h2>
-            <p style="color:#cbd5e1; line-height:1.6; margin-bottom:25px;">
-                لشحن رصيد حسابك على المنصة، يرجى التواصل مع مستر حمدي عيد مباشرة على الرقم التالي:<br>
-                <strong style="color: var(--primary); font-size: 1.4rem;">01111276700</strong>
-            </p>
-            <a href="https://wa.me/201111276700" target="_blank" style="background:#25d366; color:#fff; text-decoration:none; display:block; padding:12px; border-radius:10px; font-weight:bold; margin-bottom:10px;"><i class="fab fa-whatsapp"></i> مراسلة عبر واتساب</a>
-            <button onclick="document.getElementById('wallet-overlay').style.display='none'" style="background:rgba(255,255,255,0.1); color:#fff; border:none; padding:10px; border-radius:10px; width:100%; cursor:pointer;">إغلاق</button>
-        </div>
+        <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="videos.html"><i class="fas fa-play"></i> المحاضرات</a>
+        <a href="exams.html"><i class="fas fa-file-pen"></i> الاختبارات</a>
+        <a href="live.html"><i class="fas fa-broadcast-tower"></i> لايف</a>
+        <a href="lab.html"><i class="fas fa-cube"></i> المختبر التفاعلي</a>
+        <button id="install-btn"><i class="fas fa-download"></i> تثبيت التطبيق</button>
     </div>
 
     <header>
-        <div style="display: flex; align-items: center;">
-            <div id="menu-toggle"><span></span><span></span><span></span></div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div id="menu-toggle" style="cursor:pointer; font-size: 1.2rem;"><i class="fas fa-bars"></i></div>
             <div class="logo">🧬 <span id="welcome-name">تحميل...</span></div>
         </div>
+        
         <nav>
             <ul>
-                <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-                <li><a href="videos.html"><i class="fas fa-play"></i> المحاضرات</a></li>
-                <li><a href="exams.html"><i class="fas fa-file-pen"></i> الاختبارات</a></li>
-                <li><a href="live.html"><i class="fas fa-broadcast-tower"></i> لايف</a></li>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="videos.html">المحاضرات</a></li>
+                <li><a href="exams.html">الاختبارات</a></li>
+                <li><a href="lab.html">المختبر</a></li>
             </ul>
         </nav>
 
         <div class="header-right">
-            <div class="partner-links">
-                <a href="https://kemo-omar.github.io/Kareem/" target="_blank" class="partner-btn p-kareem" title="منصة مستر كريم عمر">K</a>
-                <a href="https://mostafa7html7-pixel.github.io/Abqarieno-/" target="_blank" class="partner-btn p-abq" title="منصة سنتر عبقرينو">A</a>
-            </div>
-    
             <div class="wallet-box" onclick="document.getElementById('wallet-overlay').style.display='flex'">
-                <i class="fas fa-wallet"></i>
-                <span id="user-balance">0</span> ج.م
+                <i class="fas fa-wallet"></i> <span id="user-balance">0</span>
             </div>
-    
             <div class="user-controls">
-                <i class="fas fa-music" id="music-toggle-btn" title="تشغيل/إيقاف الموسيقى"></i>
-                <a href="admin.html" id="admin-link" title="لوحة الإدارة" style="display: none;"><i class="fas fa-user-shield"></i></a>
                 <i class="fas fa-adjust" id="theme-toggle"></i>
-                <i class="fas fa-sign-out-alt" id="logout-btn" onclick="logout()"></i>
+                <i class="fas fa-sign-out-alt" onclick="logout()" style="color: var(--accent);"></i>
             </div>
         </div>
     </header>
@@ -466,33 +160,45 @@
             <h1>صانع الأوائل <br><span>مستر حمدي عيد</span></h1>
             <p class="hero-description">الدرجة النهائية ليست مجرد حلم، بل هي واقع نصنعه معاً. خبرة سنوات، شرح مبسط، ومتابعة دقيقة تضمن لك التفوق.</p>
             <div class="hero-buttons">
-                <a href="videos.html" class="hero-btn primary-btn"><i class="fas fa-rocket"></i> ابدأ التعلم الآن</a>
-                <a href="library.html" class="hero-btn secondary-btn"><i class="fas fa-download"></i> المذكرات</a>
-                <!-- ضع رابط المختبر الخارجي هنا بدلاً من # -->
-                <a href="lab.html"  class="hero-btn secondary-btn"><i class="fas fa-cube"></i> المختبر التفاعلي</a>
+                <a href="videos.html" class="hero-btn primary-btn"><i class="fas fa-rocket"></i> ابدأ الآن</a>
+                <a href="lab.html" class="hero-btn secondary-btn"><i class="fas fa-cube"></i> المختبر الذكي</a>
             </div>
         </div>
         <div class="teacher-img-container animate__animated animate__zoomIn">
             <div class="img-glow-wrapper">
-                <img src="H.png" alt="مستر حمدي عيد" class="teacher-img" id="main-poster" fetchpriority="high">
+                <img src="H.png" alt="مستر حمدي عيد" class="teacher-img">
             </div>
         </div>
     </main>
 
-    <footer class="main-footer">
-        <div class="footer-bottom">
-            <div class="online-badge">
-                <span style="height:8px; width:8px; background:#00ff88; border-radius:50%; box-shadow: 0 0 10px #00ff88;"></span> الطلاب المتصلون الآن: <span id="real-count" style="font-weight: bold;">0</span>
-            </div>
-            <p>جميع الحقوق محفوظة لموقع مستر حمدي عيد © 2026 | تطوير <span style="color: var(--primary);">K & A</span></p>
-        </div>
+    <nav class="mobile-nav">
+        <a href="index.html"><i class="fas fa-home"></i>الرئيسية</a>
+        <a href="videos.html"><i class="fas fa-play"></i>المحاضرات</a>
+        <a href="exams.html"><i class="fas fa-file-pen"></i>الاختبارات</a>
+        <a href="lab.html"><i class="fas fa-flask"></i>المختبر</a>
+    </nav>
+
+    <footer class="footer-bottom">
+        <p>
+            جميع الحقوق محفوظة © 2026 | تطوير 
+            <span class="partner-footer-links">
+                <a href="https://mostafa7html7-pixel.github.io/Abqarieno-/" class="p-link" style="color:#673ab7">A</a>
+                <a href="https://kemo-omar.github.io/Kareem/" class="p-link" style="color:#ff9800">K</a>
+            </span>
+        </p>
+        <div style="font-size: 0.7rem; opacity: 0.6; margin-top: 5px;">الطلاب المتصلون: <span id="real-count">0</span></div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
+        // 1. الحماية الصارمة (Redirect if not logged in)
+        const userPhone = localStorage.getItem('userLoggedIn');
+        if (!userPhone) {
+            window.location.href = "go.html";
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyCcFRLMsewcgYXYgVvdkyQHf-imoJHHzng",
             authDomain: "mrhamdy-1c406.firebaseapp.com",
@@ -502,160 +208,73 @@
             messagingSenderId: "806268398144",
             appId: "1:806268398144:web:e7c9b87205cbb6fb2b4da5"
         };
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        const userPhone = localStorage.getItem('userLoggedIn');
-        const userName = localStorage.getItem('userName');
-        let alertQueue = [];
+        // 2. جلب بيانات المستخدم
+        db.ref('students/' + userPhone).on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) { logout(); return; }
+            document.getElementById('user-balance').innerText = data.balance || 0;
+            document.getElementById('welcome-name').innerText = "أهلاً، " + data.name.split(' ')[0];
+        });
 
-        if (!userPhone) {
-            // تم تعطيل هذا السطر مؤقتاً لتتمكن من رؤية تصميم الصفحة
-            // في الوضع الطبيعي، هذا السطر يقوم بتحويل المستخدم غير المسجل إلى صفحة الدخول
-            // window.location.href = "go.html"; 
-        } else {
-            db.ref('students/' + userPhone).on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (!data) { logout(); return; }
-                if (data.status === "blocked") { window.location.href = "contact.html"; return; }
-                document.getElementById('user-balance').innerText = (data.balance || 0).toLocaleString();
-                document.getElementById('welcome-name').innerText = "أهلاً، " + data.name.split(' ')[0];
-                if (data.role === "admin" || userPhone === "01111276700") {
-                    document.getElementById('admin-link').style.display = "block";
-                }
-            });
-
-            // نظام التنبيهات المتعددة
-            db.ref('admin/global_alerts').once('value', (snapshot) => {
-                const seenAlerts = JSON.parse(localStorage.getItem('seenAlerts') || '[]');
-                snapshot.forEach((child) => {
-                    if (!seenAlerts.includes(child.key)) {
-                        alertQueue.push({ key: child.key, text: child.val().text });
-                    }
-                });
-                showNextAlert();
-            });
-
-            // حالة الاتصال
-            const myPresenceRef = db.ref('admin/online_list/' + userPhone);
-            myPresenceRef.set({ name: userName, lastSeen: firebase.database.ServerValue.TIMESTAMP });
-            myPresenceRef.onDisconnect().remove();
-        }
-
-        function showNextAlert() {
-            if (alertQueue.length > 0) {
-                document.getElementById('alert-text').innerText = alertQueue[0].text;
-                document.getElementById('alert-overlay').style.display = 'flex';
-            }
-        }
-
-        function closeCurrentAlert() {
-            const current = alertQueue.shift();
-            let seen = JSON.parse(localStorage.getItem('seenAlerts') || '[]');
-            seen.push(current.key);
-            localStorage.setItem('seenAlerts', JSON.stringify(seen));
-            
-            document.getElementById('alert-overlay').style.display = 'none';
-            if (alertQueue.length > 0) {
-                setTimeout(showNextAlert, 500);
-            }
-        }
-
-        // عداد المتصلين
-        db.ref('admin/online_list').on('value', (snap) => {
+        // 3. عداد المتصلين
+        db.ref('admin/online_list').on('value', snap => {
             document.getElementById('real-count').innerText = snap.numChildren() || 0;
         });
 
-        function logout() { localStorage.clear(); window.location.href = "go.html"; }
-        
-        // --- نظام السمات الثلاثي ---
-        const themes = ['dark', 'light', 'yellow'];
-        const body = document.body;
-
-        function applyTheme(themeName) {
-            body.setAttribute('data-theme', themeName);
-            localStorage.setItem('theme', themeName);
-        }
-
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme && themes.includes(savedTheme)) {
-            applyTheme(savedTheme);
-        } else {
-            applyTheme('dark'); // السمة الافتراضية
-        }
-
-        document.getElementById('theme-toggle').onclick = () => {
-            const currentTheme = body.getAttribute('data-theme');
-            const currentIndex = themes.indexOf(currentTheme);
-            const nextIndex = (currentIndex + 1) % themes.length;
-            applyTheme(themes[nextIndex]);
+        // 4. القائمة الجانبية
+        const menuBtn = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar-menu');
+        menuBtn.onclick = () => sidebar.classList.toggle('open');
+        document.onclick = (e) => {
+            if(!sidebar.contains(e.target) && !menuBtn.contains(e.target)) sidebar.classList.remove('open');
         };
 
-        // Sidebar Logic
-        const menuToggle = document.getElementById('menu-toggle');
-        const sidebar = document.getElementById('sidebar-menu');
-        const overlay = document.getElementById('sidebar-overlay');
+        // 5. تبديل الثيمات
+        const themes = ['dark', 'light', 'yellow'];
+        document.getElementById('theme-toggle').onclick = () => {
+            let current = document.body.getAttribute('data-theme');
+            let next = themes[(themes.indexOf(current) + 1) % themes.length];
+            document.body.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+        };
 
-        function openMenu() {
-            sidebar.style.right = '0';
-            overlay.classList.add('visible');
-            menuToggle.classList.add('open');
-        }
+        // 6. منطق تنزيل التطبيق (PWA)
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
 
-        function closeMenu() {
-            sidebar.style.right = '-300px';
-            overlay.classList.remove('visible');
-            menuToggle.classList.remove('open');
-        }
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'block';
+        });
 
-        // تعديل: زر القائمة يفتح ويغلق الآن
-        menuToggle.addEventListener('click', () => (sidebar.style.right === '0px' ? closeMenu() : openMenu()));
-        overlay.addEventListener('click', closeMenu);
-
-        // Music Player Logic
-        const musicToggleBtn = document.getElementById('music-toggle-btn');
-        const backgroundMusic = document.getElementById('background-music');
-        
-        musicToggleBtn.addEventListener('click', () => {
-            if (backgroundMusic.paused) {
-                backgroundMusic.play()
-                    .then(() => {
-                        musicToggleBtn.classList.add('playing');
-                    })
-                    .catch(error => {
-                        console.error("خطأ في تشغيل الصوت:", error);
-                        alert("عذراً، تعذر تشغيل الملف الصوتي (mp3.mp3). تأكد من أن الملف هو ملف صوتي فعلي.");
-                    });
-            } else {
-                backgroundMusic.pause();
-                musicToggleBtn.classList.remove('playing');
+        installBtn.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choice) => {
+                    if (choice.outcome === 'accepted') installBtn.style.display = 'none';
+                    deferredPrompt = null;
+                });
             }
         });
 
+        function logout() { localStorage.clear(); window.location.href = "go.html"; }
 
-        particlesJS('particles-js', {
-            particles: { number: { value: 50 }, color: { value: '#00e5ff' }, opacity: { value: 0.2 }, size: { value: 2 }, line_linked: { enable: true, opacity: 0.1 }, move: { enable: true, speed: 0.8 } }
-        });
-
-        // إنشاء ملف الـ Manifest برمجياً للتجربة
-        const manifestData = {
+        // إنشاء المانيفست ديناميكياً
+        const manifest = {
             "name": "مستر حمدي عيد",
             "short_name": "الأحياء",
             "start_url": "index.html",
             "display": "standalone",
             "background_color": "#05080f",
             "theme_color": "#00e5ff",
-            "icons": [
-                { "src": "H.png", "sizes": "1080x1080", "type": "image/png" }
-            ]
+            "icons": [{ "src": "H.png", "sizes": "512x512", "type": "image/png" }]
         };
-        const stringManifest = JSON.stringify(manifestData);
-        const blob = new Blob([stringManifest], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blob);
-        document.querySelector('link[rel="manifest"]').setAttribute('href', manifestURL);
+        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(blob));
     </script>
 </body>
-
 </html>
-
-
