@@ -59,6 +59,7 @@
             text-align: right;
         }
         input:focus { border-color: var(--primary); }
+        select option { background: #1e293b; color: white; }
 
         #mr-welcome { 
             display: none; background: rgba(0, 229, 255, 0.1); 
@@ -90,16 +91,30 @@
         <div id="signup-view" class="auth-form">
             <span class="back-btn" onclick="showMain()"><i class="fas fa-arrow-right"></i> رجوع</span>
             <h3 style="text-align:center;">بيانات طالب جديد</h3>
+            
             <div class="form-group"><input type="text" id="reg-name" placeholder="الاسم بالكامل"></div>
-            <div class="form-group"><input type="tel" id="reg-phone" placeholder="رقم الموبايل"></div>
+            
             <div class="form-group">
-                <select id="reg-grade">
-                    <option value="1">الصف الأول الثانوي</option>
-                    <option value="2">الصف الثاني الثانوي</option>
-                    <option value="3">الصف الثالث الثانوي</option>
+                <select id="reg-country">
+                    <option value="" disabled selected>اختر الدولة</option>
+                    <option value="قطر">دولة قطر</option>
+                    <option value="السعودية">المملكة العربية السعودية</option>
                 </select>
             </div>
+
+            <div class="form-group"><input type="tel" id="reg-phone" placeholder="رقم الموبايل"></div>
+            
+            <div class="form-group">
+                <select id="reg-grade">
+                    <option value="" disabled selected>اختر الصف الدراسي</option>
+                    <option value="10">الصف العاشر</option>
+                    <option value="11">الصف الحادي عشر</option>
+                    <option value="12">الصف الثاني عشر</option>
+                </select>
+            </div>
+            
             <div class="form-group"><input type="password" id="reg-pass" placeholder="كلمة السر"></div>
+            
             <button class="btn btn-primary" onclick="startRegistration()">تأكيد وتسجيل</button>
         </div>
 
@@ -141,7 +156,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // فحص الدخول التلقائي والحظر عند التحميل
         window.onload = function() {
             const savedPhone = localStorage.getItem('userLoggedIn');
             if (savedPhone) {
@@ -183,15 +197,23 @@
             const name = document.getElementById('reg-name').value.trim();
             const pass = document.getElementById('reg-pass').value.trim();
             const grade = document.getElementById('reg-grade').value;
+            const country = document.getElementById('reg-country').value;
 
-            if(!phone || !name || !pass) return alert("يرجى ملء كافة البيانات");
+            if(!phone || !name || !pass || !grade || !country) {
+                return alert("يرجى ملء كافة البيانات واختيار الدولة والصف");
+            }
 
             db.ref('students/' + phone).once('value', snap => {
                 if(snap.exists()) {
                     alert("هذا الرقم مسجل بالفعل!");
                 } else {
+                    // تخزين البيانات شاملة الدولة والصف الجديد
                     tempUser = { 
-                        name, phone, pass, grade, 
+                        name, 
+                        phone, 
+                        pass, 
+                        grade, 
+                        country,
                         role: "student", 
                         status: "active",
                         balance: 0,
@@ -207,6 +229,7 @@
         function verifyOTP() {
             const input = document.getElementById('otp-input').value;
             if(input == generatedOTP) {
+                // حفظ البيانات في الفايربيس
                 db.ref('students/' + tempUser.phone).set(tempUser).then(() => {
                     localStorage.setItem('userLoggedIn', tempUser.phone);
                     localStorage.setItem('userName', tempUser.name);
