@@ -11,350 +11,192 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* Copying root variables and basic styles from index.html for consistency */
         :root {
             --primary: #00e5ff; --accent: #ff1744; --bg: #05080f; 
             --card-bg: rgba(255, 255, 255, 0.03); --text: #e2e8f0;
-            --nav-bg: rgba(10, 15, 28, 0.7); --glass: rgba(255, 255, 255, 0.08); --gold: #ffd700;
+            --nav-bg: rgba(10, 15, 28, 0.9); --glass: rgba(255, 255, 255, 0.08);
         }
 
-        [data-theme="light"] {
-            --bg: #eef2f7; --text: #0f172a; --nav-bg: rgba(255, 255, 255, 0.9);
-            --primary: #00bfa5; --card-bg: rgba(0, 0, 0, 0.03); --glass: rgba(0, 0, 0, 0.05);
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; }
+
+        /* --- نظام العارض الذكي (Viewer) --- */
+        #site-viewer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 30000; display: none; flex-direction: column;
+            animation: slideUp 0.4s cubic-bezier(0, 0, 0.2, 1);
         }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        [data-theme="yellow"] {
-            --bg: #fdf6e3; --text: #657b83; --nav-bg: rgba(253, 246, 227, 0.85);
-            --primary: #268bd2; --accent: #dc322f; --card-bg: rgba(0, 0, 0, 0.02);
-            --glass: rgba(88, 110, 117, 0.1); --gold: #b58900;
+        .viewer-header {
+            background: #111; padding: 12px 5%; display: flex; 
+            justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary);
         }
+        .close-btn { 
+            background: var(--accent); color: white; border: none; 
+            padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; 
+        }
+        #main-iframe { width: 100%; height: 100%; border: none; background: white; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
-        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; padding-bottom: 80px; }
-
-        /* Header Styles */
-        header {
+        /* --- الهيدر والقائمة الجانبية --- */
+        header { 
             position: sticky; top: 0; width: 100%; background: var(--nav-bg); 
-            backdrop-filter: blur(16px) saturate(180%); padding: 15px 5%; z-index: 1000;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--glass); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px); padding: 15px 5%; z-index: 1000; 
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass); 
         }
-        .logo { font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 8px; font-size: 1.1rem; }
         
-        /* Sidebar Styles */
         .sidebar {
-            height: auto; width: 260px; position: fixed; z-index: 10001; top: 85px; right: -300px; left: auto;
-            background-color: var(--nav-bg); backdrop-filter: blur(16px) saturate(180%);
-            overflow: hidden; transition: right 0.3s ease-out, opacity 0.3s ease-out;
-            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3); border-radius: 15px; border: 1px solid #ff0f39;
+            position: fixed; top: 0; right: -300px; width: 280px; height: 100%;
+            background: #0a0f1a; z-index: 20000; transition: 0.4s; padding: 20px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5); border-left: 1px solid var(--primary);
         }
-        .sidebar a { padding: 12px 20px; text-decoration: none; font-size: 0.95rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 15px; transition: 0.3s; }
-        .sidebar a:hover { color: var(--primary); background: rgba(0, 229, 255, 0.05); border-right: 3px solid var(--primary); }
-        .sidebar a i { width: 20px; text-align: center; }
-        #sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; display: none; opacity: 0; transition: opacity 0.3s; }
-        #sidebar-overlay.visible { display: block; opacity: 1; }
-
-        /* Menu Toggle */
-        #menu-toggle { width: 24px; height: 18px; position: relative; cursor: pointer; transition: .5s ease-in-out; }
-        #menu-toggle span { display: block; position: absolute; height: 3px; width: 100%; background: var(--text); border-radius: 9px; opacity: 1; left: 0; transform: rotate(0deg); transition: .25s ease-in-out; }
-        #menu-toggle span:nth-child(1) { top: 0px; }
-        #menu-toggle span:nth-child(2) { top: 7.5px; }
-        #menu-toggle span:nth-child(3) { top: 15px; }
-        #menu-toggle.open span:nth-child(1) { top: 7.5px; transform: rotate(135deg); background: var(--primary); }
-        #menu-toggle.open span:nth-child(2) { opacity: 0; left: -60px; }
-        #menu-toggle.open span:nth-child(3) { top: 7.5px; transform: rotate(-135deg); background: var(--primary); }
-
-        /* Library Specific Styles */
-        .page-header {
-            text-align: center;
-            padding: 60px 20px 40px;
+        .sidebar.active { right: 0; }
+        .sidebar a {
+            display: flex; align-items: center; gap: 15px; color: white;
+            text-decoration: none; padding: 15px; border-radius: 10px; margin-bottom: 10px;
+            font-weight: bold; background: rgba(255,255,255,0.03);
         }
-        .page-header h1 {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-            text-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
-        }
-        .page-header p {
-            color: var(--text);
-            opacity: 0.8;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
+        .sidebar a:hover { background: var(--primary); color: black; }
+        #sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
+            display: none; z-index: 15000; backdrop-filter: blur(3px);
         }
 
-        .library-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            padding: 0 5% 60px;
-            max-width: 1400px;
-            margin: 0 auto;
+        /* --- محتوى الصفحة --- */
+        .page-header { text-align: center; padding: 50px 20px; }
+        .library-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 25px; padding: 0 5% 50px; max-width: 1400px; margin: 0 auto; 
         }
-
         .book-card {
-            background: var(--card-bg);
-            border: 1px solid var(--glass);
-            border-radius: 20px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+            background: var(--card-bg); border: 1px solid var(--glass); border-radius: 20px; 
+            padding: 30px; text-align: center; transition: 0.3s; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .book-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,229,255,0.2); }
+        .book-icon { font-size: 3.5rem; color: var(--primary); margin-bottom: 15px; }
+        .open-btn {
+            background: var(--primary); color: #000; border: none; padding: 12px 30px;
+            border-radius: 50px; font-weight: bold; margin-top: 20px; cursor: pointer; width: 100%;
         }
 
-        .book-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: 0.4s ease;
-        }
-
-        .book-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .book-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .book-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            transition: 0.4s;
-        }
-
-        .book-card:hover .book-icon {
-            background: var(--primary);
-            color: #000;
-            transform: rotateY(180deg);
-        }
-
-        .book-title {
-            font-size: 1.4rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            color: var(--text);
-        }
-
-        .book-desc {
-            font-size: 0.95rem;
-            color: var(--text);
-            opacity: 0.7;
-            margin-bottom: 25px;
-            line-height: 1.6;
-            flex-grow: 1;
-        }
-
-        .download-btn {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-            padding: 10px 30px;
-            border-radius: 50px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .download-btn:hover {
-            background: var(--primary);
-            color: #000;
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
-        }
-
-        /* Footer from index.html */
-        .main-footer {
-            background: rgba(5, 10, 15, 0.95);
-            border-top: 1px solid var(--glass);
-            padding: 10px 0;
-            margin-top: 30px;
-            position: relative;
-            z-index: 10;
-        }
-        .footer-bottom {
-            text-align: center;
-            color: var(--text);
-            opacity: 0.7;
-            font-size: 0.75rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        /* User Controls in Header */
-        .user-controls { display: flex; align-items: center; gap: 15px; }
-        .user-controls i, .user-controls a {
-            width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; background: transparent; border: 1px solid var(--glass);
-            color: var(--text); transition: 0.3s; cursor: pointer; text-decoration: none; font-size: 1.1rem;
-        }
-        .user-controls i:hover, .user-controls a:hover { 
-            border-color: var(--primary); color: var(--primary); 
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); transform: translateY(-3px); 
-        }
-        #music-toggle-btn.playing { color: var(--primary); border-color: var(--primary); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); } 50% { box-shadow: 0 0 20px rgba(0, 229, 255, 0.5); } 100% { box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); } }
-
-        @media (max-width: 768px) {
-            .logo span { display: none; }
-            .library-grid { grid-template-columns: 1fr; }
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 100px 20px;
-            color: var(--text);
-            opacity: 0.7;
-        }
-        .empty-state i {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            color: var(--glass);
-        }
-        .empty-state h2 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        .empty-state p {
-            font-size: 1.1rem;
-        }
+        /* شاشة التحميل */
+        .loader-box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #555; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body data-theme="dark">
+<body>
 
-    <audio id="background-music" src="mp3.mp3" loop preload="auto"></audio>
-
-    <div id="sidebar-menu" class="sidebar">
-        <a href="index.html"><i class="fas fa-home"></i><span>الرئيسية</span></a>
-        <a href="videos.html"><i class="fas fa-play"></i><span>المحاضرات</span></a>
-        <a href="exams.html"><i class="fas fa-file-pen"></i><span>الاختبارات</span></a>
-        <a href="live.html"><i class="fas fa-broadcast-tower"></i><span>لايف</span></a>
-        <a href="library.html"><i class="fas fa-download"></i><span>المذكرات</span></a>
-        <a href="lab.html"><i class="fas fa-cube"></i><span>المختبر التفاعلي</span></a>
-        <a href="contact.html"><i class="fas fa-envelope"></i><span>تواصل معنا</span></a>
+    <div id="sidebar-overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar" id="mainSidebar">
+        <h2 style="color: var(--primary); margin-bottom: 25px; text-align: center;">القائمة الرئيسية</h2>
+        <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="videos.html"><i class="fas fa-play"></i> المحاضرات</a>
+        <a href="exams.html"><i class="fas fa-file-pen"></i> الاختبارات</a>
+        <a href="library.html"><i class="fas fa-download"></i> المذكرات</a>
+        <a href="#" onclick="openViewer('https://afedne.com/', 'بوابة أفدني الأصلية')"><i class="fas fa-globe"></i> تصفح أفدني</a>
+        <a href="contact.html"><i class="fas fa-envelope"></i> تواصل معنا</a>
+        <button onclick="toggleMenu()" style="width: 100%; margin-top: 20px; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer;">إغلاق</button>
     </div>
-    <div id="sidebar-overlay"></div>
+
+    <div id="site-viewer">
+        <div class="viewer-header">
+            <div style="font-weight: bold; color: var(--primary);"><i class="fas fa-window-restore"></i> <span id="view-title">جارِ العرض...</span></div>
+            <button class="close-btn" onclick="closeViewer()">إغلاق النافذة ×</button>
+        </div>
+        <div style="flex-grow: 1; position: relative;">
+            <div class="loader-box" id="viewerLoader">
+                <div class="spinner"></div>
+                <p>جارِ تحميل المحتوى...</p>
+            </div>
+            <iframe id="main-iframe" src="" onload="hideLoader()"></iframe>
+        </div>
+    </div>
 
     <header>
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <div id="menu-toggle"><span></span><span></span><span></span></div>
-            <div class="logo">🧬 <span>منصة الأحياء</span></div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <i class="fas fa-bars" onclick="toggleMenu()" style="font-size: 1.5rem; cursor: pointer; color: var(--primary);"></i>
+            <div style="font-weight: 900; font-size: 1.2rem; color: var(--primary);">🧬 منصة مستر حمدي</div>
         </div>
-        
         <div class="user-controls">
-            <i class="fas fa-music" id="music-toggle-btn" title="تشغيل/إيقاف الموسيقى"></i>
-            <i class="fas fa-adjust" id="theme-toggle" title="تغيير المظهر"></i>
+            <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
         </div>
     </header>
 
     <div class="page-header">
-        <h1>مكتبة الأحياء الرقمية</h1>
-        <p>حمل المذكرات والملخصات والكتب الخارجية لتضمن التفوق في مادة الأحياء. جميع الملفات متاحة بصيغة PDF عالية الجودة.</p>
+        <h1>المكتبة الرقمية الحديثة</h1>
+        <p>تصفح المصادر التعليمية من "مناهج" وبوابة "أفدني" الأصلية مباشرة دون مغادرة موقعك</p>
     </div>
 
-    <div class="empty-state">
-        <i class="fas fa-book-dead"></i>
-        <h2>لا توجد مذكرات حالياً</h2>
-        <p>سيتم إضافة المذكرات والكتب قريباً، يرجى التحقق لاحقاً.</p>
-    </div>
-
-    <footer class="main-footer">
-        <div class="footer-bottom">
-            <p>جميع الحقوق محفوظة لموقع مستر حمدي عيد © 2026 | تطوير <span style="color: var(--primary);">K & A</span></p>
+    <div class="library-grid">
+        <div class="book-card" onclick="openViewer('https://afedne.com/', 'بوابة أفدني الأصلية')">
+            <div style="font-size: 0.8rem; background: #4caf50; color: white; padding: 5px 15px; border-radius: 20px; margin-bottom: 10px;">البوابة الرسمية</div>
+            <i class="fas fa-globe book-icon" style="color: #4caf50;"></i>
+            <h3 style="margin-bottom: 10px;">موقع أفدني (الرئيسي)</h3>
+            <p style="opacity: 0.7; font-size: 0.9rem; flex-grow: 1;">اختر دولتك وتصفح أكبر موسوعة للمذكرات والملخصات لجميع المراحل.</p>
+            <button class="open-btn" style="background: #4caf50; color: white;">فتح بوابة أفدني</button>
         </div>
-    </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+        <div class="book-card" onclick="openViewer('https://www.mnhaji.com/%d9%83%d8%aa%d8%a7%d8%a8-%d8%b9%d9%84%d9%85-%d8%a7%d9%84%d8%a8%d9%8a%d8%a6%d8%a9-%d9%a1-%d9%a1-%d9%85%d8%b3%d8%a7%d8%b1%d8%a7%d8%aa/', 'كتاب علم البيئة')">
+            <div style="font-size: 0.8rem; background: var(--primary); color: #000; padding: 5px 15px; border-radius: 20px; margin-bottom: 10px;">كتاب الوزارة</div>
+            <i class="fas fa-book-open book-icon"></i>
+            <h3 style="margin-bottom: 10px;">كتاب علم البيئة</h3>
+            <p style="opacity: 0.7; font-size: 0.9rem; flex-grow: 1;">منهج المسارات المعتمد 1447 - تصفح مباشر.</p>
+            <button class="open-btn">عرض الكتاب</button>
+        </div>
+
+        <div class="book-card" onclick="openViewer('https://www.mnhaji.com/%d8%a7%d8%ae%d8%aa%d8%a8%d8%a7%d8%b1-%d8%b9%d9%85%d9%84%d9%8a-%d8%b9%d9%84%d9%85-%d8%a7%d9%84%d8%a8%d9%8a%d8%a6%d8%a9-1-1-%d9%85%d8%b3%d8%a7%d8%b1%d8%a7%d8%aa/', 'الاختبار العملي')">
+            <div style="font-size: 0.8rem; background: var(--accent); color: white; padding: 5px 15px; border-radius: 20px; margin-bottom: 10px;">اختبار تفاعلي</div>
+            <i class="fas fa-vials book-icon" style="color: var(--accent);"></i>
+            <h3 style="margin-bottom: 10px;">الاختبار العملي</h3>
+            <p style="opacity: 0.7; font-size: 0.9rem; flex-grow: 1;">تدريبات تفاعلية على نماذج الاختبارات العملية.</p>
+            <button class="open-btn" style="background: var(--accent); color: white;">بدأ الاختبار</button>
+        </div>
+    </div>
+
     <script>
-        // Theme Logic
-        const themes = ['dark', 'light', 'yellow'];
-        const body = document.body;
-
-        function applyTheme(themeName) {
-            body.setAttribute('data-theme', themeName);
-            localStorage.setItem('theme', themeName);
+        // دالة تشغيل وإغلاق القائمة الجانبية
+        function toggleMenu() {
+            const sidebar = document.getElementById('mainSidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
         }
 
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme && themes.includes(savedTheme)) {
-            applyTheme(savedTheme);
-        } else {
-            applyTheme('dark');
+        // دالة فتح العارض الذكي
+        function openViewer(url, title) {
+            const viewer = document.getElementById('site-viewer');
+            const iframe = document.getElementById('main-iframe');
+            const loader = document.getElementById('viewerLoader');
+            const titleSpan = document.getElementById('view-title');
+
+            titleSpan.innerText = title;
+            loader.style.display = 'block';
+            iframe.style.opacity = '0';
+            viewer.style.display = 'flex';
+            iframe.src = url;
+            
+            // قفل السكرول في الصفحة الرئيسية
+            document.body.style.overflow = 'hidden';
+            // إغلاق المنيو إذا كانت مفتوحة
+            document.getElementById('mainSidebar').classList.remove('active');
+            document.getElementById('sidebar-overlay').style.display = 'none';
         }
 
-        document.getElementById('theme-toggle').onclick = () => {
-            const currentTheme = body.getAttribute('data-theme');
-            const currentIndex = themes.indexOf(currentTheme);
-            const nextIndex = (currentIndex + 1) % themes.length;
-            applyTheme(themes[nextIndex]);
-        };
-
-        // Sidebar Logic
-        const menuToggle = document.getElementById('menu-toggle');
-        const sidebar = document.getElementById('sidebar-menu');
-        const overlay = document.getElementById('sidebar-overlay');
-
-        function openMenu() {
-            sidebar.style.right = '0';
-            overlay.classList.add('visible');
-            menuToggle.classList.add('open');
+        function hideLoader() {
+            document.getElementById('viewerLoader').style.display = 'none';
+            document.getElementById('main-iframe').style.opacity = '1';
+            document.getElementById('main-iframe').style.transition = '0.5s';
         }
-        function closeMenu() {
-            sidebar.style.right = '-300px';
-            overlay.classList.remove('visible');
-            menuToggle.classList.remove('open');
+
+        function closeViewer() {
+            const viewer = document.getElementById('site-viewer');
+            const iframe = document.getElementById('main-iframe');
+            viewer.style.display = 'none';
+            iframe.src = '';
+            document.body.style.overflow = 'auto';
         }
-        menuToggle.addEventListener('click', () => (sidebar.style.right === '0px' ? closeMenu() : openMenu()));
-        overlay.addEventListener('click', closeMenu);
-
-        // Music Player Logic
-        const musicToggleBtn = document.getElementById('music-toggle-btn');
-        const backgroundMusic = document.getElementById('background-music');
-        
-        musicToggleBtn.addEventListener('click', () => {
-            if (backgroundMusic.paused) {
-                backgroundMusic.play()
-                    .then(() => {
-                        musicToggleBtn.classList.add('playing');
-                    })
-                    .catch(error => {
-                        console.error("خطأ في تشغيل الصوت:", error);
-                        alert("عذراً، تعذر تشغيل الملف الصوتي (mp3.mp3). تأكد من أن الملف هو ملف صوتي فعلي.");
-                    });
-            } else {
-                backgroundMusic.pause();
-                musicToggleBtn.classList.remove('playing');
-            }
-        });
-
-        // Particles
-        particlesJS('particles-js', {
-            particles: { number: { value: 30 }, color: { value: '#00e5ff' }, opacity: { value: 0.1 }, size: { value: 2 }, line_linked: { enable: true, opacity: 0.05 }, move: { enable: true, speed: 0.5 } }
-        });
     </script>
-    <div id="particles-js" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
 </body>
 </html>
